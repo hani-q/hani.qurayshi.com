@@ -63,11 +63,12 @@ const RED = "#E3001B", YELLOW = "#F7B500";
 }
 
 // App icon (home screens, large tiles): the page's 3D mark in red and yellow on a dark rounded
-// square. Source for public/apple-touch-icon.png and icon-512.png (browser renders: blur filters).
+// square, lines thickened. Source for apple-touch-icon.png and the web-app manifest icons
+// (icon-192.png, icon-512.png), used when the site is installed or saved to a home screen/desktop.
 {
-  const o = { colors: { H: RED, Q: YELLOW }, dots: { H: RED, Q: YELLOW }, strokeScale: 1.6 };
+  const o = { colors: { H: RED, Q: YELLOW }, dots: { H: RED, Q: YELLOW }, strokeScale: 3.2 };
   const art = tip(glass(o), 28).replaceAll("var(--ink)", INK).replaceAll("var(--bgc)", BG);
-  const [x, y, w, h] = viewBox, side = Math.max(w, h) * 1.08, cx = x + w / 2, cy = y + h / 2;
+  const [x, y, w, h] = viewBox, side = Math.max(w, h) * 1.02, cx = x + w / 2, cy = y + h / 2;
   const vb = [cx - side / 2, cy - side / 2, side, side].map((v) => +v.toFixed(2));
   writeFileSync("public/app-icon.svg", `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.join(" ")}"><rect x="${vb[0]}" y="${vb[1]}" width="${side.toFixed(2)}" height="${side.toFixed(2)}" rx="${(side * 0.22).toFixed(2)}" fill="${BG}"/>${art}</svg>\n`);
 }
