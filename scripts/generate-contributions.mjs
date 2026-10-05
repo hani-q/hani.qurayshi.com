@@ -10,11 +10,17 @@ const USERNAME = "hani-q";
 const OUTPUT_DIR = "src/data";
 
 if (!TOKEN) {
-  console.warn("⚠ GH_CONTRIBUTIONS_TOKEN not set — generating empty contributions data");
-  const { writeFileSync, mkdirSync } = await import("fs");
+  const { writeFileSync, mkdirSync, existsSync } = await import("fs");
   const { join } = await import("path");
+  const out = join(OUTPUT_DIR, "contributions.json");
+  // Keep the committed data rather than wiping it on every tokenless local build.
+  if (existsSync(out)) {
+    console.warn("⚠ GH_CONTRIBUTIONS_TOKEN not set — keeping existing contributions data");
+    process.exit(0);
+  }
+  console.warn("⚠ GH_CONTRIBUTIONS_TOKEN not set — generating empty contributions data");
   mkdirSync(OUTPUT_DIR, { recursive: true });
-  writeFileSync(join(OUTPUT_DIR, "contributions.json"), JSON.stringify({ totalContributions: 0, weeks: [] }));
+  writeFileSync(out, JSON.stringify({ totalContributions: 0, weeks: [] }));
   process.exit(0);
 }
 
@@ -72,15 +78,12 @@ async function main() {
   console.log("✓ Generated contributions.json");
 }
 
-main().catch((err) => {
+main().catch(async (err) => {
   console.error("✗ Failed to generate contribution data:", err.message);
-  // Write empty data so build doesn't fail
-  import("fs").then(({ writeFileSync, mkdirSync }) => {
-    mkdirSync(OUTPUT_DIR, { recursive: true });
-    writeFileSync(
-      import("path").then(({ join }) => join(OUTPUT_DIR, "contributions.json")),
-      JSON.stringify({ totalContributions: 0, weeks: [] })
-    );
-  });
+  // Write empty data so the build doesn't fail, and finish writing before exiting.
+  const { writeFileSync, mkdirSync } = await import("fs");
+  const { join } = await import("path");
+  mkdirSync(OUTPUT_DIR, { recursive: true });
+  writeFileSync(join(OUTPUT_DIR, "contributions.json"), JSON.stringify({ totalContributions: 0, weeks: [] }));
   process.exit(0);
 });

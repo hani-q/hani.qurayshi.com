@@ -8,12 +8,14 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "prebuild": "node scripts/generate-contributions.mjs",
+    "prebuild": "node scripts/generate-contributions.mjs && node scripts/fetch-posts.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
+    "@huggingface/transformers": "4.3.0",
+    "@mlc-ai/web-llm": "0.2.85",
     "@tailwindcss/vite": "^4.2.2",
     "astro": "^6.0.8",
     "tailwindcss": "^4.2.2"

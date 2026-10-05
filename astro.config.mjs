@@ -6,6 +6,8 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    // The chat's model workers import code-split libraries, which need ES-module workers.
+    worker: { format: 'es' }
   }
 });

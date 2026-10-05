@@ -1,0 +1,39 @@
+[
+  {
+    "id": "2102382997890576507",
+    "url": "https://x.com/haniq313/status/2102382997890576507",
+    "createdAt": "2026-09-22T13:02:21.000Z",
+    "likes": 1,
+    "replies": 0,
+    "author": {
+      "name": "Hani Q",
+      "handle": "haniq313",
+      "avatar": "/posts/avatar.jpg",
+      "verified": true
+    },
+    "segments": [
+      {
+        "text": "JEV from "
+      },
+      {
+        "text": "@typesafeai",
+        "href": "https://x.com/typesafeai"
+      },
+      {
+        "text": " AI is SOMETHING\n\ncreated a test rig to evaluate it from Traffic Classification by feeding it Flow Metadata from a DPI. and also added option in the RIG to test laya and also Use GPT and Claude for Comparison (with websearch Tool call in the prompt)"
+      }
+    ],
+    "photos": [
+      {
+        "src": "/posts/2102382997890576507-1.jpg",
+        "width": 3422,
+        "height": 1028
+      },
+      {
+        "src": "/posts/2102382997890576507-2.jpg",
+        "width": 3424,
+        "height": 1044
+      }
+    ]
+  }
+]
