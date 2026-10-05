@@ -807,39 +807,57 @@ const tiltAttrs = { "data-sf-tilt": "" };
       var topbar = root.querySelector('.sf-topbar');
       if (markEl && heroSpot && barSpot && topbar) {
         var markTick = false;
+        // Geometry is measured once per layout (load, resize, fonts, hero changes) as document
+        // coordinates, so a scroll frame reads no layout: it only does arithmetic and writes one
+        // compositor-only transform. The mark keeps the hero size as its layout width and is scaled
+        // down with transform (no width change, so its blurred SVG isn't re-rasterized per frame).
+        var geo = null;
+        function measure() {
+          var sy = window.scrollY, a = heroSpot.getBoundingClientRect(), b = barSpot.getBoundingClientRect();
+          var cSpot = root.querySelector('.sf-contact-mark'), c = cSpot && cSpot.getBoundingClientRect();
+          geo = { ax: a.left, ay: a.top + sy, aw: a.width || 1, bx: b.left, by: b.top, bw: b.width,
+                  c: c && { x: c.left, y: c.top + sy, w: c.width }, vh: window.innerHeight };
+          markEl.style.width = geo.aw.toFixed(1) + 'px';
+          heroCopy = root.querySelector('.sf-hero-copy');
+          wide = window.innerWidth > 900;
+        }
+        var heroCopy = null, wide = true, lastT = -1;
         function placeMark() {
           markTick = false;
-          var raw = Math.min(Math.max(window.scrollY / (window.innerHeight * 0.45), 0), 1);
+          if (!geo) measure();
+          var g = geo, sy = window.scrollY;
+          var raw = Math.min(Math.max(sy / (g.vh * 0.45), 0), 1);
           var t = reduced ? (raw > 0.5 ? 1 : 0) : raw * raw * (3 - 2 * raw);   // smoothstep
-          var a = heroSpot.getBoundingClientRect(), b = barSpot.getBoundingClientRect();
-          // Both placeholders are measured live: the hero one scrolls away as the mark travels.
+          var ay = g.ay - sy;
           // Never above the bar: the hero placeholder scrolls up faster than the mark travels.
-          var x = a.left + (b.left - a.left) * t, y = Math.max(a.top + (b.top - a.top) * t, b.top);
-          var w = a.width + (b.width - a.width) * t;
+          var x = g.ax + (g.bx - g.ax) * t, y = Math.max(ay + (g.by - ay) * t, g.by);
+          var w = g.aw + (g.bw - g.aw) * t;
           // Near the end the mark leaves the bar again and lands on the contact card's
           // placeholder as that card scrolls in.
-          var cSpot = root.querySelector('.sf-contact-mark');
-          if (cSpot && t >= 0.999) {
-            var c = cSpot.getBoundingClientRect(), vh = window.innerHeight;
-            var rawC = Math.min(Math.max((vh * 0.95 - c.top) / (vh * 0.45), 0), 1);
+          if (g.c && t >= 0.999) {
+            var cy = g.c.y - sy;
+            var rawC = Math.min(Math.max((g.vh * 0.95 - cy) / (g.vh * 0.45), 0), 1);
             var u = reduced ? (rawC > 0.5 ? 1 : 0) : rawC * rawC * (3 - 2 * rawC);
-            if (u > 0) { x += (c.left - x) * u; y += (c.top - y) * u; w += (c.width - w) * u; }
+            if (u > 0) { x += (g.c.x - x) * u; y += (cy - y) * u; w += (g.c.w - w) * u; }
           }
-          markEl.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
-          markEl.style.width = w.toFixed(1) + 'px';
-          // The hero prompt fades out as a whole (never a hole in the sentence) before the
-          // mark crosses it, while the bar name fades in.
-          // On phones the prompt sits below the logo's first screen and is what scrolling reveals, so it stays.
-          var heroCopy = root.querySelector('.sf-hero-copy');
-          if (heroCopy) heroCopy.style.opacity = window.innerWidth > 900 ? Math.max(0, 1 - t * 2.2).toFixed(3) : '';
+          markEl.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) scale(' + (w / g.aw).toFixed(4) + ')';
+          // Only touch the rest when the docking progress changed (it is constant once docked).
+          if (t === lastT) return;
+          lastT = t;
+          // The hero prompt fades out as a whole before the mark crosses it; on phones it sits
+          // below the logo's first screen and is what scrolling reveals, so it stays.
+          if (heroCopy) heroCopy.style.opacity = wide ? Math.max(0, 1 - t * 2.2).toFixed(3) : '';
           topbar.style.setProperty('--sf-bar', t.toFixed(3));
           root.classList.toggle('sf-docked', t >= 0.999);
         }
+        function remeasure() { geo = null; lastT = -1; queueMark(); }
         function queueMark() { if (!markTick) { markTick = true; requestAnimationFrame(placeMark); } }
         window.addEventListener('scroll', queueMark, { passive: true });
-        window.addEventListener('resize', queueMark);
-        window.addEventListener('load', queueMark);
-        if (document.fonts && document.fonts.ready) document.fonts.ready.then(queueMark);
+        window.addEventListener('resize', remeasure);
+        window.addEventListener('load', remeasure);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
+        // Anything that moves the placeholders (typing/chat mode, streamed lines, images) remeasures.
+        if (window.ResizeObserver) new ResizeObserver(remeasure).observe(document.body);
         placeMark();
       }
 
@@ -1197,11 +1215,14 @@ const tiltAttrs = { "data-sf-tilt": "" };
   @property --hq-qd { syntax: "<color>"; inherits: true; initial-value: #F1F1F1; }
   @property --sf-primary { syntax: "<color>"; inherits: true; initial-value: #4B9BD8; }
   @property --sf-accent { syntax: "<color>"; inherits: true; initial-value: #3FB07E; }
-  [data-theme="simplefolio"] { transition: --sf-primary 2.4s ease-in-out, --sf-accent 2.4s ease-in-out, background-color 0.3s ease, color 0.3s ease; }
+  /* --sf-primary/--sf-accent are deliberately NOT transitioned: they are inherited by the whole page,
+     so a 2.4s transition recalculated every element's style each frame and made scrolling stutter
+     on phones. The page accents snap; only the logo's own colours glide (.sf-brand below). */
+  [data-theme="simplefolio"] { transition: background-color 0.3s ease, color 0.3s ease; }
   /* HQ mark, top-left; colour roles default to ink and are set per palette by script */
   [data-theme="simplefolio"] .sf-brand {
     --hq-h: var(--sf-ink); --hq-q: var(--sf-ink); --hq-hd: var(--sf-ink); --hq-qd: var(--sf-ink); --ink: var(--sf-ink); --bgc: var(--sf-paper);
-    position: fixed; z-index: 52; top: 0; left: 0; display: block; line-height: 0; border-radius: 4px; transform-origin: 0 0; will-change: transform, width;
+    position: fixed; z-index: 52; top: 0; left: 0; display: block; line-height: 0; border-radius: 4px; transform-origin: 0 0; will-change: transform;
     transition: --hq-h 2.4s ease-in-out, --hq-q 2.4s ease-in-out, --hq-hd 2.4s ease-in-out, --hq-qd 2.4s ease-in-out;
   }
   [data-theme="simplefolio"] .sf-brand svg { display: block; width: 100%; height: auto; }
