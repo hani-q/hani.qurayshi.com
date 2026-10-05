@@ -185,7 +185,10 @@ export function initChat(root: HTMLElement) {
       .then((d) => { jokes = (d.jokes ?? []).map((j: { joke: string }) => j.joke.replace(/\s+/g, " ").trim()).filter((j: string) => j.length <= 110); })
       .catch(() => {})
       .finally(() => { jokesLoading = null; }));
-  const idle = () => !hero.classList.contains("sf-hero--ask") && !input.value && window.scrollY < window.innerHeight * 0.3 && !document.hidden;
+  // Idle = nobody typing or chatting, the headline on screen (on phones it sits below the
+  // logo's first screen) and the tab visible.
+  const onScreen = () => { const r = title.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; };
+  const idle = () => !hero.classList.contains("sf-hero--ask") && !input.value && onScreen() && !document.hidden;
   let turn = 0;
   let lastTidbit = -1;
   async function rotate() {

@@ -829,8 +829,9 @@ const tiltAttrs = { "data-sf-tilt": "" };
           markEl.style.width = w.toFixed(1) + 'px';
           // The hero prompt fades out as a whole (never a hole in the sentence) before the
           // mark crosses it, while the bar name fades in.
+          // On phones the prompt sits below the logo's first screen and is what scrolling reveals, so it stays.
           var heroCopy = root.querySelector('.sf-hero-copy');
-          if (heroCopy) heroCopy.style.opacity = Math.max(0, 1 - t * 2.2).toFixed(3);
+          if (heroCopy) heroCopy.style.opacity = window.innerWidth > 900 ? Math.max(0, 1 - t * 2.2).toFixed(3) : '';
           topbar.style.setProperty('--sf-bar', t.toFixed(3));
           root.classList.toggle('sf-docked', t >= 0.999);
         }
@@ -1690,7 +1691,6 @@ const tiltAttrs = { "data-sf-tilt": "" };
   @media (max-width: 600px) {
     [data-theme="simplefolio"] section { padding-left: 4px; padding-right: 4px; }
     [data-theme="simplefolio"] .sf-hero { padding: 0 16px; }
-    [data-theme="simplefolio"] .sf-hero-title { font-size: 35px; line-height: 1.4; }
     [data-theme="simplefolio"] .sf-section-title { font-size: 28px; margin-bottom: 32px; }
     [data-theme="simplefolio"] .sf-panel { padding: 36px 20px; }
     [data-theme="simplefolio"] .sf-contact .sf-contact-card { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 40px 20px; }
@@ -1725,8 +1725,19 @@ const tiltAttrs = { "data-sf-tilt": "" };
     [data-theme="simplefolio"] .sf-browser-offline span { font-size: 96px; }
     [data-theme="simplefolio"] .sf-expand { display: none; }
   }
-  @media (max-width: 320px) {
-    [data-theme="simplefolio"] .sf-hero-title { font-size: 28px; }
+  /* Phones: nothing in the idle hero is vertically centred, so a streaming or rotating headline
+     only ever pushes content below it. The logo has the first screen to itself; scrolling flies
+     it into the top bar and brings up the prompt (headline + cursor line), which stays put. */
+  @media (max-width: 900px) {
+    [data-theme="simplefolio"] .sf-hero:not(.sf-hero--ask) { display: block; min-height: 0; padding-top: 0; }
+    [data-theme="simplefolio"] .sf-hero:not(.sf-hero--ask) .sf-hero-inner { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 0; }
+    [data-theme="simplefolio"] .sf-hero:not(.sf-hero--ask) .sf-hero-mark {
+      align-self: center; width: min(62vw, 260px); margin: calc(50svh - min(31vw, 130px)) auto calc(50svh - min(31vw, 130px) - 40px);
+    }
+    [data-theme="simplefolio"] .sf-hero:not(.sf-hero--ask) .sf-hero-copy { min-height: 46svh; }
+    [data-theme="simplefolio"] .sf-hero:not(.sf-hero--ask) .sf-hero-title { font-size: 30px; line-height: 1.18; }
+    [data-theme="simplefolio"] .sf-hero:not(.sf-hero--ask) .sf-hero-title--long { font-size: 24px; }
+    [data-theme="simplefolio"] .sf-hero:not(.sf-hero--ask) .sf-hero-title--longer { font-size: 20px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
