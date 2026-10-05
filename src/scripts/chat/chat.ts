@@ -525,7 +525,8 @@ export function initChat(root: HTMLElement) {
         // A bare follow-up ("tell me", "yes", "more") can match some passage weakly by accident, so
         // it always compares with the context; a question that only points back ("when does it
         // launch?") does so when it finds nothing on its own. "He"/"his" mean Hani, not the context.
-        const followUp = /^(tell me( more)?|more|go on|yes|yeah|sure|ok(ay)?|why|how|explain|and)\b/i.test(q.trim()) || q.trim().split(/\s+/).length <= 2;
+        // "why?"/"how?" alone are follow-ups; "how old is he?" is a question of its own.
+        const followUp = /^(tell me( more)?|more|go on|yes|yeah|sure|ok(ay)?|explain|and)\b/i.test(q.trim()) || q.trim().split(/\s+/).length <= 2;
         const pointsBack = /\b(it|its|that|this|there|they|them)\b/i.test(q);
         if (prev && (followUp || (pointsBack && hits[0]?.score < MIN_SCORE))) {
           // Drop the name and the "just ask" filler, which match every passage alike and drown the topic.
