@@ -813,7 +813,8 @@ const tiltAttrs = { "data-sf-tilt": "" };
           var t = reduced ? (raw > 0.5 ? 1 : 0) : raw * raw * (3 - 2 * raw);   // smoothstep
           var a = heroSpot.getBoundingClientRect(), b = barSpot.getBoundingClientRect();
           // Both placeholders are measured live: the hero one scrolls away as the mark travels.
-          var x = a.left + (b.left - a.left) * t, y = a.top + (b.top - a.top) * t;
+          // Never above the bar: the hero placeholder scrolls up faster than the mark travels.
+          var x = a.left + (b.left - a.left) * t, y = Math.max(a.top + (b.top - a.top) * t, b.top);
           var w = a.width + (b.width - a.width) * t;
           // Near the end the mark leaves the bar again and lands on the contact card's
           // placeholder as that card scrolls in.
@@ -1669,6 +1670,7 @@ const tiltAttrs = { "data-sf-tilt": "" };
   }
   @media (max-width: 1100px) { [data-theme="simplefolio"] .sf-hero-mark { width: 220px; } }
   @media (max-width: 900px) {
+    [data-theme="simplefolio"] .sf-topbar-slot { width: 52px; }
     [data-theme="simplefolio"] .sf-hero-inner { flex-direction: column; gap: 28px; }
     [data-theme="simplefolio"] .sf-hero-mark { width: 180px; }
     [data-theme="simplefolio"] .sf-topbar-name { font-size: 15px; }

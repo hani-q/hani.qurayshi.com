@@ -423,11 +423,24 @@ export function initChat(root: HTMLElement) {
     return picks.map((h) => h.p.text).join(" ");
   }
 
+  // Track the visible viewport (it shrinks when a phone keyboard opens) so the chat fits above
+  // the keyboard; while chatting, keep the hero pinned to the top of what is visible.
+  const vv = window.visualViewport;
+  const fitViewport = () => {
+    if (!vv) return;
+    root.style.setProperty("--sf-vvh", `${Math.round(vv.height)}px`);
+    if (chatting && document.activeElement === input && window.scrollY > 0) window.scrollTo(0, 0);
+    scroll();
+  };
+  vv?.addEventListener("resize", fitViewport);
+  input.addEventListener("focus", () => setTimeout(fitViewport, 300));
+
   function enterChat() {
     if (chatting) return;
     chatting = true;
     if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
     hero.classList.add("sf-hero--ask", "sf-hero--chat");
+    fitViewport();
   }
 
   // No visible box: clicks on the headline or prompt focus the input (this is what opens the
