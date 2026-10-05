@@ -4,12 +4,13 @@
  *               CSS variables --hq-h / --hq-q (letters) and --hq-hd / --hq-qd (dots), so the
  *               page can cycle palettes by changing variables only.
  *   palettes  - each palette's dark and light colours (light is darkened for white grounds).
- *   favicons  - one data: URI per palette: the top view of the mark on a dark tile.
+ * It also writes public/favicon.svg (flat red H + yellow Q faces) and public/app-icon.svg (the 3D
+ * mark in red and yellow). The PNG/ICO icons are browser renders of those two files.
  *
  * Usage: node scripts/gen-hq-logo.mjs
  */
 import { writeFileSync } from "fs";
-import { glass, hTop, tip } from "./hq-logo.mjs";
+import { glass, tip, faces } from "./hq-logo.mjs";
 
 const palettes = [
   { name: "Mono", h: null, q: null, hd: null, qd: null },
@@ -49,12 +50,28 @@ const viewBox = (() => {
 })();
 
 const INK = "#F1F1F1", BG = "#0D0D0D";
-const favicon = (p) => {
-  const o = { pitch: 90, yaw: 0, colors: { H: p.h || INK, Q: p.q || INK }, dots: { H: p.hd || INK, Q: p.qd || INK } };
-  const art = (glass(o) + hTop(o)).replaceAll("var(--ink)", INK).replaceAll("var(--bgc)", BG);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 160"><rect x="4" y="4" width="192" height="152" rx="22" fill="${BG}"/><g transform="translate(14 11) scale(.86)">${art}</g></svg>`;
-  return "data:image/svg+xml," + encodeURIComponent(svg);
-};
+const RED = "#E3001B", YELLOW = "#F7B500";
+
+// Favicon: just the two letter faces, filled flat (red H, yellow Q), no glass, edges or blur, so
+// it stays crisp at 16px. y is flipped for SVG, which puts the Q's tail slot at bottom right.
+{
+  const { H, Q } = faces();
+  const gap = 14, qShift = 120 + gap - 112;
+  const path = (pts, dx = 0) => "M" + pts.map(([x, y]) => `${x + dx} ${120 - y}`).join(" L") + " Z";
+  const w = 120 + gap + 120;
+  writeFileSync("public/favicon.svg", `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-6 ${-(w - 120) / 2 - 6} ${w + 12} ${w + 12}"><path d="${path(H)}" fill="${RED}"/><path d="${path(Q, qShift)}" fill="${YELLOW}" fill-rule="evenodd"/></svg>\n`);
+}
+
+// App icon (home screens, large tiles): the page's 3D mark in red and yellow on a dark rounded
+// square, lines thickened. Source for apple-touch-icon.png and the web-app manifest icons
+// (icon-192.png, icon-512.png), used when the site is installed or saved to a home screen/desktop.
+{
+  const o = { colors: { H: RED, Q: YELLOW }, dots: { H: RED, Q: YELLOW }, strokeScale: 3.2 };
+  const art = tip(glass(o), 28).replaceAll("var(--ink)", INK).replaceAll("var(--bgc)", BG);
+  const [x, y, w, h] = viewBox, side = Math.max(w, h) * 1.02, cx = x + w / 2, cy = y + h / 2;
+  const vb = [cx - side / 2, cy - side / 2, side, side].map((v) => +v.toFixed(2));
+  writeFileSync("public/app-icon.svg", `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.join(" ")}"><rect x="${vb[0]}" y="${vb[1]}" width="${side.toFixed(2)}" height="${side.toFixed(2)}" rx="${(side * 0.22).toFixed(2)}" fill="${BG}"/>${art}</svg>\n`);
+}
 
 writeFileSync(
   "src/data/hq-logo.json",
@@ -62,7 +79,6 @@ writeFileSync(
     logo,
     viewBox,
     palettes: palettes.map((p) => ({ name: p.name, dark: { h: p.h, q: p.q, hd: p.hd, qd: p.qd }, light: { h: darken(p.h), q: darken(p.q), hd: darken(p.hd), qd: darken(p.qd) } })),
-    favicons: palettes.map(favicon),
   }) + "\n",
 );
 console.log(`✓ Wrote src/data/hq-logo.json (${palettes.length} palettes)`);
