@@ -25,7 +25,7 @@ const yearsOfExperience = Math.floor(
 export const resume = {
   yearsOfExperience,
   name: "Hani Quraishi",
-  title: "Engineering Leader & Solutions Architect",
+  title: "Founder, ArkaType Intelligence",
   location: "Makkah, Kingdom of Saudi Arabia",
   email: "hanan.ilyas@gmail.com",
   phone: "+966532534616",
@@ -36,13 +36,14 @@ export const resume = {
 
   overview: {
     summary:
-      `Engineering Leader & Solutions Architect with ${yearsOfExperience}+ years of experience building and scaling engineering teams across Network Intelligence, Cloud Architecture, and Cyber Security. Currently managing 20+ engineers across four teams at DNI Dubai. An <a href="https://www.rfc-editor.org/rfc/rfc1925" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-500">RFC 1925</a>-compatible engineer.`,
+      `Founder of ArkaType Intelligence, building agentic cyber intelligence: FlowSense.AI, a Deep Packet Intelligence engine that explains what network traffic is doing without decrypting it. ${yearsOfExperience}+ years across Network Intelligence, Cloud Architecture, and Cyber Security, leading engineering teams and running engineering agentic-first. An <a href="https://www.rfc-editor.org/rfc/rfc1925" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-500">RFC 1925</a>-compatible engineer.`,
     highlights: [
-      "Currently leading Application, Data Engineering, DevSecOps, and Agentic Software Engineering teams at DNI Dubai, driving AI-assisted development practices and Network Intelligence solutions",
+      "Founder of ArkaType Intelligence (2026), building FlowSense.AI: on-device Deep Packet Intelligence, with agents that act on what it finds under rules you control",
+      "Head of Engineering at DNI, running engineering agentic-first across DPI, FCAPS, and analytics products",
       "Extensive experience in DPI, Network Analytics, and Cloud Solutions with proven track record at Sandvine and PLUMgrid (acquired by VMware)",
       "Strong background in Cloud Architecture with triple AWS certifications and expertise in DevSecOps, MLOps, and Infrastructure as Code",
       "Proven leadership experience managing cross-functional teams and establishing Centers of Excellence",
-      "Technical expertise: Cloud Architecture, Network Security, DPDK, Kubernetes, AI/ML, DevSecOps, Terraform/OpenTofu",
+      "Technical expertise: Agentic AI, Network Security, DPDK, Cloud Architecture, Kubernetes, AI/ML, DevSecOps, Terraform/OpenTofu",
       "Global work experience across UAE, KSA, USA, Sweden, and Pakistan in both startup and enterprise environments",
     ],
   },
@@ -91,18 +92,29 @@ export const resume = {
 
   experience: [
     {
-      title: "Head of Engineering — Application, Data Engineering, DevSecOps & Agentic Software Engineering",
+      title: "Founder",
+      company: "ArkaType Intelligence",
+      location: "Delaware, USA (Remote)",
+      period: "January 2026 - Present",
+      bullets: [
+        "Founded ArkaType Intelligence Inc. on 5 January 2026 to build agentic cyber intelligence: network intelligence that explains what traffic is doing without reading what it carries.",
+        "Lead product and engineering of FlowSense.AI, a Deep Packet Intelligence engine that recognizes applications in encrypted traffic without decrypting it, combining custom-trained ML models, behavioral heuristics, signatures, and protocol parsers for TLS, QUIC, HTTP, and DNS.",
+        "Designed its three-stage pipeline: recognize the application, score the experience (delay, throughput, time to first response), and use anomaly models to turn evidence into a likely cause and a suggested next step.",
+        "Set a privacy-first architecture, \"inspection without surveillance\": analyze packet sizes, timing, and flow behavior, never message content, call media, or model prompts, with processing on hardware the user owns.",
+        "Shaping use cases across homes, businesses, AI infrastructure, and operators: AI inference observability, application QoE, network visibility, connection investigation, digital wellness, parental control, privacy awareness, and device visibility.",
+      ],
+    },
+    {
+      title: "Head of Engineering",
       company: "Dynamic Network Intelligence (DNI)",
       location: "Dubai, UAE (Hybrid)",
       period: "October 2023 - Present",
       bullets: [
-        "Build the entire engineering organization from the ground up at a greenfield startup — design the org structure, define team charters, hire and onboard 20+ engineers, and establish engineering methodologies, tooling, and culture.",
-        "Structure the engineering department into focused teams: Application Engineering, Data Engineering, DevSecOps, QA, and Agentic Software Engineering, each with clear ownership, delivery cadence (Scrum/Kanban/Scrumban), and KPIs.",
-        "Own product management for the full DPI stack — drive roadmap, prioritization, and delivery across Management & Configuration, Signatures, Control Plane, Data Plane, Analytics, and Observability modules.",
-        "Spearhead the adoption of Agentic Software Engineering practices across the org, establishing safe usage guidelines and best practices for AI-assisted development using Claude Code, OpenAI Codex, and self-hosted models.",
-        "Establish DevSecOps practices with security-first development workflows, CI/CD pipelines (GitHub Actions, ArgoCD), GitOps, and infrastructure as code (Terraform/OpenTofu, Ansible).",
-        "Oversee the development of high-performance network intelligence and cyber security solutions using DPDK, AI/ML-driven analysis, Redpanda, ClickHouse, and real-time monitoring systems.",
-        "Lead cross-functional collaboration between engineering, product, and business teams to deliver scalable, production-grade networking and cyber security products.",
+        "Built the engineering organization from the ground up at a greenfield startup: org structure, team charters, and hiring of 20+ engineers across Application, Data Engineering, DevSecOps, QA, and Agentic Software Engineering.",
+        "Run engineering agentic-first: specifications become reviewable plans that agents implement, with team conventions encoded as repository rules and AGENTS.md files, risk-based multi-agent review, and governed use of Claude Code, OpenAI Codex, and self-hosted models.",
+        "Build DNI's operations products through agentic development: FCAPS tooling (fault, configuration, accounting, performance, and security management), analytics, and deployment automation for the DPI platform.",
+        "Own product management for the DPI stack across management and configuration, signatures, control plane, data plane, analytics, and observability.",
+        "Established DevSecOps with CI/CD (GitHub Actions, ArgoCD), GitOps, and infrastructure as code (Terraform/OpenTofu, Ansible) for high-performance network intelligence built on DPDK, Redpanda, and ClickHouse.",
       ],
     },
     {
@@ -277,7 +289,7 @@ export const resume = {
   ],
 
   education:
-    "Bachelor of Electrical Engineering | Computer | University of Engineering and Technology, Taxila | Islamabad, Pakistan | 2009",
+    "Bachelor of Electrical Engineering | Computer | Centre for Advanced Studies in Engineering (CASE), UET Taxila | Islamabad, Pakistan | 2009",
 
   involvement: {
     organization: "Qasmia Welfare Trust",

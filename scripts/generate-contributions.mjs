@@ -10,11 +10,17 @@ const USERNAME = "hani-q";
 const OUTPUT_DIR = "src/data";
 
 if (!TOKEN) {
-  console.warn("⚠ GH_CONTRIBUTIONS_TOKEN not set — generating empty contributions data");
-  const { writeFileSync, mkdirSync } = await import("fs");
+  const { writeFileSync, mkdirSync, existsSync } = await import("fs");
   const { join } = await import("path");
+  const out = join(OUTPUT_DIR, "contributions.json");
+  // Keep the committed data rather than wiping it on every tokenless local build.
+  if (existsSync(out)) {
+    console.warn("⚠ GH_CONTRIBUTIONS_TOKEN not set — keeping existing contributions data");
+    process.exit(0);
+  }
+  console.warn("⚠ GH_CONTRIBUTIONS_TOKEN not set — generating empty contributions data");
   mkdirSync(OUTPUT_DIR, { recursive: true });
-  writeFileSync(join(OUTPUT_DIR, "contributions.json"), JSON.stringify({ totalContributions: 0, weeks: [] }));
+  writeFileSync(out, JSON.stringify({ totalContributions: 0, weeks: [] }));
   process.exit(0);
 }
 
