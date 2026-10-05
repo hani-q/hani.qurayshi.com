@@ -50,6 +50,19 @@ const skillLabels: Record<string, string> = {
 
 const short = (period: string) => period.replace(/([A-Z][a-z]+) (\d{4})/g, "$2");
 
+// Age, worked out at build time from HANI_BIRTH_DATE (YYYY-MM-DD). The date itself lives only in a
+// local .env (git-ignored) and the deploy workflow's secret, so neither the public repo nor the
+// built site carries it; the chat only ever learns the age. Unset → no age passage.
+function ageToday(): number | null {
+  const raw = (process.env.HANI_BIRTH_DATE ?? import.meta.env?.HANI_BIRTH_DATE ?? "").trim();
+  const m = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return null;
+  const [y, mo, d] = m.slice(1).map(Number);
+  const now = new Date();
+  const hadBirthday = now.getUTCMonth() + 1 > mo || (now.getUTCMonth() + 1 === mo && now.getUTCDate() >= d);
+  return now.getUTCFullYear() - y - (hadBirthday ? 0 : 1);
+}
+
 export function buildKnowledge(projects: ChatProject[]) {
   const name = resume.name;
   const first = name.split(" ")[0];
@@ -98,8 +111,12 @@ export function buildKnowledge(projects: ChatProject[]) {
   add("Volunteering", `${first} has been ${inv.role} for ${inv.organization}, ${inv.location}, since ${inv.period.split(" - ")[0]}.`);
   for (const b of inv.bullets) add("Volunteering", `At ${inv.organization}: ${b}`);
 
+  const age = ageToday();
+  if (age != null) add("Age", `${first} is ${age} years old.`);
+
   const facts = [
     `${name}: ${resume.title}, ${resume.yearsOfExperience}+ years of experience.`,
+    ...(age != null ? [`${first} is ${age} years old (his birth date is private; never state it).`] : []),
     `Current roles: ${current.join("; ")}.`,
     careerStart,
     `Contact: ${resume.workEmail} (work), ${resume.email}, ${resume.linkedin}.`,
