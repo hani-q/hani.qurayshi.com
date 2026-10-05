@@ -807,37 +807,31 @@ const tiltAttrs = { "data-sf-tilt": "" };
       var topbar = root.querySelector('.sf-topbar');
       if (markEl && heroSpot && barSpot && topbar) {
         var markTick = false;
-        // Geometry is measured once per layout (load, resize, fonts, hero changes) as document
-        // coordinates, so a scroll frame reads no layout: it only does arithmetic and writes one
-        // compositor-only transform. The mark keeps the hero size as its layout width and is scaled
-        // down with transform (no width change, so its blurred SVG isn't re-rasterized per frame).
-        var geo = null;
+        var cSpot = root.querySelector('.sf-contact-mark'), heroCopy = root.querySelector('.sf-hero-copy');
+        // Geometry is measured once per layout change (load, resize, fonts, body or hero-copy
+        // resize, 'sf:layout' from the chat) as document coordinates, so a scroll frame reads no
+        // layout: arithmetic plus one compositor-only transform. The mark keeps the hero size as its
+        // layout width and is scaled down, so its blurred SVG isn't re-rasterized per frame.
+        var geo = null, lastT = -1, markW = 0;
         function measure() {
-          var sy = window.scrollY, a = heroSpot.getBoundingClientRect(), b = barSpot.getBoundingClientRect();
-          var cSpot = root.querySelector('.sf-contact-mark'), c = cSpot && cSpot.getBoundingClientRect();
+          var sy = window.scrollY, a = heroSpot.getBoundingClientRect(), b = barSpot.getBoundingClientRect(), c = cSpot && cSpot.getBoundingClientRect();
           geo = { ax: a.left, ay: a.top + sy, aw: a.width || 1, bx: b.left, by: b.top, bw: b.width,
-                  c: c && { x: c.left, y: c.top + sy, w: c.width }, vh: window.innerHeight };
-          markEl.style.width = geo.aw.toFixed(1) + 'px';
-          heroCopy = root.querySelector('.sf-hero-copy');
-          wide = window.innerWidth > 900;
+                  c: c && { x: c.left, y: c.top + sy, w: c.width }, vh: window.innerHeight, wide: window.innerWidth > 900 };
+          if (geo.aw !== markW) { markW = geo.aw; markEl.style.width = markW.toFixed(1) + 'px'; }
+          lastT = -1;
         }
-        var heroCopy = null, wide = true, lastT = -1;
+        // Clamp to 0..1 then smoothstep (reduced motion: jump at the midpoint).
+        function ease(v) { v = Math.min(Math.max(v, 0), 1); return reduced ? (v > 0.5 ? 1 : 0) : v * v * (3 - 2 * v); }
         function placeMark() {
           markTick = false;
           if (!geo) measure();
-          var g = geo, sy = window.scrollY;
-          var raw = Math.min(Math.max(sy / (g.vh * 0.45), 0), 1);
-          var t = reduced ? (raw > 0.5 ? 1 : 0) : raw * raw * (3 - 2 * raw);   // smoothstep
-          var ay = g.ay - sy;
+          var g = geo, sy = window.scrollY, t = ease(sy / (g.vh * 0.45)), docked = t >= 0.999, ay = g.ay - sy;
           // Never above the bar: the hero placeholder scrolls up faster than the mark travels.
-          var x = g.ax + (g.bx - g.ax) * t, y = Math.max(ay + (g.by - ay) * t, g.by);
-          var w = g.aw + (g.bw - g.aw) * t;
+          var x = g.ax + (g.bx - g.ax) * t, y = Math.max(ay + (g.by - ay) * t, g.by), w = g.aw + (g.bw - g.aw) * t;
           // Near the end the mark leaves the bar again and lands on the contact card's
           // placeholder as that card scrolls in.
-          if (g.c && t >= 0.999) {
-            var cy = g.c.y - sy;
-            var rawC = Math.min(Math.max((g.vh * 0.95 - cy) / (g.vh * 0.45), 0), 1);
-            var u = reduced ? (rawC > 0.5 ? 1 : 0) : rawC * rawC * (3 - 2 * rawC);
+          if (g.c && docked) {
+            var cy = g.c.y - sy, u = ease((g.vh * 0.95 - cy) / (g.vh * 0.45));
             if (u > 0) { x += (g.c.x - x) * u; y += (cy - y) * u; w += (g.c.w - w) * u; }
           }
           markEl.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) scale(' + (w / g.aw).toFixed(4) + ')';
@@ -846,18 +840,18 @@ const tiltAttrs = { "data-sf-tilt": "" };
           lastT = t;
           // The hero prompt fades out as a whole before the mark crosses it; on phones it sits
           // below the logo's first screen and is what scrolling reveals, so it stays.
-          if (heroCopy) heroCopy.style.opacity = wide ? Math.max(0, 1 - t * 2.2).toFixed(3) : '';
+          if (heroCopy) heroCopy.style.opacity = g.wide ? Math.max(0, 1 - t * 2.2).toFixed(3) : '';
           topbar.style.setProperty('--sf-bar', t.toFixed(3));
-          root.classList.toggle('sf-docked', t >= 0.999);
+          root.classList.toggle('sf-docked', docked);
         }
-        function remeasure() { geo = null; lastT = -1; queueMark(); }
+        function remeasure() { geo = null; queueMark(); }
         function queueMark() { if (!markTick) { markTick = true; requestAnimationFrame(placeMark); } }
         window.addEventListener('scroll', queueMark, { passive: true });
-        window.addEventListener('resize', remeasure);
-        window.addEventListener('load', remeasure);
+        ['resize', 'load', 'sf:layout'].forEach(function (ev) { window.addEventListener(ev, remeasure); });
         if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
-        // Anything that moves the placeholders (typing/chat mode, streamed lines, images) remeasures.
-        if (window.ResizeObserver) new ResizeObserver(remeasure).observe(document.body);
+        // Page height changes (images, streamed lines) move the contact card; hero-copy size
+        // changes (typing, chat mode) move the hero placeholder without resizing the body.
+        if (window.ResizeObserver) { var ro = new ResizeObserver(remeasure); ro.observe(document.body); if (heroCopy) ro.observe(heroCopy); }
         placeMark();
       }
 
