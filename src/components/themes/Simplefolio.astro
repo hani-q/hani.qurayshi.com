@@ -28,6 +28,8 @@ import edxLogo from "../../assets/logos/edx.svg?raw";
 import awsLogo from "../../assets/logos/amazonwebservices.svg?raw";
 import posts from "../../data/posts.json";
 import hqLogo from "../../data/hq-logo.json";
+import AskChat from "../AskChat.astro";
+import { products, openSource } from "../../data/projects";
 
 const firstYear = (s: string) => s.match(/\d{4}/)?.[0] ?? "";
 
@@ -69,48 +71,21 @@ const socials = [
   { label: "GitHub", href: githubUrl, path: "M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-1.96c-3.2.7-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" },
 ];
 
-// ArkaType's product and the open-source work, shown as website windows; each
-// opens the shared browser dialog.
-const products = [
-  {
-    id: "sf-proj-flowsense",
-    name: "FlowSense.AI",
-    kicker: "ArkaType Intelligence · macOS",
-    tagline: "Agentic cyber intelligence. Every flow, identified in real time.",
-    when: "Launching 2026",
-    where: "macOS app by ArkaType Intelligence",
-    site: { label: "getflowsense.com", image: "/sites/flowsense.jpg", tag: "launching soon" },
-    role: "ArkaType Intelligence's first product",
-    summary: "A Mac app that names every network flow, lets you write rules for them in FlowRuby or hand them to your agents, and explains what changed in plain English, all on-device.",
-    bullets: [
-      "Names every flow in real time with a carrier-grade packet intelligence engine: 1,400+ signatures, TLS and QUIC included, reading a passive copy of the interface without decrypting anything, at about 16% of one core at 1 GbE line rate.",
-      "Live view of the last sixty seconds, then a tree of application, app, hostname and flow with up and down rates, trend, flow count and round-trip time, plus process attribution where macOS allows it.",
-      "A daily briefing instead of a dashboard, written on the Mac by Apple Intelligence or a local model in one of seven personas, with follow-up questions by chat or voice.",
-      "FlowRuby, a language for policies and custom signatures: scope rules by app, device or destination, set schedules and expiring rules, and recognize your own services from hostnames or packet contents, written by hand or by agents.",
-      "Auto mode: a typed decision model blocks, shapes or prioritizes traffic on its own, and every action lands in an undoable journal with its reason and the rule it wrote. Off by default.",
-    ],
-  },
-];
 
-const openSource = [
-  {
-    id: "sf-proj-qstack",
-    name: "qstack",
-    kicker: "Open source · MIT",
-    tagline: "Agent skills for reviewable planning, disciplined execution and durable lessons.",
-    when: "2026",
-    where: "GitHub · Claude Code, Codex",
-    site: { label: "github.com/hani-q/qstack", url: "https://github.com/hani-q/qstack", image: "/sites/qstack.jpg", tag: "open source" },
-    role: "Author and maintainer",
-    summary: "A personal stack of 33 agent skills for Claude Code and Codex that turn plans into reviewable documents, execute them without drift, and keep the lessons.",
-    bullets: [
-      "33 skills for Claude Code, Codex and any harness that reads ~/.agents/skills, installed from one checkout that stays the source of truth, and published on skills.sh.",
-      "Turns a Markdown draft or a chat into a numbered HTML plan, with a high-level half for whoever approves the work and a low-level half for the agent, so review feedback can cite clauses like §4.2.",
-      "Execution loops work the plan card by card, keep a running execution.md and ask how much adversarial review to run; an adherence review then scores the outcome from 0 to 5 against the plan, the record and the diff.",
-      "A review skill scores code against a correctness baseline plus the repository's CODE_REVIEW_RULES.md, and plan-close and prior-art skills carry what work actually cost into the next plan instead of growing AGENTS.md.",
-      "Ten engineering-practice skills adapted from Lauren Tan's PStack: diagnose before patching, prove the real artifact runs, separate ownership before reaching for a lock.",
-    ],
-  },
+
+// Contact tiles: each opens its channel. Stroke icons for mail/phone, brand marks reuse socials.
+const strokeIcon = (d: string) => ({ d, stroke: true });
+const contactLinks = [
+  { kind: "Work", value: resume.workEmail, href: `mailto:${resume.workEmail}`, icon: strokeIcon("M3.5 5.5h17v13h-17z M4 6.5l8 6.2 8-6.2"), external: false },
+  { kind: "Personal", value: resume.email, href: `mailto:${resume.email}`, icon: strokeIcon("M3.5 5.5h17v13h-17z M4 6.5l8 6.2 8-6.2"), external: false },
+  { kind: "Phone", value: resume.phone, href: `tel:${resume.phone}`, icon: strokeIcon("M6.8 3.5h2.9l1.4 3.8-1.9 1.2a10.5 10.5 0 0 0 5.3 5.3l1.2-1.9 3.8 1.4v2.9a1.9 1.9 0 0 1-2.1 1.9A15.6 15.6 0 0 1 4.9 5.6a1.9 1.9 0 0 1 1.9-2.1Z"), external: false },
+  ...socials.map((s) => ({
+    kind: s.label.replace(" (Twitter)", ""),
+    value: s.href.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""),
+    href: s.href,
+    icon: { d: s.path, stroke: false },
+    external: true,
+  })),
 ];
 
 // Contribution levels by quartile of active days, so a busy year still shows contrast.
@@ -118,22 +93,39 @@ const ghActive = ghWeeks.flatMap((w) => w.contributionDays.map((d) => d.contribu
 const ghQuart = [0.25, 0.5, 0.75].map((q) => ghActive[Math.floor(q * (ghActive.length - 1))] ?? 0);
 const ghCellLevel = (n: number) => (n === 0 ? 0 : n <= ghQuart[0] ? 1 : n <= ghQuart[1] ? 2 : n <= ghQuart[2] ? 3 : 4);
 
-// Hero second line rotates through these, as the old portal's headline did.
-const heroLines = [
-  "Founder of ArkaType Intelligence.",
-  "Building agentic cyber intelligence.",
-  "Every flow, explained.",
-  "From Packets to Products.",
-  `${resume.yearsOfExperience}+ Years of Shipping.`,
-  "Engineering the Next Engineering.",
-  "Build. Lead. Ship.",
+// The hero opens with one of these welcome prompts, picked at random on each visit and
+// typed in (src/scripts/chat/chat.ts); {name} renders highlighted. The first is the
+// server-rendered default for no-JS visitors and crawlers.
+const welcomes = [
+  "Ask something about {name}, the founder of ArkaType Intelligence.",
+  "Hello! What would you like to know about {name}?",
+  "Curious what {name} is building at ArkaType? Just ask.",
+  `{name} has ${resume.yearsOfExperience}+ years in networks, cloud and security. Ask me anything about it.`,
+  "Ask me about {name}'s experience, projects or skills.",
+  "Want to know how {name} runs engineering agentic-first? Ask away.",
 ];
+const [welcomeBefore, welcomeAfter] = welcomes[0].split("{name}");
+// Once the welcome has streamed in, the headline rotates every 5s while idle: a programming joke
+// (fetched in the browser) alternating with one of these tidbits, all taken from the résumé.
+const tidbits = [
+  "{name} started his career in 2008 at wi-tribe in Islamabad.",
+  "{name} has worked across the UAE, Saudi Arabia, the USA, Sweden and Pakistan.",
+  "At Sandvine, {name} led the Centre of Excellence for Traffic Classification.",
+  "{name} built network intelligence for operators serving 30M+ subscribers.",
+  "{name} is building FlowSense.AI, which names every network flow without decrypting it.",
+  "{name} maintains qstack: 33 open-source agent skills for Claude Code and Codex.",
+  "{name} runs engineering agentic-first at DNI.",
+  "{name} co-founded Vincere Systems in 2016.",
+  "{name} holds three AWS certifications, Solutions Architect Professional included.",
+];
+// The third kind of line in the rotation: the truths of RFC 1925 (the ones that stand alone).
+const truths = rfc1925Truths.filter((t) => !t.text.startsWith("See ")).map((t) => `RFC 1925, truth ${t.number}: ${t.text}`);
 
 // Capabilities shown on the site in place of tool lists (the printed résumé keeps the
 // full tool keywords for ATS). Each claim is backed only by facts in the record.
 const capabilities = [
   {
-    title: "Agentic engineering leadership",
+    title: "Agentic Engineering Leadership",
     claim: "Runs engineering through specifications, agent implementation, and governed review.",
     proof: [
       "DNI: engineering run agentic-first across five teams",
@@ -142,7 +134,7 @@ const capabilities = [
     ],
   },
   {
-    title: "Network & packet intelligence",
+    title: "Network & Packet Intelligence",
     claim: "Builds traffic-classification systems spanning carrier-scale DPI, applied ML, and on-device intelligence.",
     proof: [
       "Sandvine: DPI, PCRF and NFV for operators serving 30M+ subscribers",
@@ -151,7 +143,16 @@ const capabilities = [
     ],
   },
   {
-    title: "Engineering organization building",
+    title: "Full-Stack Product Engineering",
+    claim: "Ships products end to end: React and React Native front ends, Node.js, Java and Go back ends, on AWS.",
+    proof: [
+      "Simplus Innovation: full-stack engineer on React, TypeScript, Redux, MongoDB and AWS",
+      "Qasmia Welfare Trust: Next.js and AWS Amplify finance system with live dashboards",
+      "Seamless Payments: Java Spring back ends handling 50K+ concurrent transactions",
+    ],
+  },
+  {
+    title: "Engineering Organization Building",
     claim: "Builds engineering teams from zero, including a 20+ person organization across five teams.",
     proof: [
       "DNI: org structure, team charters and hiring from a greenfield start",
@@ -160,7 +161,7 @@ const capabilities = [
     ],
   },
   {
-    title: "Technical product leadership",
+    title: "Technical Product Leadership",
     claim: "Owns DPI product direction and is developing FlowSense.AI, a pre-launch cyber-intelligence product.",
     proof: [
       "DNI: product management across the full DPI stack",
@@ -169,7 +170,7 @@ const capabilities = [
     ],
   },
   {
-    title: "Network & platform architecture",
+    title: "Network & Platform Architecture",
     claim: "Designs programmable network infrastructure and the automation that deploys it.",
     proof: [
       "PLUMgrid: SDN, VXLAN/VTEP overlays and microsegmentation for OpenStack",
@@ -180,7 +181,6 @@ const capabilities = [
 ];
 
 const highlights = resume.overview.highlights.slice(0, 4);
-const truth = rfc1925Truths.find((t) => t.number === "12") ?? rfc1925Truths[0];
 const year = new Date().getFullYear();
 const tiltAttrs = { "data-sf-tilt": "" };
 ---
@@ -194,6 +194,8 @@ const tiltAttrs = { "data-sf-tilt": "" };
       var root = document.querySelector('[data-theme="simplefolio"]');
       if (!root) return;
       try { if (localStorage.getItem('sf-mode') === 'light') root.setAttribute('data-mode', 'light'); } catch (e) {}
+      // The hero headline types itself in (src/scripts/chat/chat.ts); hide it until then.
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) root.classList.add('sf-typing');
     })();
   </script>
 
@@ -225,7 +227,7 @@ const tiltAttrs = { "data-sf-tilt": "" };
       <h1>{resume.name}</h1>
       <p class="sf-cv-title">{resume.title}</p>
       <p class="sf-cv-contact">
-        {resume.location} | {resume.phone} | {resume.email}<br />
+        {resume.phone} | {resume.workEmail} | {resume.email}<br />
         {resume.linkedin.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")} | {githubUrl.replace(/^https?:\/\//, "")}
       </p>
     </header>
@@ -276,16 +278,8 @@ const tiltAttrs = { "data-sf-tilt": "" };
   <section class="sf-hero" id="sf-hero">
     <div class="sf-container sf-hero-inner">
       <div class="sf-hero-copy">
-      <h1 class="sf-hero-title">
-        Hi, my name is <span class="sf-grad sf-hero-name">{resume.name}</span>
-        <br />
-        <span class="sf-rotator" data-sf-rotator>
-          {heroLines.map((line, i) => <span class:list={["sf-rotator-line", { "sf-rotator-line--on": i === 0 }]} aria-hidden={i === 0 ? undefined : "true"}>{line}</span>)}
-        </span>
-      </h1>
-      <p class="sf-hero-cta">
-        <a class="sf-cta sf-cta--hero" href="#sf-about">Know more</a>
-      </p>
+      <h1 class="sf-hero-title" data-sf-welcomes={JSON.stringify(welcomes)} data-sf-tidbits={JSON.stringify(tidbits)} data-sf-truths={JSON.stringify(truths)}><span class="sf-welcome">{welcomeBefore}<span class="sf-grad sf-hero-name">{resume.name}</span>{welcomeAfter}</span></h1>
+      <AskChat />
       </div>
       <div class="sf-hero-mark" aria-hidden="true" style={`aspect-ratio: ${hqLogo.viewBox[2]} / ${hqLogo.viewBox[3]}`}></div>
     </div>
@@ -298,7 +292,16 @@ const tiltAttrs = { "data-sf-tilt": "" };
       <div class="sf-row sf-about-wrapper">
         <div class="sf-col-md-6">
           <div class="sf-about-image">
-            <img src={resume.profileImage} alt={`Portrait of ${resume.name}`} width="340" height="340" loading="eager" />
+            <div class="sf-portrait" data-sf-portrait>
+              <img src={resume.profileImage} alt={`Portrait of ${resume.name}`} width="340" height="340" loading="eager" />
+              <span class="sf-lens" aria-hidden="true"><span class="sf-lens-view" style={`background-image: url(${resume.profileImage})`}></span></span>
+            </div>
+            <svg class="sf-svg-defs" width="0" height="0" aria-hidden="true">
+              <filter id="sf-liquid" x="-10%" y="-10%" width="120%" height="120%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.011" numOctaves="2" seed="7" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" xChannelSelector="R" yChannelSelector="G" />
+              </filter>
+            </svg>
           </div>
         </div>
         <div class="sf-col-md-6">
@@ -671,19 +674,24 @@ const tiltAttrs = { "data-sf-tilt": "" };
   <!-- Contact -->
   <section class="sf-contact" id="sf-contact">
     <div class="sf-container">
-      <div class="sf-panel sf-panel--glow">
-      <h2 class="sf-section-title">Contact</h2>
-      <div class="sf-contact-wrapper">
-        <p class="sf-contact-text">Would you like to work with me? Awesome!</p>
-        <a class="sf-cta sf-cta--resume" href={`mailto:${resume.email}`}>Let's Talk</a>
-        <p class="sf-contact-sub">
-          <a href={`mailto:${resume.email}`}>{resume.email}</a>
-          <span aria-hidden="true">·</span>
-          <a href={`tel:${resume.phone}`}>{resume.phone}</a>
-          <span aria-hidden="true">·</span>
-          <span>{resume.location}</span>
-        </p>
-      </div>
+      <div class="sf-panel sf-panel--glow sf-contact-card">
+        <div class="sf-contact-mark" aria-hidden="true" style={`aspect-ratio: ${hqLogo.viewBox[2]} / ${hqLogo.viewBox[3]}`}></div>
+        <div class="sf-contact-body">
+          <h2 class="sf-section-title">Contact</h2>
+          <p class="sf-contact-lede">Building something in networks, security or AI? <span class="sf-grad">Let's talk.</span></p>
+          <ul class="sf-contact-links">
+            {contactLinks.map((l) => (
+              <li>
+                <a class="sf-contact-link" href={l.href} target={l.external ? "_blank" : undefined} rel={l.external ? "noreferrer" : undefined}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" fill={l.icon.stroke ? "none" : "currentColor"} stroke={l.icon.stroke ? "currentColor" : "none"} stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d={l.icon.d} /></svg>
+                  <span><em>{l.kind}</em>{l.value}</span>
+                  <b aria-hidden="true">↗</b>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p class="sf-contact-foot"><span class="sf-flags" role="img" aria-label="Saudi Arabia, United Arab Emirates, United States, Pakistan" title="Saudi Arabia · UAE · USA · Pakistan">🇸🇦 🇦🇪 🇺🇸 🇵🇰</span></p>
+        </div>
       </div>
     </div>
   </section>
@@ -724,19 +732,10 @@ const tiltAttrs = { "data-sf-tilt": "" };
       <a href="#sf-top" class="sf-back-to-top" aria-label="Back to top">
         <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6" /></svg>
       </a>
-      <div class="sf-social-links">
-        {socials.map((s) => (
-          <a href={s.href} target="_blank" rel="noreferrer" aria-label={s.label}>
-            <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor" aria-hidden="true"><path d={s.path} /></svg>
-          </a>
-        ))}
-      </div>
       <hr />
       <p class="sf-footer-text">
-        © {year} {resume.name} · Design based on
-        <a href="https://github.com/cobiwave/simplefolio" target="_blank" rel="noreferrer">Simplefolio by Jacobo Martínez</a>
+        © {year} {resume.name}
       </p>
-      <p class="sf-footer-truth">RFC 1925 · Truth {truth.number}: {truth.text}</p>
     </div>
   </footer>
 
@@ -816,11 +815,21 @@ const tiltAttrs = { "data-sf-tilt": "" };
           // Both placeholders are measured live: the hero one scrolls away as the mark travels.
           var x = a.left + (b.left - a.left) * t, y = a.top + (b.top - a.top) * t;
           var w = a.width + (b.width - a.width) * t;
+          // Near the end the mark leaves the bar again and lands on the contact card's
+          // placeholder as that card scrolls in.
+          var cSpot = root.querySelector('.sf-contact-mark');
+          if (cSpot && t >= 0.999) {
+            var c = cSpot.getBoundingClientRect(), vh = window.innerHeight;
+            var rawC = Math.min(Math.max((vh * 0.95 - c.top) / (vh * 0.45), 0), 1);
+            var u = reduced ? (rawC > 0.5 ? 1 : 0) : rawC * rawC * (3 - 2 * rawC);
+            if (u > 0) { x += (c.left - x) * u; y += (c.top - y) * u; w += (c.width - w) * u; }
+          }
           markEl.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
           markEl.style.width = w.toFixed(1) + 'px';
-          // The name doesn't travel: it fades out of the hero as the bar name fades in.
-          var heroName = root.querySelector('.sf-hero-name');
-          if (heroName) heroName.style.opacity = Math.max(0, 1 - t * 2.2).toFixed(3);
+          // The hero prompt fades out as a whole (never a hole in the sentence) before the
+          // mark crosses it, while the bar name fades in.
+          var heroCopy = root.querySelector('.sf-hero-copy');
+          if (heroCopy) heroCopy.style.opacity = Math.max(0, 1 - t * 2.2).toFixed(3);
           topbar.style.setProperty('--sf-bar', t.toFixed(3));
           root.classList.toggle('sf-docked', t >= 0.999);
         }
@@ -861,24 +870,6 @@ const tiltAttrs = { "data-sf-tilt": "" };
         if (!reduced && pals.length > 1) setInterval(function () { if (document.hidden) return; palIdx = (palIdx + 1) % pals.length; paint(); }, 5000);
       }
 
-      // Hero headline: rotate the second line every 6s; every line shares one grid
-      // cell, so the hero keeps the height of the longest and never jumps.
-      var rotator = root.querySelector('[data-sf-rotator]');
-      if (rotator && !reduced) {
-        var lines = rotator.querySelectorAll('.sf-rotator-line');
-        var lineIdx = 0;
-        setInterval(function () {
-          if (document.hidden || window.scrollY > window.innerHeight) return;
-          var prev = lines[lineIdx];
-          prev.classList.remove('sf-rotator-line--on');
-          prev.classList.add('sf-rotator-line--off');
-          prev.setAttribute('aria-hidden', 'true');
-          setTimeout(function () { prev.classList.remove('sf-rotator-line--off'); }, 700);
-          lineIdx = (lineIdx + 1) % lines.length;
-          lines[lineIdx].classList.add('sf-rotator-line--on');
-          lines[lineIdx].removeAttribute('aria-hidden');
-        }, 6000);
-      }
 
       // Bar section label: once a section heading scrolls under the bar, its number and
       // title appear after the separator; a change rolls the old label up and the new one in.
@@ -887,19 +878,26 @@ const tiltAttrs = { "data-sf-tilt": "" };
       if (titles.length && secBox) {
         var roll = secBox.querySelector('.sf-topbar-roll'), current = '', secTick = false;
         function label(t) { return String(titles.indexOf(t) + 1).padStart(2, '0') + ' ' + t.textContent.trim(); }
+        function rollItem(text, cls) {
+          var el = document.createElement('span');
+          el.className = 'sf-roll-item ' + cls;
+          var num = document.createElement('b'); num.textContent = text.slice(0, 2);
+          el.appendChild(num); el.appendChild(document.createTextNode(text.slice(2)));
+          return el;
+        }
+        // Invisible copies of every label hold the slot at the widest one, so the bar's
+        // mark | name | section group keeps one width and stays centred as labels change.
+        titles.forEach(function (t) { var g = rollItem(label(t), 'sf-roll-ghost'); g.setAttribute('aria-hidden', 'true'); roll.appendChild(g); });
         function setLabel(text) {
           if (text === current) return;
           current = text;
           secBox.classList.toggle('sf-topbar-sec--on', !!text);
-          Array.prototype.forEach.call(roll.children, function (old) {
+          Array.prototype.forEach.call(roll.querySelectorAll('.sf-roll-item:not(.sf-roll-ghost)'), function (old) {
             old.classList.add('sf-roll-out');
             setTimeout(function () { old.remove(); }, 450);
           });
           if (!text) return;
-          var el = document.createElement('span');
-          el.className = 'sf-roll-item sf-roll-in';
-          var num = document.createElement('b'); num.textContent = text.slice(0, 2);
-          el.appendChild(num); el.appendChild(document.createTextNode(text.slice(2)));
+          var el = rollItem(text, 'sf-roll-in');
           roll.appendChild(el);
           void el.offsetWidth;
           el.classList.remove('sf-roll-in');
@@ -912,7 +910,9 @@ const tiltAttrs = { "data-sf-tilt": "" };
           titles.forEach(function (t) { var sec = t.closest('section') || t; if (sec.getBoundingClientRect().top < bar) active = t; });
           setLabel(active ? label(active) : '');
           // The heading now shown in the bar fades out of the page so it isn't shown twice.
-          titles.forEach(function (t) { t.classList.toggle('sf-title-docked', t === active); });
+          // Phones hide the bar's section label, so there the heading stays on the page.
+          var shown = secBox.offsetParent !== null;
+          titles.forEach(function (t) { t.classList.toggle('sf-title-docked', shown && t === active); });
         }
         window.addEventListener('scroll', function () { if (!secTick) { secTick = true; requestAnimationFrame(pickSection); } }, { passive: true });
         pickSection();
@@ -1010,6 +1010,75 @@ const tiltAttrs = { "data-sf-tilt": "" };
       var pageTitle = document.title;
       window.addEventListener('beforeprint', function () { document.title = root.getAttribute('data-cv-title'); });
       window.addEventListener('afterprint', function () { document.title = pageTitle; });
+      // Portrait: a liquid-glass lens springs after the pointer, magnifying the photo under it
+      // and stretching along its motion; it grows in on enter and shrinks away on leave.
+      var portrait = root.querySelector('[data-sf-portrait]');
+      if (portrait && !reduced && window.matchMedia('(hover: hover)').matches) {
+        var lens = portrait.querySelector('.sf-lens'), lensView = lens.querySelector('.sf-lens-view'), photo = portrait.querySelector('img');
+        var MAG = 1.4, PAD = 12, lx = 0, ly = 0, tx = 0, ty = 0, vx = 0, vy = 0, grow = 0, over = false, lensRaf = 0;
+        var lensStep = function () {
+          vx = (vx + (tx - lx) * 0.16) * 0.74; vy = (vy + (ty - ly) * 0.16) * 0.74;
+          lx += vx; ly += vy;
+          grow += ((over ? 1 : 0) - grow) * 0.16;
+          var speed = Math.min(Math.hypot(vx, vy) / 28, 1), ang = Math.atan2(vy, vx);
+          lens.style.transform = 'translate(' + lx.toFixed(1) + 'px,' + ly.toFixed(1) + 'px) rotate(' + ang.toFixed(3) + 'rad) scale(' +
+            (grow * (1 + speed * 0.38)).toFixed(3) + ',' + (grow * (1 - speed * 0.22)).toFixed(3) + ')';
+          // The photo as object-fit: cover lays it out, magnified so the point under the
+          // pointer sits at the lens centre.
+          var W = portrait.clientWidth, nw = photo.naturalWidth || W, nh = photo.naturalHeight || W;
+          var c = Math.max(W / nw, W / nh), dw = nw * c, dh = nh * c, ox = (W - dw) * 0.5, oy = (W - dh) * 0.12;
+          var mid = lens.offsetWidth / 2 + PAD;
+          lensView.style.backgroundSize = (dw * MAG).toFixed(1) + 'px ' + (dh * MAG).toFixed(1) + 'px';
+          lensView.style.backgroundPosition = (mid - (lx - ox) * MAG).toFixed(1) + 'px ' + (mid - (ly - oy) * MAG).toFixed(1) + 'px';
+          lensView.style.transform = 'rotate(' + (-ang).toFixed(3) + 'rad)';
+          if (over || grow > 0.01) lensRaf = requestAnimationFrame(lensStep);
+          else { lensRaf = 0; lens.style.transform = 'scale(0)'; }
+        };
+        var lensAim = function (e) { var r = portrait.getBoundingClientRect(); tx = e.clientX - r.left; ty = e.clientY - r.top; };
+        portrait.addEventListener('pointerenter', function (e) {
+          lensAim(e); if (grow < 0.05) { lx = tx; ly = ty; vx = vy = 0; }
+          over = true; if (!lensRaf) lensRaf = requestAnimationFrame(lensStep);
+        });
+        portrait.addEventListener('pointermove', lensAim);
+        portrait.addEventListener('pointerleave', function () { over = false; if (!lensRaf) lensRaf = requestAnimationFrame(lensStep); });
+      }
+
+      // GitHub heatmap: the cells swell around the pointer and the grid bends away from it,
+      // like stretching a mesh. Centres come from offsets (unaffected by the transforms);
+      // one rAF per pointer move; cells far from the pointer are left alone.
+      var ghGrid = root.querySelector('.sf-gh-grid');
+      if (ghGrid && !reduced && window.matchMedia('(hover: hover)').matches) {
+        var ghCells = Array.prototype.slice.call(ghGrid.children), ghCentres = [], ghX = 0, ghY = 0, ghRaf = 0;
+        var ghMeasure = function () {
+          // Relative to the grid whichever box the offsets are measured from.
+          var own = ghCells[0].offsetParent === ghGrid, ox = own ? 0 : ghGrid.offsetLeft, oy = own ? 0 : ghGrid.offsetTop;
+          ghCentres = ghCells.map(function (c) { return [c.offsetLeft - ox + c.offsetWidth / 2, c.offsetTop - oy + c.offsetHeight / 2]; });
+        };
+        var ghFrame = function () {
+          ghRaf = 0;
+          var radius = ghCells[0].offsetWidth * 3.2, twoR2 = 2 * radius * radius;
+          ghCells.forEach(function (c, i) {
+            var dx = ghCentres[i][0] - ghX, dy = ghCentres[i][1] - ghY, d2 = dx * dx + dy * dy;
+            var g = Math.exp(-d2 / twoR2);
+            if (g < 0.02) { if (c.style.transform) { c.style.transform = ''; c.style.zIndex = ''; } return; }
+            var d = Math.sqrt(d2) || 1, push = g * radius * 0.28;
+            c.style.transform = 'translate(' + (dx / d * push).toFixed(1) + 'px,' + (dy / d * push).toFixed(1) + 'px) scale(' + (1 + g).toFixed(3) + ')';
+            c.style.zIndex = String(Math.round(g * 10));
+          });
+        };
+        ghGrid.addEventListener('pointerenter', ghMeasure);
+        ghGrid.addEventListener('pointermove', function (e) {
+          var r = ghGrid.getBoundingClientRect();
+          ghX = e.clientX - r.left; ghY = e.clientY - r.top;
+          if (!ghRaf) ghRaf = requestAnimationFrame(ghFrame);
+        });
+        ghGrid.addEventListener('pointerleave', function () {
+          if (ghRaf) { cancelAnimationFrame(ghRaf); ghRaf = 0; }
+          ghCells.forEach(function (c) { c.style.transform = ''; c.style.zIndex = ''; });
+        });
+        window.addEventListener('resize', ghMeasure);
+      }
+
       Array.prototype.forEach.call(root.querySelectorAll('.sf-print'), function (b) {
         b.addEventListener('click', function () { window.print(); });
       });
@@ -1100,9 +1169,19 @@ const tiltAttrs = { "data-sf-tilt": "" };
     mask-image: radial-gradient(ellipse 90% 80% at 50% 40%, #000 40%, transparent 100%);
   }
 
-  /* Frosted surface shared by panels, cards and the mode button */
+  /* Diffused glass shared by every panel and card: square corners, a blurred ground, a faint
+     top-left sheen, a hairline highlight on the top edge and a soft drop shadow */
   [data-theme="simplefolio"] .sf-panel,
-  [data-theme="simplefolio"] .sf-thumbnail,
+  [data-theme="simplefolio"] .sf-thumbnail {
+    --sf-sheen: linear-gradient(155deg, color-mix(in srgb, var(--sf-ink) 5%, transparent), transparent 55%);
+    background: var(--sf-sheen), var(--sf-glass);
+    -webkit-backdrop-filter: blur(26px) saturate(160%);
+    backdrop-filter: blur(26px) saturate(160%);
+    border: 1px solid var(--sf-rule);
+    border-radius: 0;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--sf-ink) 9%, transparent), 0 24px 60px -36px rgba(0, 0, 0, 0.45);
+  }
+  /* The mode and print buttons keep the plain frosted surface */
   [data-theme="simplefolio"] .sf-mode {
     background: var(--sf-glass);
     -webkit-backdrop-filter: blur(18px) saturate(140%);
@@ -1111,7 +1190,7 @@ const tiltAttrs = { "data-sf-tilt": "" };
     border-radius: 4px;
   }
   [data-theme="simplefolio"] .sf-panel { position: relative; padding: 64px 56px; }
-  [data-theme="simplefolio"] .sf-panel--glow { background: var(--sf-glass-strong); }
+  [data-theme="simplefolio"] .sf-panel--glow { background: var(--sf-sheen), var(--sf-glass-strong); }
 
   /* Mode toggle */
   /* Registered colours so palette changes blend: the logo's roles and the page accents. */
@@ -1142,9 +1221,10 @@ const tiltAttrs = { "data-sf-tilt": "" };
   }
   [data-theme="simplefolio"] .sf-topbar-slot { width: 70px; flex: none; }
   [data-theme="simplefolio"] .sf-topbar-id { position: relative; display: flex; align-items: center; }
-  /* Third section: separator + current section, hung off the name so the name never shifts */
+  /* Third section: separator + current section, in the centred group; its slot is as wide as the
+     longest label (ghost items), so nothing shifts when the label changes */
   [data-theme="simplefolio"] .sf-topbar-sec {
-    position: absolute; left: 100%; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 16px; margin-left: 18px;
+    display: flex; align-items: center; gap: 16px; margin-left: 18px;
     opacity: 0; transition: opacity 0.3s ease;
   }
   [data-theme="simplefolio"] .sf-topbar-sec--on { opacity: var(--sf-bar); }
@@ -1156,6 +1236,7 @@ const tiltAttrs = { "data-sf-tilt": "" };
     transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.45s ease;
   }
   [data-theme="simplefolio"] .sf-roll-item b { font-family: var(--sf-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; color: var(--sf-primary); }
+  [data-theme="simplefolio"] .sf-roll-ghost { visibility: hidden; transition: none; }
   [data-theme="simplefolio"] .sf-roll-in { transform: translateY(100%); opacity: 0; transition: none; }
   [data-theme="simplefolio"] .sf-roll-out { transform: translateY(-100%); opacity: 0; }
   /* The bar name fades in as the hero name fades out */
@@ -1231,34 +1312,48 @@ const tiltAttrs = { "data-sf-tilt": "" };
   [data-theme="simplefolio"] .sf-hero {
     min-height: 100vh; min-height: 100svh; display: flex; align-items: center; color: var(--sf-ink); padding: 0 56px;
   }
-  [data-theme="simplefolio"] .sf-rotator { display: inline-grid; vertical-align: top; }
-  [data-theme="simplefolio"] .sf-rotator-line {
-    grid-area: 1 / 1; opacity: 0; transform: translateY(0.35em);
-    transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  [data-theme="simplefolio"] .sf-rotator-line--on { opacity: 1; transform: none; transition-delay: 0.25s; }
-  /* The outgoing line lifts away; the incoming one rises into place */
-  [data-theme="simplefolio"] .sf-rotator-line--off { transform: translateY(-0.35em); }
   [data-theme="simplefolio"] .sf-hero-inner { display: flex; align-items: center; gap: 56px; }
   [data-theme="simplefolio"] .sf-hero-copy { flex: 1 1 auto; min-width: 0; }
   [data-theme="simplefolio"] .sf-hero-mark { flex: none; width: 300px; order: -1; }
-  [data-theme="simplefolio"] .sf-hero-title { font-size: 64px; font-weight: 700; line-height: 1.04; letter-spacing: -0.045em; margin: 0 0 36px; text-align: left; }
-  [data-theme="simplefolio"] .sf-hero-cta { display: flex; margin: 0; }
-  [data-theme="simplefolio"] .sf-hero-cta a { font-size: 22px; padding: 14px 26px; }
+  [data-theme="simplefolio"] .sf-hero-title { max-width: 18ch; font-size: 56px; font-weight: 700; line-height: 1.08; letter-spacing: -0.04em; margin: 0 0 30px; text-align: left; text-wrap: balance; }
 
   /* About */
   [data-theme="simplefolio"] .sf-about { padding: 60px 0 90px; }
 
   [data-theme="simplefolio"] .sf-about-image { display: flex; height: 100%; align-items: center; justify-content: center; }
-  [data-theme="simplefolio"] .sf-about-image img {
-    width: 340px; max-width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; object-position: center 12%;
-    border-radius: 4px; border: 1px solid var(--sf-rule);
-    box-shadow: var(--sf-shadow);
+  /* Photo and text as two balanced columns: a larger photo, a little more room for the text */
+  @media (min-width: 768px) {
+    [data-theme="simplefolio"] .sf-about-wrapper { align-items: center; }
+    [data-theme="simplefolio"] .sf-about-wrapper > .sf-col-md-6:first-child { flex: 0 0 44%; max-width: 44%; }
+    [data-theme="simplefolio"] .sf-about-wrapper > .sf-col-md-6:last-child { flex: 0 0 56%; max-width: 56%; }
+  }
+  [data-theme="simplefolio"] .sf-about-text { font-size: 18px; line-height: 1.6; }
+  [data-theme="simplefolio"] .sf-portrait { position: relative; width: 100%; max-width: 480px; aspect-ratio: 1 / 1; overflow: hidden; border: 1px solid var(--sf-rule); box-shadow: var(--sf-shadow); }
+  [data-theme="simplefolio"] .sf-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 12%; }
+  /* Liquid-glass lens that follows the pointer over the portrait: a magnified, slightly
+     refracted copy of the photo inside a glass bead with rim light and a specular highlight.
+     It springs after the pointer and stretches along its motion (script in the inline JS). */
+  [data-theme="simplefolio"] .sf-svg-defs { position: absolute; width: 0; height: 0; }
+  [data-theme="simplefolio"] .sf-lens {
+    position: absolute; left: 0; top: 0; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%;
+    overflow: hidden; pointer-events: none; transform: scale(0); will-change: transform;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.75), inset 0 0 0 4px rgba(255, 255, 255, 0.12),
+      inset 0 0 22px rgba(255, 255, 255, 0.28), inset 10px 12px 18px rgba(255, 255, 255, 0.4),
+      inset -12px -14px 22px rgba(0, 0, 0, 0.3), 0 20px 40px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(0, 0, 0, 0.15);
+  }
+  [data-theme="simplefolio"] .sf-lens-view {
+    position: absolute; inset: -12px; background-repeat: no-repeat;
+    filter: url(#sf-liquid) saturate(1.15) brightness(1.06);
+  }
+  [data-theme="simplefolio"] .sf-lens::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%; mix-blend-mode: screen;
+    background: radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.5), transparent 38%),
+      radial-gradient(circle at 72% 82%, rgba(255, 255, 255, 0.14), transparent 42%);
   }
   [data-theme="simplefolio"] .sf-about-info { display: flex; height: 100%; justify-content: center; flex-direction: column; text-align: left; }
   [data-theme="simplefolio"] .sf-important { background: var(--sf-tag); color: var(--sf-tag-ink); display: inline-block; font-weight: 600; padding: 0 5px; margin: 3px 0; border-radius: 2px; line-height: 1.6; }
   [data-theme="simplefolio"] .sf-about-list { list-style: none; margin: 0 0 8px; padding: 0; }
-  [data-theme="simplefolio"] .sf-about-list li { position: relative; padding-left: 20px; margin-bottom: 8px; font-size: 14px; line-height: 1.55; }
+  [data-theme="simplefolio"] .sf-about-list li { position: relative; padding-left: 20px; margin-bottom: 10px; font-size: 16px; line-height: 1.55; }
   [data-theme="simplefolio"] .sf-about-list li::before { content: ""; position: absolute; left: 2px; top: 8px; width: 7px; height: 7px; border: 2px solid var(--sf-secondary); transform: rotate(45deg); }
   [data-theme="simplefolio"] .sf-about-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
   [data-theme="simplefolio"] .sf-about-actions .sf-cta { font-size: 15px; }
@@ -1460,7 +1555,8 @@ const tiltAttrs = { "data-sf-tilt": "" };
   [data-theme="simplefolio"] .sf-gh-total { margin: 0; font-size: 15px; color: var(--sf-text); }
   [data-theme="simplefolio"] .sf-gh-total b { color: var(--sf-ink); font-weight: 600; }
   [data-theme="simplefolio"] .sf-gh-head .sf-cta--link { margin-left: auto; font-size: 14px; }
-  [data-theme="simplefolio"] .sf-gh-scroll { overflow-x: auto; padding-bottom: 6px; direction: rtl; }
+  /* Vertical padding gives the swelling cells room inside the scroll box, which clips */
+  [data-theme="simplefolio"] .sf-gh-scroll { overflow-x: auto; padding: 18px 14px 22px; margin: -18px -14px -16px; direction: rtl; }
   [data-theme="simplefolio"] .sf-gh-chart { direction: ltr; --sf-gh-cell: 11px; --sf-gh-gap: 4px; min-width: max-content; }
   [data-theme="simplefolio"] .sf-gh-months,
   [data-theme="simplefolio"] .sf-gh-grid {
@@ -1471,7 +1567,8 @@ const tiltAttrs = { "data-sf-tilt": "" };
   /* Zero-width labels overflow their column so they never widen it */
   [data-theme="simplefolio"] .sf-gh-months span { grid-row: 1; width: 0; white-space: nowrap; overflow: visible; }
   [data-theme="simplefolio"] .sf-gh-grid { grid-template-rows: repeat(7, auto); row-gap: var(--sf-gh-gap); }
-  [data-theme="simplefolio"] .sf-gh-grid i { aspect-ratio: 1; }
+  [data-theme="simplefolio"] .sf-gh-grid { position: relative; }
+  [data-theme="simplefolio"] .sf-gh-grid i { position: relative; aspect-ratio: 1; transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); will-change: transform; }
   [data-theme="simplefolio"] .sf-gh i { display: block; border-radius: 2px; background: var(--sf-wash); outline: 1px solid color-mix(in srgb, var(--sf-ink) 4%, transparent); outline-offset: -1px; }
   [data-theme="simplefolio"] .sf-gh i[data-level="1"] { background: color-mix(in srgb, var(--sf-accent) 30%, var(--sf-wash)); }
   [data-theme="simplefolio"] .sf-gh i[data-level="2"] { background: color-mix(in srgb, var(--sf-accent) 55%, var(--sf-wash)); }
@@ -1487,9 +1584,8 @@ const tiltAttrs = { "data-sf-tilt": "" };
   [data-theme="simplefolio"] .sf-plain--last { padding-bottom: 120px; }
   [data-theme="simplefolio"] .sf-plain--last .sf-project { margin-bottom: 0; }
   [data-theme="simplefolio"] .sf-cap-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 24px; text-align: left; }
-  /* Three across, then two wider cards: the five fill the row evenly */
-  [data-theme="simplefolio"] .sf-cap { grid-column: span 2; display: flex; flex-direction: column; padding: 28px 26px 26px; }
-  [data-theme="simplefolio"] .sf-cap:nth-child(n + 4) { grid-column: span 3; }
+  /* Six cards, three across */
+  [data-theme="simplefolio"] .sf-cap { grid-column: span 2; display: flex; flex-direction: column; padding: 30px 28px 28px; }
   [data-theme="simplefolio"] .sf-cap-num { margin: 0 0 18px; font-family: var(--sf-mono); font-size: 0.72rem; letter-spacing: 0.12em; color: var(--sf-ash); }
   [data-theme="simplefolio"] .sf-cap-title { margin: 0 0 10px; font-size: 21px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; color: var(--sf-ink); }
   [data-theme="simplefolio"] .sf-cap-claim { margin: 0 0 20px; font-size: 15px; line-height: 1.55; color: var(--sf-text); }
@@ -1516,30 +1612,42 @@ const tiltAttrs = { "data-sf-tilt": "" };
 
   /* Contact */
   [data-theme="simplefolio"] .sf-contact { color: var(--sf-ink); padding: 40px 0 100px; }
-  [data-theme="simplefolio"] .sf-contact .sf-panel { padding: 72px 40px; }
-  [data-theme="simplefolio"] .sf-contact-wrapper { margin-top: 16px; padding: 0 20px; backface-visibility: hidden; }
-  [data-theme="simplefolio"] .sf-contact-text { margin-bottom: 28px; font-size: 24px; color: var(--sf-text); }
-  [data-theme="simplefolio"] .sf-contact-wrapper > .sf-cta { font-size: 22px; padding: 14px 28px; }
-  [data-theme="simplefolio"] .sf-contact-sub { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; margin: 40px 0 0; font-size: 15px; color: var(--sf-muted); }
-  [data-theme="simplefolio"] .sf-contact-sub a { font-size: 15px; color: var(--sf-text); border-bottom: 1px solid var(--sf-rule); overflow-wrap: anywhere; }
-  [data-theme="simplefolio"] .sf-contact-sub a:hover { color: var(--sf-ink); border-bottom-color: var(--sf-secondary); }
+  /* The card: HQ mark on the left (the logo lands here from the top bar), pitch and contact tiles on the right */
+  [data-theme="simplefolio"] .sf-contact .sf-contact-card {
+    display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 64px; align-items: center; padding: 64px; text-align: left; overflow: hidden;
+  }
+  [data-theme="simplefolio"] .sf-contact-card::before {
+    content: ""; position: absolute; left: -120px; top: 50%; width: 560px; height: 560px; transform: translateY(-50%); pointer-events: none;
+    background: radial-gradient(circle, color-mix(in srgb, var(--sf-primary) 20%, transparent), color-mix(in srgb, var(--sf-accent) 8%, transparent) 40%, transparent 68%);
+  }
+  [data-theme="simplefolio"] .sf-contact-mark { position: relative; width: 100%; }
+  [data-theme="simplefolio"] .sf-contact-body { position: relative; min-width: 0; }
+  [data-theme="simplefolio"] .sf-contact-body .sf-section-title { margin-bottom: 16px; text-align: left; }
+  [data-theme="simplefolio"] .sf-contact-lede { max-width: 22ch; margin: 0 0 32px; font-size: 34px; font-weight: 700; line-height: 1.15; letter-spacing: -0.035em; color: var(--sf-ink); }
+  [data-theme="simplefolio"] .sf-contact-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+  [data-theme="simplefolio"] .sf-contact-link {
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid var(--sf-rule);
+    background: color-mix(in srgb, var(--sf-paper) 40%, transparent); color: var(--sf-ink); text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  [data-theme="simplefolio"] .sf-contact-link svg { flex: none; width: 20px; height: 20px; color: var(--sf-accent); }
+  [data-theme="simplefolio"] .sf-contact-link span { display: flex; flex-direction: column; min-width: 0; font-size: 15px; overflow-wrap: anywhere; }
+  [data-theme="simplefolio"] .sf-contact-link em { margin-bottom: 2px; font-style: normal; font-family: var(--sf-mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sf-ash); }
+  [data-theme="simplefolio"] .sf-contact-link b { margin-left: auto; font-weight: 400; color: var(--sf-ash); transition: transform 0.2s, color 0.2s; }
+  [data-theme="simplefolio"] .sf-contact-link:hover { border-color: var(--sf-accent); background: color-mix(in srgb, var(--sf-accent) 8%, transparent); }
+  [data-theme="simplefolio"] .sf-contact-link:hover b { color: var(--sf-accent); transform: translate(2px, -2px); }
+  [data-theme="simplefolio"] .sf-contact-link:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; }
+  [data-theme="simplefolio"] .sf-contact-foot { margin: 22px 0 0; }
+  [data-theme="simplefolio"] .sf-flags { font-size: 34px; letter-spacing: 0.12em; line-height: 1; }
 
   /* Footer */
   [data-theme="simplefolio"] .sf-footer { color: var(--sf-ink); padding: 32px 0 48px; }
   [data-theme="simplefolio"] .sf-back-to-top { display: inline-flex; color: var(--sf-ink); margin: 10px 0 16px; transition: all 0.2s ease-in; }
   [data-theme="simplefolio"] .sf-back-to-top:hover { transform: translateY(-2px); color: var(--sf-secondary); }
-  [data-theme="simplefolio"] .sf-social-links { display: flex; justify-content: center; gap: 12px; }
-  [data-theme="simplefolio"] .sf-social-links a {
-    display: flex; align-items: center; justify-content: center; color: var(--sf-ink); width: 46px; height: 46px; margin: 12px 0; border-radius: 4px;
-    background: var(--sf-glass); border: 1px solid var(--sf-glass-border); transition: all 0.2s ease-in;
-  }
-  [data-theme="simplefolio"] .sf-social-links a svg { width: 22px; height: 22px; }
-  [data-theme="simplefolio"] .sf-social-links a:hover { color: var(--sf-ink); border-color: var(--sf-ash); }
   [data-theme="simplefolio"] .sf-footer hr { margin: 20px auto 10px; border: 0; width: 50%; border-top: 1px solid var(--sf-rule); }
   [data-theme="simplefolio"] .sf-footer-text { color: var(--sf-muted); font-size: 13px; margin: 16px 0 0; }
   [data-theme="simplefolio"] .sf-footer-text a { color: var(--sf-muted); font-size: 13px; transition: all 0.4s; display: inline-block; }
   [data-theme="simplefolio"] .sf-footer-text a:hover { color: var(--sf-secondary); }
-  [data-theme="simplefolio"] .sf-footer-truth { max-width: 640px; margin: 16px auto 0; color: var(--sf-muted); opacity: 0.8; font-family: var(--sf-mono); font-size: 11.5px; }
 
   /* Responsive (template breakpoints: 1200 / 900 / 768 / 600 / 320) */
   @media (max-width: 1200px) {
@@ -1547,8 +1655,7 @@ const tiltAttrs = { "data-sf-tilt": "" };
     [data-theme="simplefolio"] .sf-project-image { width: 100%; margin: 0; }
     [data-theme="simplefolio"] .sf-plain--last { padding-bottom: 80px; }
     [data-theme="simplefolio"] .sf-cap-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    [data-theme="simplefolio"] .sf-cap, [data-theme="simplefolio"] .sf-cap:nth-child(n + 4) { grid-column: auto; }
-    [data-theme="simplefolio"] .sf-cap:last-child { grid-column: 1 / -1; }
+    [data-theme="simplefolio"] .sf-cap { grid-column: auto; }
   }
   @media (max-width: 991.98px) {
     [data-theme="simplefolio"] .sf-project-text { margin-bottom: 48px; }
@@ -1568,7 +1675,6 @@ const tiltAttrs = { "data-sf-tilt": "" };
     [data-theme="simplefolio"] .sf-topbar { justify-content: flex-start; padding-left: 12px; height: 68px; }
     [data-theme="simplefolio"] .sf-topbar-sec { display: none; }
     [data-theme="simplefolio"] .sf-hero-title { font-size: 36px; text-align: center; }
-    [data-theme="simplefolio"] .sf-hero-cta { justify-content: center; }
   }
   @media (max-width: 768px) {
     [data-theme="simplefolio"] .sf-about-image { padding-bottom: 48px; }
@@ -1583,10 +1689,12 @@ const tiltAttrs = { "data-sf-tilt": "" };
     [data-theme="simplefolio"] section { padding-left: 4px; padding-right: 4px; }
     [data-theme="simplefolio"] .sf-hero { padding: 0 16px; }
     [data-theme="simplefolio"] .sf-hero-title { font-size: 35px; line-height: 1.4; }
-    [data-theme="simplefolio"] .sf-hero-cta a { font-size: 18px; }
     [data-theme="simplefolio"] .sf-section-title { font-size: 28px; margin-bottom: 32px; }
     [data-theme="simplefolio"] .sf-panel { padding: 36px 20px; }
-    [data-theme="simplefolio"] .sf-contact .sf-panel { padding: 48px 16px; }
+    [data-theme="simplefolio"] .sf-contact .sf-contact-card { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 40px 20px; }
+    [data-theme="simplefolio"] .sf-contact-mark { width: 140px; justify-self: center; }
+    [data-theme="simplefolio"] .sf-contact-lede { font-size: 24px; }
+    [data-theme="simplefolio"] .sf-contact-links { grid-template-columns: minmax(0, 1fr); }
     [data-theme="simplefolio"] .sf-important { display: inline; margin: 0; padding: 0 3px; font-style: normal; }
     [data-theme="simplefolio"] .sf-project-wrapper { margin-bottom: 0; }
     [data-theme="simplefolio"] .sf-project { margin-bottom: 40px; }
@@ -1598,9 +1706,6 @@ const tiltAttrs = { "data-sf-tilt": "" };
     [data-theme="simplefolio"] .sf-cap-grid,
     [data-theme="simplefolio"] .sf-cert-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
     [data-theme="simplefolio"] .sf-cert-grid { gap: 0; }
-    [data-theme="simplefolio"] .sf-contact-text,
-    [data-theme="simplefolio"] .sf-contact-wrapper > .sf-cta { font-size: 19px; }
-    [data-theme="simplefolio"] .sf-contact-wrapper { padding: 0; }
   }
   @media (max-width: 860px) {
     [data-theme="simplefolio"] .sf-browser { width: 100vw; height: 100vh; height: 100dvh; border: 0; border-radius: 0; }

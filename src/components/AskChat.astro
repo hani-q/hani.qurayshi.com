@@ -1,0 +1,198 @@
+---
+// The hero is the prompt. A random welcome line (the headline) types itself in and a big
+// cursor blinks on the line below it, at headline size. The first keystroke swaps that for
+// a prompt box (with a status line and model toggles under it) and the headline steps back.
+// Enter asks: the hero becomes a chat (transcript above, prompt box at the bottom). The box
+// mirrors a transparent input that takes the keystrokes. Engines live in src/scripts/chat/chat.ts.
+// Only the small facts block is inlined; passages and their vectors load from
+// /chat-index.json on the first keystroke.
+import { buildKnowledge } from "../data/chat-knowledge";
+import { products, openSource } from "../data/projects";
+import qwenLogo from "../assets/logos/qwen.svg?raw";
+import geminiLogo from "../assets/logos/googlegemini.svg?raw";
+
+const { passages: _, ...knowledge } = buildKnowledge([...products, ...openSource]);
+const json = JSON.stringify(knowledge).replace(/</g, "\\u003c");
+---
+
+<div class="sf-ask" data-sf-ask>
+  <script type="application/json" id="sf-chat-data" set:html={json} />
+  <div class="sf-ask-log" aria-live="polite"></div>
+  <form class="sf-ask-form">
+    <div class="sf-ask-field">
+      <div class="sf-ask-line" aria-hidden="true"><span class="sf-ask-typed"></span><span class="sf-type-caret"></span><span class="sf-ask-ph">Enter your prompt here</span></div>
+      <input class="sf-ask-input" type="text" aria-label={`Ask a question about ${knowledge.first}`} autocomplete="off" autocapitalize="sentences" enterkeyhint="send" maxlength="300" />
+    </div>
+    <div class="sf-ask-bar">
+      <div class="sf-ask-opts" hidden>
+        <button type="button" class="sf-ask-chip" data-sf-opt="smart" aria-pressed="false" aria-label="Qwen3 0.6B: smarter answers, about 350 MB download" title="Qwen3 0.6B · smarter answers · ~350 MB" hidden set:html={qwenLogo} />
+        <button type="button" class="sf-ask-chip" data-sf-opt="gemini" aria-pressed="false" aria-label="Gemini Nano, built into Chrome" title="Gemini Nano · built into Chrome" hidden set:html={geminiLogo} />
+      </div>
+      <span class="sf-sl-engine">Résumé search</span>
+      <span class="sf-ask-info" tabindex="0" role="img" aria-label="Runs on your device: your questions never leave your browser." data-tip="Runs on your device: your questions never leave your browser.">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 7.5v.01" /></svg>
+      </span>
+      <span class="sf-sl-state" role="status"></span>
+      <button type="submit" class="sf-ask-send" aria-label="Ask" title="Ask (Enter)">↵</button>
+    </div>
+    <div class="sf-ask-progress" aria-hidden="true"></div>
+  </form>
+  <a class="sf-ask-below" href="#sf-about">scroll ↓</a>
+</div>
+
+<script>
+  import { initChat } from "../scripts/chat/chat";
+  const root = document.querySelector<HTMLElement>('[data-theme="simplefolio"]');
+  if (root) initChat(root);
+</script>
+
+<style is:global>
+  /* Intro typing: hidden until the script types it; revealed anyway after 3s if script never runs */
+  @keyframes sf-type-reveal { to { visibility: visible; } }
+  [data-theme="simplefolio"].sf-typing .sf-hero-title { visibility: hidden; animation: sf-type-reveal 0s 3s forwards; }
+  [data-theme="simplefolio"] .sf-type-caret {
+    display: inline-block; width: 0.09em; height: 0.92em; margin-left: 0.06em; vertical-align: -0.1em;
+    background: var(--sf-accent); animation: sf-caret 1.06s steps(1) infinite;
+  }
+  @keyframes sf-caret { 50% { opacity: 0; } }
+  [data-theme="simplefolio"] .sf-hero-title { cursor: text; }
+  [data-theme="simplefolio"] .sf-welcome { transition: opacity 0.35s ease; }
+  /* Long rotating lines (jokes, RFC truths) set smaller so the headline keeps its height */
+  [data-theme="simplefolio"] .sf-hero-title--long { max-width: 26ch; font-size: 40px; }
+  [data-theme="simplefolio"] .sf-hero-title--longer { max-width: 32ch; font-size: 32px; }
+  @media (max-width: 900px) {
+    [data-theme="simplefolio"] .sf-hero-title--long { font-size: 24px; }
+    [data-theme="simplefolio"] .sf-hero-title--longer { font-size: 20px; }
+  }
+  /* Streamed tokens fade in like chat model output (TOKEN_FADE_MS in chat.ts matches) */
+  [data-theme="simplefolio"] .sf-tok { animation: sf-tok-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  @keyframes sf-tok-in { from { opacity: 0; filter: blur(5px); } to { opacity: 1; filter: none; } }
+  [data-theme="simplefolio"] .sf-welcome--out { opacity: 0; }
+  /* Idle: the big cursor on its own line under the welcome, at headline size */
+  [data-theme="simplefolio"] .sf-hero-cursor { display: block; }
+  [data-theme="simplefolio"] .sf-hero-cursor .sf-type-caret { margin-left: 0; }
+  [data-theme="simplefolio"] .sf-hero-typed { font-weight: 600; color: var(--sf-graphite); overflow-wrap: anywhere; }
+  [data-theme="simplefolio"] .sf-hero-typed:not(:empty) ~ .sf-hero-ph { display: none; }
+  [data-theme="simplefolio"] .sf-hero-enter {
+    display: none; margin-left: 0.25em; padding: 0.08em 0.3em; border: 1px solid var(--sf-rule); border-radius: 6px; background: none;
+    font: 500 0.42em/1 var(--sf-mono); color: var(--sf-ash); vertical-align: 0.4em; cursor: pointer; transition: border-color 0.2s, color 0.2s;
+  }
+  [data-theme="simplefolio"] .sf-hero-enter:hover { border-color: var(--sf-accent); color: var(--sf-accent); }
+  [data-theme="simplefolio"] .sf-hero-typed:not(:empty) ~ .sf-hero-enter { display: inline-block; }
+  [data-theme="simplefolio"] .sf-hero-ph { margin-left: 0.3em; font-size: 0.42em; font-family: var(--sf-mono); font-weight: 400; letter-spacing: 0; color: var(--sf-ash); opacity: 0.55; vertical-align: 0.35em; }
+  [data-theme="simplefolio"] .sf-hero--ask .sf-hero-cursor { display: none; }
+
+  [data-theme="simplefolio"] .sf-ask { position: relative; text-align: left; }
+
+  /* The prompt box: collapsed (but focusable) until the visitor types */
+  [data-theme="simplefolio"] .sf-ask-form {
+    position: relative; max-width: 680px; margin: 0; padding: 14px 14px 10px 18px;
+    background: var(--sf-glass); -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid var(--sf-rule); border-radius: 6px; transition: border-color 0.2s;
+  }
+  [data-theme="simplefolio"] .sf-ask-form:focus-within { border-color: color-mix(in srgb, var(--sf-accent) 55%, var(--sf-rule)); }
+  [data-theme="simplefolio"] .sf-hero:not(.sf-hero--ask) .sf-ask-form { height: 0; padding: 0; border: 0; overflow: hidden; opacity: 0; }
+  [data-theme="simplefolio"] .sf-hero:not(.sf-hero--ask) .sf-ask-below { display: none; }
+  [data-theme="simplefolio"] .sf-hero:not(.sf-hero--ask) .sf-ask-form > :not(.sf-ask-field) { display: none; }
+  [data-theme="simplefolio"] .sf-hero--ask .sf-ask-form, [data-theme="simplefolio"] .sf-hero--ask .sf-ask-below { animation: sf-ask-in 0.35s ease both; }
+  @keyframes sf-ask-in { from { opacity: 0; transform: translateY(-4px); } }
+  [data-theme="simplefolio"] .sf-ask-line { font-size: 20px; font-weight: 500; line-height: 1.45; letter-spacing: -0.01em; color: var(--sf-ink); white-space: pre-wrap; overflow-wrap: anywhere; cursor: text; }
+  [data-theme="simplefolio"] .sf-ask-line::before { content: "› "; color: var(--sf-accent); font-family: var(--sf-mono); font-weight: 500; }
+  [data-theme="simplefolio"] .sf-ask-line .sf-type-caret { margin: 0 0.12em 0 0; }
+  [data-theme="simplefolio"] .sf-ask-ph { color: var(--sf-ash); opacity: 0.7; }
+  [data-theme="simplefolio"] .sf-ask-typed:not(:empty) ~ .sf-ask-ph { display: none; }
+  [data-theme="simplefolio"] .sf-ask-field { position: relative; }
+  [data-theme="simplefolio"] .sf-ask-input { position: absolute; left: 0; top: 0; width: 100%; height: 100%; min-height: 1px; padding: 0; border: 0; opacity: 0; font-size: 16px; color: transparent; background: none; caret-color: transparent; }
+  [data-theme="simplefolio"] .sf-ask-input:focus { outline: none; }
+
+  /* Toolbar inside the box: model toggles · engine · state ··· send */
+  [data-theme="simplefolio"] .sf-ask-bar { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-family: var(--sf-mono); font-size: 11.5px; color: var(--sf-ash); }
+  [data-theme="simplefolio"] .sf-sl-engine { color: var(--sf-accent); white-space: nowrap; }
+  [data-theme="simplefolio"] .sf-sl-engine::before { content: "● "; }
+  /* Info icon with a hover/focus tooltip (privacy note) */
+  [data-theme="simplefolio"] .sf-ask-info { position: relative; display: inline-grid; place-items: center; color: var(--sf-ash); cursor: help; outline: none; }
+  [data-theme="simplefolio"] .sf-ask-info:hover, [data-theme="simplefolio"] .sf-ask-info:focus-visible { color: var(--sf-ink); }
+  [data-theme="simplefolio"] .sf-ask-info::after {
+    content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 10px); z-index: 5; width: max-content; max-width: 240px;
+    padding: 8px 10px; border: 1px solid var(--sf-rule); background: var(--sf-glass-strong); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); font-family: var(--sf-mono); font-size: 11px; line-height: 1.5; letter-spacing: 0; text-transform: none; color: var(--sf-graphite);
+    white-space: normal; text-align: left; opacity: 0; pointer-events: none; transform: translate(-50%, 4px); transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  [data-theme="simplefolio"] .sf-ask-info:hover::after, [data-theme="simplefolio"] .sf-ask-info:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+  [data-theme="simplefolio"] .sf-sl-state { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  [data-theme="simplefolio"] .sf-ask-send {
+    display: grid; place-items: center; flex: none; width: 34px; height: 30px; margin-left: auto; padding: 0; border: 1px solid var(--sf-rule); border-radius: 6px;
+    background: none; color: var(--sf-ash); font: 500 15px/1 var(--sf-mono); cursor: pointer; transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  [data-theme="simplefolio"] .sf-ask-form:has(.sf-ask-typed:not(:empty)) .sf-ask-send { border-color: var(--sf-accent); color: var(--sf-paper); background: var(--sf-accent); }
+  [data-theme="simplefolio"] .sf-ask-below { display: inline-block; margin: 10px 0 0 4px; font-family: var(--sf-mono); font-size: 12px; color: var(--sf-ash); text-decoration: none; }
+  [data-theme="simplefolio"] .sf-ask-below:hover { color: var(--sf-ink); }
+
+  /* Model toggles: small round logo buttons, on/off */
+  [data-theme="simplefolio"] .sf-ask-opts { display: flex; gap: 6px; padding-right: 10px; border-right: 1px solid var(--sf-rule); }
+  [data-theme="simplefolio"] .sf-ask-opts[hidden], [data-theme="simplefolio"] .sf-ask-chip[hidden] { display: none; }
+  [data-theme="simplefolio"] .sf-ask-chip {
+    position: relative; display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 1px solid var(--sf-rule); border-radius: 50%;
+    background: none; color: var(--sf-ash); cursor: pointer; transition: border-color 0.2s, color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  [data-theme="simplefolio"] .sf-ask-chip svg { width: 16px; height: 16px; }
+  [data-theme="simplefolio"] .sf-ask-chip:hover:not(:disabled) { border-color: var(--sf-ash); color: var(--sf-ink); }
+  [data-theme="simplefolio"] .sf-ask-chip:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; }
+  [data-theme="simplefolio"] .sf-ask-chip:disabled { cursor: progress; }
+  [data-theme="simplefolio"] .sf-ask-chip[aria-pressed="true"] { border-color: var(--sf-accent); color: var(--sf-accent); background: color-mix(in srgb, var(--sf-accent) 12%, transparent); box-shadow: 0 0 10px color-mix(in srgb, var(--sf-accent) 35%, transparent); }
+  /* Download progress: a ring on the downloading model's button and a bar along the box's bottom edge */
+  [data-theme="simplefolio"] .sf-ask-chip[data-dl]::after {
+    content: ""; position: absolute; inset: -4px; border-radius: 50%;
+    background: conic-gradient(var(--sf-accent) calc(var(--sf-dl) * 360deg), color-mix(in srgb, var(--sf-accent) 15%, transparent) 0);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px)); mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  }
+  [data-theme="simplefolio"] .sf-ask-progress {
+    position: absolute; left: 0; bottom: 0; height: 2px; width: calc(var(--sf-dl, 0) * 100%); background: var(--sf-accent);
+    opacity: 0; transition: width 0.3s ease, opacity 0.4s ease; box-shadow: 0 0 8px var(--sf-accent);
+  }
+  [data-theme="simplefolio"] .sf-ask-form[data-dl] .sf-ask-progress { opacity: 1; }
+
+  /* Transcript */
+  [data-theme="simplefolio"] .sf-ask-log { display: none; }
+  [data-theme="simplefolio"] .sf-ask-turn { display: flex; flex-direction: column; gap: 10px; }
+  [data-theme="simplefolio"] .sf-ask-turn + .sf-ask-turn { margin-top: 28px; }
+  [data-theme="simplefolio"] .sf-ask-q { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.015em; color: var(--sf-ink); overflow-wrap: anywhere; }
+  [data-theme="simplefolio"] .sf-ask-a { max-width: 70ch; font-size: 16px; line-height: 1.6; color: var(--sf-graphite); white-space: pre-wrap; overflow-wrap: anywhere; }
+  [data-theme="simplefolio"] .sf-ask-a p { margin: 0; white-space: normal; }
+  [data-theme="simplefolio"] .sf-ask-a p + p { margin-top: 12px; }
+  [data-theme="simplefolio"] .sf-ask-a--wait::after { content: ""; display: inline-block; width: 0.5em; height: 1em; vertical-align: -0.15em; background: var(--sf-accent); animation: sf-caret 1.06s steps(1) infinite; }
+  [data-theme="simplefolio"] .sf-ask-src { display: block; margin-top: 3px; font-family: var(--sf-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--sf-primary); }
+
+  /* Asking: the headline steps back as soon as the visitor types */
+  [data-theme="simplefolio"] .sf-hero, [data-theme="simplefolio"] .sf-hero-title, [data-theme="simplefolio"] .sf-hero-mark { transition: padding 0.6s ease, font-size 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), margin 0.6s ease, width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  [data-theme="simplefolio"] .sf-hero--ask .sf-hero-title { max-width: 40ch; font-size: 26px; margin-bottom: 18px; }
+  [data-theme="simplefolio"] .sf-hero--ask .sf-hero-mark { width: 120px; }
+
+  /* Chatting: transcript fills the screen, prompt box sits at the bottom */
+  [data-theme="simplefolio"] .sf-hero.sf-hero--chat { align-items: flex-start; padding-top: 96px; padding-bottom: 28px; }
+  [data-theme="simplefolio"] .sf-hero--chat .sf-hero-inner { height: calc(100svh - 124px); align-items: flex-start; }
+  [data-theme="simplefolio"] .sf-hero--chat .sf-hero-copy { align-self: stretch; display: flex; flex-direction: column; min-height: 0; }
+  [data-theme="simplefolio"] .sf-hero--chat .sf-hero-title { margin-bottom: 22px; }
+  [data-theme="simplefolio"] .sf-hero--chat .sf-ask { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  [data-theme="simplefolio"] .sf-hero--chat .sf-ask-log {
+    display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; margin-bottom: 18px; padding: 4px 8px 4px 0;
+    mask-image: linear-gradient(to bottom, transparent, #000 24px); animation: sf-ask-in 0.5s ease both;
+  }
+  /* Newest turns sit just above the prompt */
+  [data-theme="simplefolio"] .sf-hero--chat .sf-ask-log > :first-child { margin-top: auto; }
+  [data-theme="simplefolio"] .sf-hero--chat .sf-ask-form { max-width: none; }
+
+  @media (max-width: 900px) {
+    [data-theme="simplefolio"] .sf-ask-form { margin: 0 auto; text-align: left; }
+    [data-theme="simplefolio"] .sf-ask-line { font-size: 17px; }
+    [data-theme="simplefolio"] .sf-ask-q { font-size: 16px; }
+    [data-theme="simplefolio"] .sf-hero--ask .sf-hero-title { font-size: 22px; margin-bottom: 18px; }
+    [data-theme="simplefolio"] .sf-hero--ask .sf-hero-mark { width: 64px; }
+    [data-theme="simplefolio"] .sf-hero--chat .sf-hero-inner { align-items: stretch; gap: 12px; height: calc(100svh - 108px); }
+    [data-theme="simplefolio"] .sf-hero.sf-hero--chat { padding-top: 80px; }
+    [data-theme="simplefolio"] .sf-hero--chat .sf-hero-mark { align-self: center; }
+    [data-theme="simplefolio"] .sf-hero--chat .sf-hero-copy { flex: 1; }
+    [data-theme="simplefolio"] .sf-hero--chat .sf-hero-title { font-size: 20px; margin-bottom: 12px; }
+    [data-theme="simplefolio"] .sf-hero--chat .sf-ask-log { text-align: left; }
+  }
+</style>
