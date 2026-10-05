@@ -78,15 +78,12 @@ async function main() {
   console.log("✓ Generated contributions.json");
 }
 
-main().catch((err) => {
+main().catch(async (err) => {
   console.error("✗ Failed to generate contribution data:", err.message);
-  // Write empty data so build doesn't fail
-  import("fs").then(({ writeFileSync, mkdirSync }) => {
-    mkdirSync(OUTPUT_DIR, { recursive: true });
-    writeFileSync(
-      import("path").then(({ join }) => join(OUTPUT_DIR, "contributions.json")),
-      JSON.stringify({ totalContributions: 0, weeks: [] })
-    );
-  });
+  // Write empty data so the build doesn't fail, and finish writing before exiting.
+  const { writeFileSync, mkdirSync } = await import("fs");
+  const { join } = await import("path");
+  mkdirSync(OUTPUT_DIR, { recursive: true });
+  writeFileSync(join(OUTPUT_DIR, "contributions.json"), JSON.stringify({ totalContributions: 0, weeks: [] }));
   process.exit(0);
 });

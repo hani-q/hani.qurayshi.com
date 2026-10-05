@@ -232,7 +232,8 @@ export function initChat(root: HTMLElement) {
   // ---- Semantic search (worker, lazy)
   let embedWorker: Worker | null = null;
   let searchReady: Promise<void> | null = null;
-  const pending = new Map<number, (scores: number[]) => void>();
+  // Each question in flight; settled by its result or its error, or all at once if the worker dies.
+  const pending = new Map<number, { resolve: (scores: number[]) => void; reject: (e: Error) => void }>();
   let qid = 0;
   const ensureSearch = () =>
     (searchReady ??= fetch("/chat-index.json").then((r) => { if (!r.ok) throw new Error(`index ${r.status}`); return r.json(); }).then((index) => new Promise<void>((resolve, reject) => {
@@ -242,15 +243,28 @@ export function initChat(root: HTMLElement) {
         if (m.type === "progress" && m.total) setProgress(m.loaded < m.total ? m.loaded / m.total : null);
         if (m.type === "progress" && m.total) setStatus(m.loaded < m.total ? `Loading search model… ${Math.round((m.loaded / m.total) * 100)}%` : "Reading the résumé…");
         else if (m.type === "ready") { if (/^(Loading search|Reading the)/.test(status.textContent || "")) setStatus(""); resolve(); }
-        else if (m.type === "result") { pending.get(m.id)?.(m.scores); pending.delete(m.id); }
-        else if (m.type === "error") { pending.delete(m.id); reject(new Error(m.message)); }
+        else if (m.type === "result") { pending.get(m.id)?.resolve(m.scores); pending.delete(m.id); }
+        else if (m.type === "error") fail(new Error(m.message), m.id);
       };
+      // An error with a query id fails that question; any other (or a worker crash) fails startup,
+      // every question in flight, and drops the worker so the next question starts a fresh one.
+      const fail = (e: Error, id?: number) => {
+        const q = id != null ? pending.get(id) : undefined;
+        if (q) { pending.delete(id!); q.reject(e); return; }
+        for (const p of pending.values()) p.reject(e);
+        pending.clear();
+        embedWorker?.terminate();
+        embedWorker = null;
+        searchReady = null;
+        reject(e);
+      };
+      embedWorker.onerror = (ev) => { ev.preventDefault(); fail(new Error(ev.message || "search worker failed")); };
       embedWorker.postMessage({ type: "init", dims: index.dims, vectors: index.vectors });
     })).catch((e) => { searchReady = null; throw e; }));
   const rank = async (q: string): Promise<Hit[]> => {
     await ensureSearch();
     const id = ++qid;
-    const scores = await new Promise<number[]>((res) => { pending.set(id, res); embedWorker!.postMessage({ type: "query", id, text: q }); });
+    const scores = await new Promise<number[]>((resolve, reject) => { pending.set(id, { resolve, reject }); embedWorker!.postMessage({ type: "query", id, text: q }); });
     return passages.map((p, i) => ({ p, score: scores[i] })).sort((a, b) => b.score - a.score);
   };
 

@@ -876,7 +876,7 @@ const tiltAttrs = { "data-sf-tilt": "" };
       var titles = Array.prototype.slice.call(root.querySelectorAll('.sf-section-title'));
       var secBox = root.querySelector('[data-sf-sec]');
       if (titles.length && secBox) {
-        var roll = secBox.querySelector('.sf-topbar-roll'), current = '', secTick = false;
+        var roll = secBox.querySelector('.sf-topbar-roll'), secLabel = '', secTick = false;
         function label(t) { return String(titles.indexOf(t) + 1).padStart(2, '0') + ' ' + t.textContent.trim(); }
         function rollItem(text, cls) {
           var el = document.createElement('span');
@@ -889,8 +889,8 @@ const tiltAttrs = { "data-sf-tilt": "" };
         // mark | name | section group keeps one width and stays centred as labels change.
         titles.forEach(function (t) { var g = rollItem(label(t), 'sf-roll-ghost'); g.setAttribute('aria-hidden', 'true'); roll.appendChild(g); });
         function setLabel(text) {
-          if (text === current) return;
-          current = text;
+          if (text === secLabel) return;
+          secLabel = text;
           secBox.classList.toggle('sf-topbar-sec--on', !!text);
           Array.prototype.forEach.call(roll.querySelectorAll('.sf-roll-item:not(.sf-roll-ghost)'), function (old) {
             old.classList.add('sf-roll-out');
