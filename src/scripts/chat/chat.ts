@@ -444,6 +444,45 @@ export function initChat(root: HTMLElement) {
   });
   if (matchMedia("(pointer: fine)").matches && window.scrollY < 50) focus();
 
+  // After the first real answer from résumé search, offer a stronger model once: Gemini Nano
+  // where Chrome has it (nothing to download), else Qwen3 0.6B where WebGPU runs it. "Load"
+  // flips the same toggle as the prompt box's button, so download progress shows there.
+  let offered = false;
+  async function offerUpgrade(after: HTMLElement) {
+    if (offered || engine() !== "search" || llm || gemini) return;
+    offered = true;
+    const useGemini = geminiAvailable;
+    if (!useGemini && !(await gpu())) return;
+    const card = document.createElement("div");
+    card.className = "sf-ask-offer";
+    const text = document.createElement("p");
+    text.textContent = useGemini
+      ? "Want answers written in full sentences? Gemini Nano is built into your Chrome: nothing to download, and it runs on your device."
+      : "Want answers written in full sentences? Load Qwen3 0.6B, a small AI model that runs in your browser (about 350 MB, downloaded once).";
+    const load = document.createElement("button");
+    load.type = "button"; load.className = "sf-ask-offer-load";
+    load.textContent = useGemini ? "Use Gemini Nano" : "Load Qwen3 0.6B";
+    const skip = document.createElement("button");
+    skip.type = "button"; skip.className = "sf-ask-offer-skip"; skip.textContent = "Not now";
+    const btns = document.createElement("div");
+    btns.className = "sf-ask-offer-btns";
+    btns.append(load, skip);
+    card.append(text, btns);
+    after.after(card);
+    scroll();
+    skip.addEventListener("click", () => { card.remove(); input.focus({ preventScroll: true }); });
+    load.addEventListener("click", () => {
+      const opt = useGemini ? geminiOpt : smartOpt;
+      opts.hidden = false; opt.hidden = false;
+      if (!(useGemini ? geminiBox : smartBox).checked) opt.click();
+      text.textContent = useGemini
+        ? "Gemini Nano is on. Your next answers will use it."
+        : "Loading Qwen3 0.6B. Progress shows in the prompt box; your answers switch to it once it's ready.";
+      btns.remove();
+      input.focus({ preventScroll: true });
+    });
+  }
+
   async function submit(q: string) {
     if (busy) return;
     busy = true;
@@ -496,6 +535,7 @@ export function initChat(root: HTMLElement) {
         else a = await answerSearch(hits, out);
       }
       history.push({ q, a });
+      if (out.querySelector(".sf-ask-src")) offerUpgrade(turn);
     } catch (e) {
       out.textContent = `Something went wrong: ${(e as Error)?.message ?? e}`;
     } finally {
