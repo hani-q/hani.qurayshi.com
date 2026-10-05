@@ -19,6 +19,7 @@ This is a personal resume/portfolio site built with **Astro 6**, **Tailwind CSS 
 
 - `src/data/resume.ts` — Single source of truth for all resume content (experience, skills, certifications, education, etc.). All display data lives here.
 - `src/data/contributions.json` — Auto-generated at build time by `scripts/generate-contributions.mjs` via GitHub GraphQL API. Gitignored; generated on each build (the deploy workflow supplies `GH_CONTRIBUTIONS_TOKEN`).
+- Age: the chat states Hani's age, computed at build time from `HANI_BIRTH_DATE` (YYYY-MM-DD). The date is kept only in the git-ignored `.env` and the `HANI_BIRTH_DATE` repo secret, never in the public repo or the built site; unset means no age passage
 - `src/data/ABOUT.md` — Hani's own notes for the hero chat (pronouns, availability, anything the résumé doesn't say). Each `- ` line becomes a searchable passage (labelled by its `## ` heading) and is given to the models first on every question; HTML comments are ignored, so unfilled slots stay commented out. Write true, complete sentences only
 - `src/data/derive.ts` — Display-ready views derived from `resume.ts` (skill categories, parsed certifications, roles grouped by company, stats) plus `companySites`: each employer's website and its screenshot.
 - `src/assets/logos/*.svg` (Simple Icons, imported `?raw` and drawn in `currentColor`) and `public/logos/stanford.png` — certification issuer logos, mapped by issuer name in `Simplefolio.astro`

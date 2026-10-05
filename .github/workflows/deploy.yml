@@ -37,6 +37,7 @@ jobs:
         run: pnpm build
         env:
           GH_CONTRIBUTIONS_TOKEN: ${{ secrets.GH_CONTRIBUTIONS_TOKEN }}
+          HANI_BIRTH_DATE: ${{ secrets.HANI_BIRTH_DATE }}
 
       - name: Upload build artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
