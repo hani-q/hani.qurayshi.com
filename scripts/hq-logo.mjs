@@ -10,6 +10,9 @@ const H = orient([[0,0],[42,0],[42,46],[78,46],[78,0],[120,0],[120,120],[78,120]
 const Q = (w) => { const u = w / Math.SQRT2, ix = 232 - QW, iy = QW;
   return orient([[112,0],[232 - u, 0],[ix - u, iy],[112 + QW, QW],[112 + QW, 120 - QW],[ix, 120 - QW],[ix, iy + u],[232, u],[232,120],[112,120]], true); };
 
+// The two letter faces as flat 2D outlines (y up, H at x 0..120, Q at x 112..232), for the favicon.
+export const faces = (slot = 16) => ({ H, Q: Q(slot) });
+
 function setup(o) {
   const cfg = { yaw: -18, pitch: 30, D: 120, Dq: 120, hBack: 0, qBack: 0, qTilt: 90, qDx: -112, qFace: 'right', slot: 16, size: 200, ...o };
   const ry = cfg.yaw * Math.PI / 180, rx = cfg.pitch * Math.PI / 180, D = cfg.D, Dq = cfg.Dq;

@@ -208,7 +208,7 @@ const tiltAttrs = { "data-sf-tilt": "" };
       <span class="sf-topbar-sec" data-sf-sec><span class="sf-topbar-sep"></span><span class="sf-topbar-roll"></span></span>
     </span>
   </header>
-  <a class="sf-brand" href="#sf-top" aria-label={`${resume.name}, back to top`} data-hq-palettes={JSON.stringify(hqLogo.palettes)} data-hq-favicons={JSON.stringify(hqLogo.favicons)}>
+  <a class="sf-brand" href="#sf-top" aria-label={`${resume.name}, back to top`} data-hq-palettes={JSON.stringify(hqLogo.palettes)}>
     <svg viewBox={hqLogo.viewBox.join(" ")} aria-hidden="true" set:html={hqLogo.logo} />
   </a>
   <div class="sf-tools">
@@ -843,17 +843,12 @@ const tiltAttrs = { "data-sf-tilt": "" };
         placeMark();
       }
 
-      // HQ mark: step through every palette (logo colours via CSS variables, favicon via
-      // a data: URI per palette). Light mode uses the darkened set. Every 5s; paused when
+      // HQ mark: step through every palette (logo colours via CSS variables; the favicon is a
+      // fixed red and yellow HQ). Light mode uses the darkened set. Every 5s; paused when
       // hidden; reduced motion stays on the first palette.
       var brand = root.querySelector('.sf-brand');
       if (brand) {
         var pals = JSON.parse(brand.getAttribute('data-hq-palettes') || '[]');
-        var favs = JSON.parse(brand.getAttribute('data-hq-favicons') || '[]');
-        // Swap the SVG icon (browsers prefer it over the ICO, which stays for old ones).
-        var icon = document.querySelector('link[rel="icon"][type="image/svg+xml"]') || document.querySelector('link[rel="icon"]');
-        if (!icon) { icon = document.createElement('link'); icon.rel = 'icon'; document.head.appendChild(icon); }
-        icon.type = 'image/svg+xml';
         var palIdx = 0;
         function paint() {
           var set = pals[palIdx][root.getAttribute('data-mode') === 'light' ? 'light' : 'dark'];
@@ -866,7 +861,6 @@ const tiltAttrs = { "data-sf-tilt": "" };
           if (prim) root.style.setProperty('--sf-primary', prim); else root.style.removeProperty('--sf-primary');
           if (acc) root.style.setProperty('--sf-accent', acc); else root.style.removeProperty('--sf-accent');
           brand.title = pals[palIdx].name;
-          if (favs[palIdx]) icon.href = favs[palIdx];
         }
         paint();
         new MutationObserver(paint).observe(root, { attributes: true, attributeFilter: ['data-mode'] });
