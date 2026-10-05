@@ -152,6 +152,18 @@ const json = JSON.stringify(knowledge).replace(/</g, "\\u003c");
   }
   [data-theme="simplefolio"] .sf-ask-form[data-dl] .sf-ask-progress { opacity: 1; }
 
+  /* One-time offer of a stronger model, shown under the first search answer */
+  [data-theme="simplefolio"] .sf-ask-offer {
+    max-width: 70ch; margin-top: 18px; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--sf-accent) 45%, var(--sf-rule));
+    background: color-mix(in srgb, var(--sf-accent) 7%, transparent); animation: sf-ask-in 0.4s ease both;
+  }
+  [data-theme="simplefolio"] .sf-ask-offer p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--sf-graphite); }
+  [data-theme="simplefolio"] .sf-ask-offer-btns { display: flex; gap: 10px; margin-top: 12px; }
+  [data-theme="simplefolio"] .sf-ask-offer button { padding: 7px 14px; border: 1px solid var(--sf-rule); background: none; font: inherit; font-size: 13px; font-weight: 600; color: var(--sf-graphite); cursor: pointer; }
+  [data-theme="simplefolio"] .sf-ask-offer .sf-ask-offer-load { border-color: var(--sf-accent); background: var(--sf-accent); color: var(--sf-paper); }
+  [data-theme="simplefolio"] .sf-ask-offer button:hover { border-color: var(--sf-ink); }
+  [data-theme="simplefolio"] .sf-ask-offer button:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; }
+
   /* Transcript */
   [data-theme="simplefolio"] .sf-ask-log { display: none; }
   [data-theme="simplefolio"] .sf-ask-turn { display: flex; flex-direction: column; gap: 10px; }
