@@ -7,7 +7,7 @@ This file provides guidance to coding agents (Claude Code, Codex, etc.) when wor
 - **Dev server:** `pnpm dev`
 - **Build:** `pnpm build` (runs `prebuild` first to generate contributions data)
 - **Preview:** `pnpm preview`
-- **Regenerate the HQ logo/favicons:** `node scripts/gen-hq-logo.mjs` (geometry in `scripts/hq-logo.mjs`, output `src/data/hq-logo.json`)
+- **Regenerate the HQ logo/favicons:** `node scripts/gen-hq-logo.mjs` (geometry in `scripts/hq-logo.mjs`; writes `src/data/hq-logo.json` and `public/favicon.svg`). The PNG icons (`public/favicon.ico` 16/32/48, `apple-touch-icon.png` 180, `icon-512.png`) are browser renders of `favicon.svg` (its blur filters need a browser); re-render them when the mark changes and bump the `?v=` on the icon links in `Layout.astro` (icons are cached for a year)
 - **Refresh pinned X posts:** `node scripts/fetch-posts.mjs`
 - **Generate GitHub contributions:** `GH_CONTRIBUTIONS_TOKEN=xxx node scripts/generate-contributions.mjs` (without a token it keeps the existing file; locally `GH_CONTRIBUTIONS_TOKEN=$(gh auth token)` works)
 

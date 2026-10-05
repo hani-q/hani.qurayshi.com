@@ -850,7 +850,8 @@ const tiltAttrs = { "data-sf-tilt": "" };
       if (brand) {
         var pals = JSON.parse(brand.getAttribute('data-hq-palettes') || '[]');
         var favs = JSON.parse(brand.getAttribute('data-hq-favicons') || '[]');
-        var icon = document.querySelector('link[rel="icon"]');
+        // Swap the SVG icon (browsers prefer it over the ICO, which stays for old ones).
+        var icon = document.querySelector('link[rel="icon"][type="image/svg+xml"]') || document.querySelector('link[rel="icon"]');
         if (!icon) { icon = document.createElement('link'); icon.rel = 'icon'; document.head.appendChild(icon); }
         icon.type = 'image/svg+xml';
         var palIdx = 0;

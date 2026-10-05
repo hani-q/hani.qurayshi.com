@@ -65,7 +65,8 @@ export function glass(o = {}) {
   const body = faces.map((f) => {
     const fop = !f.vis ? 0.03 : f.cap ? 0.32 : f.up ? 0.2 : 0.08;
     const sop = !f.vis ? 0.06 : f.cap ? 0.95 : 0.45;
-    const sw = !f.vis ? 0.5 : f.cap ? 1.8 : 0.8;
+    // strokeScale thickens every line, for small renderings such as the favicon.
+    const sw = (!f.vis ? 0.5 : f.cap ? 1.8 : 0.8) * (o.strokeScale ?? 1);
     const col = (o.colors && o.colors[f.id]) || 'var(--ink)';
     let out;
     if (f.back) out = `<path d="${d(f.rings)}" fill="${col}" fill-opacity="0.015" fill-rule="evenodd" stroke="${col}" stroke-opacity="0.05" stroke-width="0.4" stroke-linejoin="round"/>`;
