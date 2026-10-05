@@ -119,13 +119,12 @@ export function initChat(root: HTMLElement) {
   const smartBox = toggle(smartOpt);
   const geminiBox = toggle(geminiOpt);
 
-  // The HQ mark is positioned from the hero placeholder (Simplefolio's scroll script, which
-  // re-measures on resize). Typing and chat mode move that placeholder, so nudge it along.
-  // State changes animate padding (which resizes nothing), so also follow for their duration.
-  const nudge = () => window.dispatchEvent(new Event("resize"));
-  new ResizeObserver(nudge).observe(hero.querySelector(".sf-hero-copy")!);
+  // The HQ mark is positioned from the hero placeholder; Simplefolio's docking script watches the
+  // hero copy's size itself. Chat state changes also animate padding, which resizes nothing, so
+  // for their duration tell it to remeasure each frame ('sf:layout', not a fake window resize).
+  const layoutChanged = () => window.dispatchEvent(new Event("sf:layout"));
   let followUntil = 0;
-  const follow = () => { nudge(); if (performance.now() < followUntil) requestAnimationFrame(follow); };
+  const follow = () => { layoutChanged(); if (performance.now() < followUntil) requestAnimationFrame(follow); };
   new MutationObserver(() => {
     const idle = performance.now() >= followUntil;
     followUntil = performance.now() + 900;
