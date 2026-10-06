@@ -300,6 +300,17 @@ export function initChat(root: HTMLElement) {
           if (geminiBox.checked) setStatus(e.loaded < 1 ? `Downloading Gemini Nano… ${Math.round(e.loaded * 100)}%` : "");
         });
       },
+    }).then(async (s: any) => {
+      // Chromium's fake model advertises availability but only echoes the prompt/template.
+      // Check generation on a disposable clone before calling it Gemini Nano.
+      let probe: any;
+      const question = `What is ${k.first}'s first name?`;
+      try {
+        probe = await s.clone();
+        if ((await probe.prompt(question)).includes(question)) throw new Error("Chrome returned a prompt echo instead of a model answer.");
+        return s;
+      } catch (e) { s.destroy(); throw e; }
+      finally { probe?.destroy(); }
     }).catch((e: unknown) => { gemini = null; throw e; }));
   if (LM) LM.availability(LM_OPTS).then((a: string) => { geminiAvailable = a !== "unavailable"; }).catch(() => {});
 
@@ -353,7 +364,7 @@ export function initChat(root: HTMLElement) {
       `You answer questions from visitors to ${k.name}'s résumé website.`,
       ...(k.notes.length ? [`Always true, from ${k.first} himself (follow these, but mention them only when asked):\n${k.notes.map((n) => `- ${n}`).join("\n")}`] : []),
       `Use only the facts and résumé excerpts provided. If they do not contain the answer, say you don't know and suggest emailing ${k.email}.`,
-      `Answer in one to three short sentences, in the third person, referring to ${k.first} by name. ${k.first} is a man: use he/him. Never invent employers, dates, numbers or skills.`,
+      `Answer in one to three short sentences, in the third person, referring to ${k.first} by name. ${k.first} is a man: use he/him. Never invent employers, dates, numbers or skills. Do not claim linked websites contain information that is not provided here.`,
       `Use the present tense only for the current roles listed in the facts; every other role is in the past tense. For a general summary, lead with the current roles.`,
       `Keep each project with the company named in its excerpt. A previous answer is not evidence.`,
       `Past roles in the excerpts are history, not openings. Never say whether ${k.first} is or isn't open to work unless the notes above say so; otherwise reply that he hasn't said and suggest emailing ${k.email}.`,
@@ -367,7 +378,7 @@ export function initChat(root: HTMLElement) {
     const opening = shownLine();
     return [...(opening ? [{ q: "", a: opening }] : []), ...history];
   };
-  const excerpts = (hits: Hit[], n: number) => `Résumé excerpts:\n${hits.slice(0, n).map((h) => `- ${h.p.text}`).join("\n")}`;
+  const excerpts = (hits: Hit[], n: number) => `Résumé excerpts:\n${hits.slice(0, n).map((h) => `- ${h.p.label}: ${h.p.text}`).join("\n")}`;
   const clean = (s: string) => s.replace(/<think>[\s\S]*?(<\/think>|$)/g, "").trim();
 
   async function answerQwen(q: string, hits: Hit[], out: HTMLElement) {
@@ -386,38 +397,18 @@ export function initChat(root: HTMLElement) {
     const s = await (await ensureGemini()).clone();
     const prev = turns().at(-1);
     const prompt = `${prev?.q ? `Previous question: ${prev.q}\n\n` : ""}${excerpts(hits, 8)}\n\nQuestion: ${q}`;
-    // Some Chrome setups (a debug flag, or the CPU backend) stream back a backend header plus
-    // the whole prompt before the answer. Show only what follows the question; until it
-    // arrives, keep the waiting cursor.
-    const answerOf = (raw: string) => {
-      let answer = raw;
-      if (/You answer questions from visitors|^\s*(CPU|GPU) backend/i.test(raw)) {
-        const marker = `Question: ${q}`;
-        const i = raw.lastIndexOf(marker);
-        answer = i < 0 ? "" : raw.slice(i + marker.length).replace(/^\s*(answer|model|assistant)\s*:?\s*/i, "");
-      }
-      // Some backends emit a chat-template terminator instead of (or after) prose.
-      return answer.replace(/(?:^|\n)\s*(?:End\.Model:|<\|(?:eot_id|end_of_turn|im_end)\|>)[\s\S]*$/i, "");
-    };
     let text = "";
     try {
       // Chunks have been deltas since Chrome 137; older builds sent the whole text so far.
       for await (const chunk of s.promptStreaming(prompt, LM_OPTS)) {
         text = chunk.startsWith(text) && text ? chunk : text + chunk;
-        const shown = answerOf(text).trimStart();
+        const shown = text.trimStart();
         out.classList.toggle("sf-ask-a--wait", !shown);
         out.textContent = shown; scroll();
       }
     } finally { s.destroy(); }
-    let answer = answerOf(text).trim();
-    if (!answer) {
-      // Retry once when Chrome returns only a template marker, using a fresh session.
-      const retry = await (await ensureGemini()).clone();
-      try { answer = answerOf(await retry.prompt(`${prompt}\n\nAnswer in complete sentences.`, LM_OPTS)).trim(); }
-      finally { retry.destroy(); }
-      out.textContent = answer;
-    }
-    if (!answer) out.textContent = `Gemini Nano didn't return an answer. Try again, or switch it off to use résumé search.`;
+    const answer = text.trim();
+    out.textContent = answer || `Gemini Nano didn't return an answer. Try again, or switch it off to use résumé search.`;
     return answer;
   }
 
@@ -557,6 +548,13 @@ export function initChat(root: HTMLElement) {
           const pick = (label: string) => passages.filter((p) => p.label === label);
           const lead = [...pick("Now"), ...pick("About").slice(0, 2), ...pick("Career")].map((p) => ({ p, score: 1 }));
           hits = [...lead, ...hits.filter((h) => !lead.some((l) => l.p === h.p))];
+        }
+        // "Skills" also matches qstack's agent skills; those are software, not résumé skills.
+        const label = /\bskills?\b/i.test(q) && !/\b(qstack|agent skills)\b/i.test(q) ? "Skills"
+          : /\bvolunteer(?:ing)?\b/i.test(q) ? "Volunteering" : "";
+        if (label) {
+          const lead = hits.filter((h) => h.p.label === label).map((h) => ({ ...h, score: 1 }));
+          hits = [...lead, ...hits.filter((h) => h.p.label !== label)];
         }
         const eng = engine();
         out.classList.remove("sf-ask-a--wait");
