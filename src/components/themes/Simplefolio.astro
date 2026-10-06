@@ -840,7 +840,8 @@ const tiltAttrs = { "data-sf-tilt": "" };
         // CSS scroll-driven animations exist, the mark's path is sampled into keyframes on a
         // scroll() timeline and the browser moves it in step with the scroll; the script then only
         // keeps the top bar and hero fade in sync.
-        var timeline = !reduced && window.CSS && CSS.supports('animation-timeline: scroll()');
+        var canTimeline = window.CSS && CSS.supports('animation-timeline: scroll()');
+        var timeline = !reduced && canTimeline;
         var dockCss = null;
         function buildTimeline() {
           var g = geo, maxS = Math.max(1, document.documentElement.scrollHeight - g.vh), stops = [0, maxS];
@@ -866,6 +867,16 @@ const tiltAttrs = { "data-sf-tilt": "" };
           root.classList.toggle('sf-docked', t >= 0.999);
         }
         function remeasure() { geo = null; queueMark(); }
+        // Reduced motion switched while the page is open: the CSS media rule cancels the
+        // animation, so the script must take over placing the mark (and hand it back after).
+        var motionQuery = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (motionQuery && motionQuery.addEventListener) motionQuery.addEventListener('change', function () {
+          reduced = motionQuery.matches;
+          timeline = !reduced && canTimeline;
+          if (timeline) markEl.style.transform = '';
+          else if (dockCss) dockCss.textContent = '';
+          remeasure();
+        });
         function queueMark() { if (!markTick) { markTick = true; requestAnimationFrame(placeMark); } }
         window.addEventListener('scroll', queueMark, { passive: true });
         ['resize', 'load', 'sf:layout'].forEach(function (ev) { window.addEventListener(ev, remeasure); });

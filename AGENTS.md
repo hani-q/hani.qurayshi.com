@@ -38,7 +38,7 @@ This is a personal resume/portfolio site built with **Astro 6**, **Tailwind CSS 
 ### Styling
 
 - Tailwind CSS v4 via Vite plugin (configured in `astro.config.mjs`)
-- Simplefolio loads Montserrat itself; `global.css` still defines Inter, Space Grotesk, JetBrains Mono, and Dancing Script
+- Simplefolio loads Inter and Roboto Mono itself; `global.css` still defines Inter, Space Grotesk, and JetBrains Mono (loaded by `Layout.astro`)
 - Dark mode is default; light mode is `data-mode="light"` on the theme root, persisted in localStorage (`sf-mode`)
 - Theme CSS is scoped under `[data-theme="simplefolio"]` with the `sf-` class prefix
 
