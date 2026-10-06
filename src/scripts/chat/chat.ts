@@ -273,7 +273,7 @@ export function initChat(root: HTMLElement) {
   // ---- Qwen3 0.6B via WebLLM (opt-in, WebGPU)
   let llm: any = null;
   let adapter: Promise<any> | null = null;
-  const gpu = () => (adapter ??= ((navigator as any).gpu?.requestAdapter() ?? Promise.resolve(null)).catch(() => null));
+  const gpu = (): Promise<any> => (adapter ??= ((navigator as any).gpu?.requestAdapter() ?? Promise.resolve(null)).catch(() => null));
   const loadQwen = async () => {
     const a = await gpu();
     const model = a?.features?.has("shader-f16") ? "Qwen3-0.6B-q4f16_1-MLC" : "Qwen3-0.6B-q4f32_1-MLC";
@@ -320,27 +320,30 @@ export function initChat(root: HTMLElement) {
   });
 
   const engine = () => (geminiBox.checked && gemini ? "gemini" : smartBox.checked && llm ? "smart" : "search");
-  const engineNames = { search: "Résumé search", smart: "Qwen3 0.6B", gemini: "Gemini Nano" };
-  const showEngine = () => { engineLabel.textContent = engineNames[engine()]; setStatus(""); };
+  const engineNames = { search: "Résumé search · MiniLM", smart: "Qwen3 0.6B", gemini: "Gemini Nano" };
+  const engineName = $<HTMLElement>(".sf-sl-engine-name");
+  const showEngine = () => { engineLabel.dataset.engine = engine(); engineName.textContent = engineNames[engine()]; setStatus(""); };
 
   smartBox.addEventListener("change", () => {
     if (smartBox.checked) geminiBox.checked = false;
-    if (!smartBox.checked || llm) return showEngine();
+    showEngine();
+    if (!smartBox.checked || llm) return;
     smartBox.disabled = true;
     setStatus("Downloading Qwen3 0.6B… 0%");
     loadQwen()
       .then(showEngine)
-      .catch((e: Error) => { smartBox.checked = false; setStatus(`Couldn't load Qwen3: ${e.message}`); })
+      .catch((e: Error) => { smartBox.checked = false; showEngine(); setStatus(`Couldn't load Qwen3: ${e.message}`); })
       .finally(() => { smartBox.disabled = false; setProgress(null, smartOpt); });
   });
   geminiBox.addEventListener("change", () => {
     if (geminiBox.checked) smartBox.checked = false;
-    if (!geminiBox.checked) return showEngine();
+    showEngine();
+    if (!geminiBox.checked) return;
     // create() needs the user activation this change event carries.
     setStatus("Starting Gemini Nano…");
     ensureGemini()
       .then(showEngine)
-      .catch((e: Error) => { geminiBox.checked = false; setStatus(`Gemini Nano is unavailable: ${e.message}`); })
+      .catch((e: Error) => { geminiBox.checked = false; showEngine(); setStatus(`Gemini Nano is unavailable: ${e.message}`); })
       .finally(() => setProgress(null, geminiOpt));
   });
 
@@ -350,8 +353,9 @@ export function initChat(root: HTMLElement) {
       `You answer questions from visitors to ${k.name}'s résumé website.`,
       ...(k.notes.length ? [`Always true, from ${k.first} himself (follow these, but mention them only when asked):\n${k.notes.map((n) => `- ${n}`).join("\n")}`] : []),
       `Use only the facts and résumé excerpts provided. If they do not contain the answer, say you don't know and suggest emailing ${k.email}.`,
-      `Answer in one to three short sentences, in the third person, referring to ${k.first} by name. Never invent employers, dates, numbers or skills.`,
+      `Answer in one to three short sentences, in the third person, referring to ${k.first} by name. ${k.first} is a man: use he/him. Never invent employers, dates, numbers or skills.`,
       `Use the present tense only for the current roles listed in the facts; every other role is in the past tense. For a general summary, lead with the current roles.`,
+      `Keep each project with the company named in its excerpt. A previous answer is not evidence.`,
       `Past roles in the excerpts are history, not openings. Never say whether ${k.first} is or isn't open to work unless the notes above say so; otherwise reply that he hasn't said and suggest emailing ${k.email}.`,
       `Facts:\n${k.facts}`,
     ].join("\n");
@@ -367,10 +371,10 @@ export function initChat(root: HTMLElement) {
   const clean = (s: string) => s.replace(/<think>[\s\S]*?(<\/think>|$)/g, "").trim();
 
   async function answerQwen(q: string, hits: Hit[], out: HTMLElement) {
+    const prev = turns().at(-1);
     const messages = [
       { role: "system", content: system() },
-      ...turns().slice(-2).flatMap((h) => [...(h.q ? [{ role: "user", content: h.q }] : []), { role: "assistant", content: h.a }]),
-      { role: "user", content: `${excerpts(hits, 5)}\n\nQuestion: ${q}` },
+      { role: "user", content: `${prev?.q ? `Previous question: ${prev.q}\n\n` : ""}${excerpts(hits, 5)}\n\nQuestion: ${q}` },
     ];
     const chunks = await llm.chat.completions.create({ messages, stream: true, temperature: 0.3, max_tokens: 220, extra_body: { enable_thinking: false } });
     let text = "";
@@ -381,15 +385,19 @@ export function initChat(root: HTMLElement) {
   async function answerGemini(q: string, hits: Hit[], out: HTMLElement) {
     const s = await (await ensureGemini()).clone();
     const prev = turns().at(-1);
-    const prompt = `${prev ? `${prev.q ? `Previous question: ${prev.q}\n` : ""}Previous answer: ${prev.a}\n\n` : ""}${excerpts(hits, 8)}\n\nQuestion: ${q}`;
+    const prompt = `${prev?.q ? `Previous question: ${prev.q}\n\n` : ""}${excerpts(hits, 8)}\n\nQuestion: ${q}`;
     // Some Chrome setups (a debug flag, or the CPU backend) stream back a backend header plus
     // the whole prompt before the answer. Show only what follows the question; until it
     // arrives, keep the waiting cursor.
     const answerOf = (raw: string) => {
-      if (!/You answer questions from visitors|^\s*(CPU|GPU) backend/i.test(raw)) return raw;
-      const marker = `Question: ${q}`;
-      const i = raw.lastIndexOf(marker);
-      return i < 0 ? "" : raw.slice(i + marker.length).replace(/^\s*(answer|model|assistant)\s*:?\s*/i, "");
+      let answer = raw;
+      if (/You answer questions from visitors|^\s*(CPU|GPU) backend/i.test(raw)) {
+        const marker = `Question: ${q}`;
+        const i = raw.lastIndexOf(marker);
+        answer = i < 0 ? "" : raw.slice(i + marker.length).replace(/^\s*(answer|model|assistant)\s*:?\s*/i, "");
+      }
+      // Some backends emit a chat-template terminator instead of (or after) prose.
+      return answer.replace(/(?:^|\n)\s*(?:End\.Model:|<\|(?:eot_id|end_of_turn|im_end)\|>)[\s\S]*$/i, "");
     };
     let text = "";
     try {
@@ -401,7 +409,14 @@ export function initChat(root: HTMLElement) {
         out.textContent = shown; scroll();
       }
     } finally { s.destroy(); }
-    const answer = answerOf(text).trim();
+    let answer = answerOf(text).trim();
+    if (!answer) {
+      // Retry once when Chrome returns only a template marker, using a fresh session.
+      const retry = await (await ensureGemini()).clone();
+      try { answer = answerOf(await retry.prompt(`${prompt}\n\nAnswer in complete sentences.`, LM_OPTS)).trim(); }
+      finally { retry.destroy(); }
+      out.textContent = answer;
+    }
     if (!answer) out.textContent = `Gemini Nano didn't return an answer. Try again, or switch it off to use résumé search.`;
     return answer;
   }
@@ -441,7 +456,7 @@ export function initChat(root: HTMLElement) {
     if (chatting) return;
     chatting = true;
     if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
-    hero.classList.add("sf-hero--ask", "sf-hero--chat");
+    hero!.classList.add("sf-hero--ask", "sf-hero--chat");
     fitViewport();
   }
 
@@ -459,14 +474,14 @@ export function initChat(root: HTMLElement) {
   });
   if (matchMedia("(pointer: fine)").matches && window.scrollY < 50) focus();
 
-  // After the first real answer from résumé search, offer a stronger model once: Gemini Nano
-  // where Chrome has it (nothing to download), else Qwen3 0.6B where WebGPU runs it. "Load"
+  // After the first real answer from résumé search, offer a stronger model once: Qwen3 0.6B
+  // where WebGPU runs it, else Gemini Nano where Chrome has it (nothing to download). "Load"
   // flips the same toggle as the prompt box's button, so download progress shows there.
   let offered = false;
   async function offerUpgrade(after: HTMLElement) {
     if (offered || engine() !== "search" || llm || gemini) return;
     offered = true;
-    const useGemini = geminiAvailable;
+    const useGemini = !(await gpu()) && geminiAvailable;
     if (!useGemini && !(await gpu())) return;
     const card = document.createElement("div");
     card.className = "sf-ask-offer";
@@ -537,7 +552,8 @@ export function initChat(root: HTMLElement) {
         }
         // "Who is he / summarise him" matches nothing in particular, so lead with the overview:
         // what he does now, his summary, and where his career began.
-        if (/\b(summary|summari[sz]e|overview|who is|introduce|tell me about (him|hani))\b/i.test(q)) {
+        // Broad work questions otherwise match incidental personal facts, such as age.
+        if (/\b(summary|summari[sz]e|overview|who is|introduce|tell me about (him|hani)|what (did|does) (hani|he) do)\b/i.test(q)) {
           const pick = (label: string) => passages.filter((p) => p.label === label);
           const lead = [...pick("Now"), ...pick("About").slice(0, 2), ...pick("Career")].map((p) => ({ p, score: 1 }));
           hits = [...lead, ...hits.filter((h) => !lead.some((l) => l.p === h.p))];
@@ -546,9 +562,16 @@ export function initChat(root: HTMLElement) {
         out.classList.remove("sf-ask-a--wait");
         // No passage is close enough: say so rather than let a model guess.
         if (!hits[0] || hits[0].score < MIN_SCORE) a = out.textContent = `I couldn't find that in ${k.first}'s résumé. Try asking about experience, projects, skills or certifications, or email ${k.email}.`;
-        else if (eng === "gemini") a = await answerGemini(q, hits, out);
-        else if (eng === "smart") a = await answerQwen(q, hits, out);
-        else a = await answerSearch(hits, out);
+        else {
+          // Label the answer with the model that wrote it
+          const by = document.createElement("span");
+          by.className = "sf-ask-by";
+          by.textContent = engineNames[eng];
+          out.before(by);
+          if (eng === "gemini") a = await answerGemini(q, hits, out);
+          else if (eng === "smart") a = await answerQwen(q, hits, out);
+          else a = await answerSearch(hits, out);
+        }
       }
       history.push({ q, a });
       if (out.querySelector(".sf-ask-src")) offerUpgrade(turn);

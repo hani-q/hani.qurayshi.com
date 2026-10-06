@@ -70,7 +70,7 @@ export function buildKnowledge(projects: ChatProject[]) {
   const add = (label: string, text: string) => passages.push({ label, text });
 
   const current = resume.experience.filter((j) => j.period.endsWith("Present")).map((j) => `${j.title} at ${j.company}`);
-  add("Now", `What ${first} is working on and building now: currently ${current.join(" and ")}, building FlowSense.AI, agentic cyber intelligence.`);
+  add("Now", `What ${first} is working on and building now: currently ${current.join(" and ")}. At ArkaType Intelligence, he is building FlowSense.AI, agentic cyber intelligence.`);
   add("About", `${first} has ${resume.yearsOfExperience}+ years of experience across network intelligence, cloud architecture and cyber security.`);
   // Where the career began: every role at the first employer, oldest first.
   const firstJob = resume.experience[resume.experience.length - 1];

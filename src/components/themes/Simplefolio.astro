@@ -1066,8 +1066,8 @@ const tiltAttrs = { "data-sf-tilt": "" };
             (grow * (1 + speed * 0.38)).toFixed(3) + ',' + (grow * (1 - speed * 0.22)).toFixed(3) + ')';
           // The photo as object-fit: cover lays it out, magnified so the point under the
           // pointer sits at the lens centre.
-          var W = portrait.clientWidth, nw = photo.naturalWidth || W, nh = photo.naturalHeight || W;
-          var c = Math.max(W / nw, W / nh), dw = nw * c, dh = nh * c, ox = (W - dw) * 0.5, oy = (W - dh) * 0.12;
+          var W = portrait.clientWidth, H = portrait.clientHeight, nw = photo.naturalWidth || W, nh = photo.naturalHeight || H;
+          var c = Math.max(W / nw, H / nh), dw = nw * c, dh = nh * c, ox = (W - dw) * 0.5, oy = (H - dh) * 0.12;
           var mid = lens.offsetWidth / 2 + PAD;
           lensView.style.backgroundSize = (dw * MAG).toFixed(1) + 'px ' + (dh * MAG).toFixed(1) + 'px';
           lensView.style.backgroundPosition = (mid - (lx - ox) * MAG).toFixed(1) + 'px ' + (mid - (ly - oy) * MAG).toFixed(1) + 'px';
@@ -1367,8 +1367,11 @@ const tiltAttrs = { "data-sf-tilt": "" };
   [data-theme="simplefolio"] .sf-about-image { display: flex; height: 100%; align-items: center; justify-content: center; }
   /* Photo and text as two balanced columns: a larger photo, a little more room for the text */
   @media (min-width: 768px) {
-    [data-theme="simplefolio"] .sf-about-wrapper { align-items: center; }
-    [data-theme="simplefolio"] .sf-about-wrapper > .sf-col-md-6:first-child { flex: 0 0 44%; max-width: 44%; }
+    /* Stretch both columns so the photo runs from the top of the text to the bottom of it */
+    [data-theme="simplefolio"] .sf-about-wrapper { align-items: stretch; }
+    [data-theme="simplefolio"] .sf-about-wrapper > .sf-col-md-6:first-child { flex: 0 0 44%; max-width: 44%; display: flex; }
+    [data-theme="simplefolio"] .sf-about-image { flex: 1; align-items: stretch; }
+    [data-theme="simplefolio"] .sf-about-image .sf-portrait { aspect-ratio: auto; }
     [data-theme="simplefolio"] .sf-about-wrapper > .sf-col-md-6:last-child { flex: 0 0 56%; max-width: 56%; }
   }
   [data-theme="simplefolio"] .sf-about-text { font-size: 18px; line-height: 1.6; }
