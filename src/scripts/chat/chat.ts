@@ -146,6 +146,42 @@ export function initChat(root: HTMLElement) {
     const len = line.replace("{name}", nameEl.textContent ?? "").length;
     title.classList.toggle("sf-hero-title--long", len > 80);
     title.classList.toggle("sf-hero-title--longer", len > 115);
+    fitWelcome();
+  };
+  // The idle headline is a fixed-height box (AskChat's CSS); a line that still overflows it at
+  // the --long/--longer size is stepped down (--sf-hl-fit) until it fits; a line too long for the
+  // box even at the 13px floor (only on the narrowest phones) grows the box to hold it
+  // (--sf-hl-grow) rather than run into the prompt line. Measured on the full
+  // line before it streams in, and again when fonts load, the theme changes or the width changes.
+  // While a line streams in the box holds only part of it, so a refit then waits for the stream
+  // to finish (streamWelcome) rather than measuring the partial text.
+  let streaming = false;
+  const fitWelcome = () => {
+    if (streaming) return;
+    welcome.style.removeProperty("--sf-hl-fit");
+    welcome.style.removeProperty("--sf-hl-grow");
+    if (hero.classList.contains("sf-hero--ask") || welcome.scrollHeight <= welcome.clientHeight + 1) return;
+    // Text area scales with the square of the size: jump close in one step, then trim.
+    let size = parseFloat(getComputedStyle(welcome).fontSize) * Math.sqrt(welcome.clientHeight / welcome.scrollHeight);
+    for (;;) {
+      size = Math.max(13, size);
+      welcome.style.setProperty("--sf-hl-fit", `${size.toFixed(1)}px`);
+      if (welcome.scrollHeight <= welcome.clientHeight + 1) return;
+      if (size === 13) { welcome.style.setProperty("--sf-hl-grow", `${welcome.scrollHeight}px`); return; }
+      size *= 0.95;
+    }
+  };
+  // Height-only resizes (a phone's toolbar showing or hiding while scrolling) can't change the fit.
+  let fitWidth = window.innerWidth;
+  window.addEventListener("resize", () => { if (window.innerWidth !== fitWidth) { fitWidth = window.innerWidth; fitWelcome(); } });
+  document.fonts?.addEventListener?.("loadingdone", fitWelcome);
+  // The headline's font-size is transitioned (breakpoints, the --long/--longer sizes), so a fit
+  // taken mid-transition measured the wrong size: refit once it settles.
+  title.addEventListener("transitionend", (e) => { if (e.target === title && e.propertyName === "font-size") fitWelcome(); });
+  new MutationObserver(fitWelcome).observe(root, { attributes: true, attributeFilter: ["data-skin"] });
+  const streamWelcome = async (type: () => Promise<void>) => {
+    streaming = true;
+    try { await type(); } finally { streaming = false; fitWelcome(); }
   };
   if (welcomes.length) setWelcome(welcomes[Math.floor(Math.random() * welcomes.length)]);
   // Screen readers keep the first welcome; the rotating lines below are decoration.
@@ -157,7 +193,7 @@ export function initChat(root: HTMLElement) {
       const typeWelcome = blank([welcome]);
       root.classList.add("sf-typing-run");
       root.classList.remove("sf-typing");
-      await typeWelcome();
+      await streamWelcome(typeWelcome);
       title.append(heroLine);
       rotate();
     } catch {
@@ -212,7 +248,7 @@ export function initChat(root: HTMLElement) {
       setWelcome(line);
       const typeLine = blank([welcome]);
       welcome.classList.remove("sf-welcome--out");
-      await typeLine();
+      await streamWelcome(typeLine);
     }
   }
 
