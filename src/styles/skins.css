@@ -1,0 +1,457 @@
+/* Site themes ("skins"), one per HQ wallpaper; the list and menu swatches live in
+   src/data/skins.ts. A skin is data-skin on the theme root and works through the roles
+   Simplefolio.astro already reads (--sf-paper ... --sf-accent, --sf-mono), plus its own:
+   --sf-font (body), --sf-head (section titles, hero and bar name), --sf-radius (panels and
+   cards) and the .sf-ambient backdrop. Every skin sets both a dark and a light set; the
+   light selector carries one more attribute, so it wins in light mode whatever the order.
+   Every skin but Default draws the HQ mark in one colour here (Simplefolio's script then
+   leaves the mark and the page accents alone). The fonts are loaded on demand from the
+   Google Fonts query in src/data/skins.ts; until they arrive the fallbacks show. */
+
+/* Shared hooks: fonts, corners and the page chrome colour follow the skin's own roles. */
+[data-theme="simplefolio"][data-skin] .sf-section-title,
+[data-theme="simplefolio"][data-skin] .sf-hero-title,
+[data-theme="simplefolio"][data-skin] .sf-topbar-name,
+[data-theme="simplefolio"][data-skin] .sf-roll-item { font-family: var(--sf-head, inherit); font-size-adjust: cap-height 0.73; }
+/* Diff markers follow the accent pair, and the HQ mark is one colour (--sf-mark, set per mode) */
+[data-theme="simplefolio"][data-skin], [data-theme="simplefolio"][data-skin][data-mode="light"] { --sf-in: var(--sf-accent); --sf-out: var(--sf-primary); }
+[data-theme="simplefolio"][data-skin] .sf-brand { --hq-h: var(--sf-mark); --hq-q: var(--sf-mark); }
+[data-theme="simplefolio"][data-skin] .sf-panel,
+[data-theme="simplefolio"][data-skin] .sf-thumbnail { border-radius: var(--sf-radius, 0); }
+[data-theme="simplefolio"][data-skin] .sf-ambient { -webkit-mask-image: none; mask-image: none; }
+[data-theme="simplefolio"][data-skin] .sf-ambient::before,
+[data-theme="simplefolio"][data-skin] .sf-ambient::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+
+/* Typefaces per skin (loaded on demand, see src/data/skins.ts) */
+[data-theme="simplefolio"][data-skin="neon"] { --sf-head: "Orbitron", "Exo 2", system-ui, sans-serif; --sf-font: "Exo 2", system-ui, sans-serif; }
+[data-theme="simplefolio"][data-skin="pop"] { --sf-head: "Archivo Black", "Work Sans", system-ui, sans-serif; --sf-font: "Work Sans", system-ui, sans-serif; }
+[data-theme="simplefolio"][data-skin="blueprint"] { --sf-head: "Architects Daughter", "IBM Plex Sans", cursive; --sf-font: "IBM Plex Sans", system-ui, sans-serif; --sf-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace; }
+[data-theme="simplefolio"][data-skin="exploded"] { --sf-head: "Space Grotesk", system-ui, sans-serif; --sf-font: "Space Grotesk", system-ui, sans-serif; --sf-mono: "Space Mono", ui-monospace, Menlo, monospace; }
+[data-theme="simplefolio"][data-skin="ascii"] { --sf-head: "VT323", "JetBrains Mono", ui-monospace, monospace; --sf-font: "JetBrains Mono", ui-monospace, Menlo, monospace; --sf-mono: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+[data-theme="simplefolio"][data-skin="halftone"] { --sf-head: "Bangers", Impact, sans-serif; --sf-font: "Comic Neue", "Comic Sans MS", system-ui, sans-serif; }
+[data-theme="simplefolio"][data-skin="swiss"] { --sf-head: "Inter Tight", "Helvetica Neue", Arial, sans-serif; --sf-font: "Inter Tight", "Helvetica Neue", Arial, sans-serif; }
+[data-theme="simplefolio"][data-skin="moire"] { --sf-head: "Syne", system-ui, sans-serif; --sf-font: "Manrope", system-ui, sans-serif; }
+[data-theme="simplefolio"][data-skin="boot"] { --sf-head: "Cormorant Garamond", Georgia, serif; --sf-font: "Nunito Sans", system-ui, sans-serif; }
+[data-theme="simplefolio"][data-skin="aurora"] { --sf-head: "Outfit", system-ui, sans-serif; --sf-font: "Outfit", system-ui, sans-serif; }
+[data-theme="simplefolio"][data-skin="holo"] { --sf-head: "Russo One", "Rubik", system-ui, sans-serif; --sf-font: "Rubik", system-ui, sans-serif; }
+/* Display faces whose cap height or tracking differs from Inter: every skin heading is scaled to
+   Inter's cap height above (so titles keep their size and line breaks), and tracking is loosened
+   for faces that the base -0.045em would crush */
+[data-theme="simplefolio"][data-skin="neon"] :is(.sf-section-title, .sf-hero-title, .sf-topbar-name) { letter-spacing: 0; font-weight: 800; }
+[data-theme="simplefolio"][data-skin="pop"] :is(.sf-section-title, .sf-hero-title, .sf-topbar-name) { letter-spacing: -0.02em; font-weight: 400; }
+[data-theme="simplefolio"][data-skin="blueprint"] :is(.sf-section-title, .sf-hero-title, .sf-topbar-name) { letter-spacing: 0.01em; font-weight: 400; }
+[data-theme="simplefolio"][data-skin="ascii"] :is(.sf-section-title, .sf-hero-title, .sf-topbar-name) { letter-spacing: 0; font-weight: 400; line-height: 1; }
+[data-theme="simplefolio"][data-skin="halftone"] :is(.sf-section-title, .sf-hero-title, .sf-topbar-name) { letter-spacing: 0.03em; font-weight: 400; }
+/* Bangers is condensed and all caps: a taller cap height keeps it as wide as the other titles */
+[data-theme="simplefolio"][data-skin="halftone"] :is(.sf-section-title, .sf-hero-title, .sf-topbar-name, .sf-roll-item) { font-size-adjust: cap-height 0.9; }
+[data-theme="simplefolio"][data-skin="moire"] :is(.sf-section-title, .sf-hero-title, .sf-topbar-name) { letter-spacing: -0.03em; }
+[data-theme="simplefolio"][data-skin="holo"] :is(.sf-section-title, .sf-hero-title, .sf-topbar-name) { letter-spacing: 0; font-weight: 400; }
+
+/* ---------------------------------------------------------------- Neon void */
+[data-theme="simplefolio"][data-skin="neon"] {
+  --sf-paper: #060606; --sf-wash: #140a0b; --sf-display: #0b0707; --sf-rule: #3a1a1d;
+  --sf-ash: #ab9c9c; --sf-graphite: #d6caca; --sf-ink: #FFF1EE;
+  --sf-primary: #FF3B4E; --sf-accent: #F7B500;
+  --sf-dot: rgba(255, 59, 78, 0.16);
+  --sf-glass: rgba(10, 6, 7, 0.72); --sf-glass-strong: rgba(20, 10, 11, 0.86);
+}
+[data-theme="simplefolio"][data-skin="neon"][data-mode="light"] {
+  --sf-paper: #FBF6F2; --sf-wash: #F2E7E2; --sf-display: #FFFDFB; --sf-rule: #E5CFC9;
+  --sf-ash: #6e5855; --sf-graphite: #4a3634; --sf-ink: #1a0d0c;
+  --sf-primary: #B00016; --sf-accent: #9A6A00;
+  --sf-dot: rgba(176, 0, 22, 0.14);
+  --sf-glass: rgba(251, 246, 242, 0.72); --sf-glass-strong: rgba(255, 252, 250, 0.88);
+}
+[data-theme="simplefolio"][data-skin="neon"] { --sf-mark: #FF2E44; }
+[data-theme="simplefolio"][data-skin="neon"][data-mode="light"] { --sf-mark: #B00016; }
+[data-theme="simplefolio"][data-skin="neon"] .sf-ambient {
+  background:
+    radial-gradient(40% 45% at 20% 70%, color-mix(in srgb, var(--sf-primary) 18%, transparent), transparent 70%),
+    radial-gradient(38% 40% at 82% 22%, color-mix(in srgb, var(--sf-accent) 13%, transparent), transparent 70%);
+}
+/* The neon floor: a grid laid back in perspective along the bottom of the screen */
+[data-theme="simplefolio"][data-skin="neon"] .sf-ambient::before {
+  inset: auto -60% 0 -60%; height: 42%;
+  background-image: linear-gradient(color-mix(in srgb, var(--sf-primary) 40%, transparent) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, color-mix(in srgb, var(--sf-primary) 40%, transparent) 1.5px, transparent 1.5px);
+  background-size: 64px 64px; transform: perspective(380px) rotateX(62deg); transform-origin: bottom;
+  -webkit-mask-image: linear-gradient(transparent, #000 75%); mask-image: linear-gradient(transparent, #000 75%);
+}
+[data-theme="simplefolio"][data-skin="neon"] .sf-panel,
+[data-theme="simplefolio"][data-skin="neon"] .sf-thumbnail {
+  border-color: color-mix(in srgb, var(--sf-primary) 30%, var(--sf-rule));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--sf-primary) 25%, transparent), 0 0 40px -12px color-mix(in srgb, var(--sf-primary) 35%, transparent);
+}
+[data-theme="simplefolio"][data-skin="neon"] .sf-section-title { text-shadow: 0 0 24px color-mix(in srgb, var(--sf-primary) 45%, transparent); }
+[data-theme="simplefolio"][data-skin="neon"][data-mode="light"] .sf-section-title { text-shadow: none; }
+
+/* ---------------------------------------------------------------- Palette pop */
+/* Panels and tiles take the magenta and blue of the mark's palettes. */
+[data-theme="simplefolio"][data-skin="pop"] {
+  --sf-primary: #FF3DAE; --sf-accent: #4C9BFF;
+  --sf-paper: #0E0E10; --sf-wash: #18181c; --sf-display: #121215; --sf-rule: #2c2c33;
+  --sf-ash: #a9a9b3; --sf-graphite: #d0d0d8; --sf-ink: #F5F5F7;
+  --sf-dot: rgba(255, 255, 255, 0.1);
+  --sf-glass: rgba(14, 14, 16, 0.74); --sf-glass-strong: rgba(24, 24, 28, 0.86);
+  --sf-pop: 0.08;
+}
+[data-theme="simplefolio"][data-skin="pop"][data-mode="light"] {
+  --sf-primary: #A60468; --sf-accent: #1F4FA8;
+  --sf-paper: #F4F4F1; --sf-wash: #E8E8E3; --sf-display: #FBFBF8; --sf-rule: #CFCFC8;
+  --sf-ash: #5f5f5a; --sf-graphite: #3d3d39; --sf-ink: #121211;
+  --sf-dot: rgba(0, 0, 0, 0.1);
+  --sf-glass: rgba(244, 244, 241, 0.74); --sf-glass-strong: rgba(251, 251, 248, 0.88);
+  --sf-pop: 0.11;
+}
+/* Eight tinted tiles, one per palette, like the wallpaper's grid */
+[data-theme="simplefolio"][data-skin="pop"] .sf-ambient::before {
+  inset: 0 0 50% 0; opacity: calc(var(--sf-pop) * 10);
+  background: linear-gradient(90deg, #8881 0 25%, #3587C71a 25% 50%, #C48A7C1a 50% 75%, #E3001B1a 75%);
+}
+[data-theme="simplefolio"][data-skin="pop"] .sf-ambient::after {
+  inset: 50% 0 0 0; opacity: calc(var(--sf-pop) * 10);
+  background: linear-gradient(90deg, #1F6FD01a 0 25%, #F04E231a 25% 50%, #329A6D1a 50% 75%, #F7B5001a 75%);
+}
+[data-theme="simplefolio"][data-skin="pop"] { --sf-mark: #E0068C; }
+[data-theme="simplefolio"][data-skin="pop"][data-mode="light"] { --sf-mark: #A60468; }
+[data-theme="simplefolio"][data-skin="pop"] .sf-panel,
+[data-theme="simplefolio"][data-skin="pop"] .sf-thumbnail {
+  background: var(--sf-sheen), linear-gradient(color-mix(in srgb, var(--sf-accent) 7%, transparent), color-mix(in srgb, var(--sf-primary) 5%, transparent)), var(--sf-glass);
+  border-color: color-mix(in srgb, var(--sf-accent) 40%, var(--sf-rule));
+}
+[data-theme="simplefolio"][data-skin="pop"] .sf-section-title::before { color: var(--sf-accent); }
+
+/* ---------------------------------------------------------------- Blueprint */
+[data-theme="simplefolio"][data-skin="blueprint"] {
+  --sf-paper: #0E3A6B; --sf-wash: #134680; --sf-display: #0C335F; --sf-rule: #4C729C;
+  --sf-ash: #A9C3E0; --sf-graphite: #D3E3F5; --sf-ink: #F2F8FF;
+  --sf-primary: #9FD0FF; --sf-accent: #FFD36B;
+  --sf-dot: rgba(220, 235, 255, 0.1); --sf-line: rgba(220, 235, 255, 0.07); --sf-line-major: rgba(220, 235, 255, 0.15);
+  --sf-glass: rgba(14, 58, 107, 0.8); --sf-glass-strong: rgba(19, 70, 128, 0.92);
+}
+[data-theme="simplefolio"][data-skin="blueprint"][data-mode="light"] {
+  --sf-paper: #F7FAFE; --sf-wash: #EAF1FA; --sf-display: #FFFFFF; --sf-rule: #A9C1DD;
+  --sf-ash: #4F6A8A; --sf-graphite: #2C4766; --sf-ink: #0B2545;
+  --sf-primary: #1554A0; --sf-accent: #B5470F;
+  --sf-dot: rgba(21, 84, 160, 0.12); --sf-line: rgba(21, 84, 160, 0.08); --sf-line-major: rgba(21, 84, 160, 0.17);
+  --sf-glass: rgba(247, 250, 254, 0.82); --sf-glass-strong: rgba(255, 255, 255, 0.92);
+}
+[data-theme="simplefolio"][data-skin="blueprint"] { --sf-mark: #DCEBFF; }
+[data-theme="simplefolio"][data-skin="blueprint"][data-mode="light"] { --sf-mark: #0E3A6B; }
+[data-theme="simplefolio"][data-skin="blueprint"] .sf-ambient {
+  background-image: linear-gradient(var(--sf-line) 1px, transparent 1px), linear-gradient(90deg, var(--sf-line) 1px, transparent 1px),
+    linear-gradient(var(--sf-line-major) 1px, transparent 1px), linear-gradient(90deg, var(--sf-line-major) 1px, transparent 1px);
+  background-size: 22px 22px, 22px 22px, 110px 110px, 110px 110px;
+}
+[data-theme="simplefolio"][data-skin="blueprint"] .sf-panel,
+[data-theme="simplefolio"][data-skin="blueprint"] .sf-thumbnail { box-shadow: none; border-color: var(--sf-rule); }
+[data-theme="simplefolio"][data-skin="blueprint"] .sf-section-title { text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; }
+[data-theme="simplefolio"][data-skin="blueprint"] .sf-section-title::before { content: "DWG " counter(sf-sec, decimal-leading-zero); color: var(--sf-accent); }
+
+/* ---------------------------------------------------------------- Exploded view */
+[data-theme="simplefolio"][data-skin="exploded"] {
+  --sf-paper: #131313; --sf-wash: #1b1b1b; --sf-display: #161616; --sf-rule: #363636;
+  --sf-ash: #9a9a9a; --sf-graphite: #d2d2d2; --sf-ink: #EDEDED;
+  --sf-primary: #FF3B4E; --sf-accent: #F7B500;
+  --sf-dot: rgba(255, 255, 255, 0.12);
+  --sf-glass: rgba(19, 19, 19, 0.8); --sf-glass-strong: rgba(27, 27, 27, 0.9);
+}
+[data-theme="simplefolio"][data-skin="exploded"][data-mode="light"] {
+  --sf-paper: #E6E6E3; --sf-wash: #DADAD6; --sf-display: #EFEFEC; --sf-rule: #B5B5AF;
+  --sf-ash: #5b5b56; --sf-graphite: #383834; --sf-ink: #111110;
+  --sf-primary: #C8001A; --sf-accent: #D35400;
+  --sf-dot: rgba(0, 0, 0, 0.14);
+  --sf-glass: rgba(230, 230, 227, 0.8); --sf-glass-strong: rgba(239, 239, 236, 0.9);
+}
+[data-theme="simplefolio"][data-skin="exploded"] { --sf-mark: #F7B500; }
+[data-theme="simplefolio"][data-skin="exploded"][data-mode="light"] { --sf-mark: #C26A00; }
+[data-theme="simplefolio"][data-skin="exploded"] .sf-ambient {
+  background-image: radial-gradient(var(--sf-dot) 1.2px, transparent 1.5px);
+  background-size: 28px 28px;
+}
+[data-theme="simplefolio"][data-skin="exploded"] .sf-panel,
+[data-theme="simplefolio"][data-skin="exploded"] .sf-thumbnail {
+  border: 1px dashed color-mix(in srgb, var(--sf-ink) 32%, transparent); box-shadow: none;
+}
+[data-theme="simplefolio"][data-skin="exploded"] .sf-section-title::before { content: "PART " counter(sf-sec, decimal-leading-zero); color: var(--sf-primary); }
+
+/* ---------------------------------------------------------------- ASCII terminal */
+[data-theme="simplefolio"][data-skin="ascii"] {
+  --sf-paper: #030703; --sf-wash: #071207; --sf-display: #050C05; --sf-rule: #1D4D24;
+  --sf-ash: #55C565; --sf-graphite: #9DFFA9; --sf-ink: #D6FFD6;
+  --sf-primary: #7CFF8A; --sf-accent: #39FF5A;
+  --sf-dot: rgba(77, 255, 106, 0.08);
+  --sf-glass: rgba(3, 9, 3, 0.86); --sf-glass-strong: rgba(7, 18, 7, 0.92);
+  --sf-scan: rgba(0, 0, 0, 0.32); --sf-glow: 0 0 6px rgba(77, 255, 106, 0.35);
+  --sf-shot-filter: grayscale(1) sepia(1) hue-rotate(70deg) saturate(2.6) brightness(0.85);
+}
+[data-theme="simplefolio"][data-skin="ascii"][data-mode="light"] {
+  --sf-paper: #F3F1E7; --sf-wash: #E8E5D8; --sf-display: #F9F8F2; --sf-rule: #B5C6B1;
+  --sf-ash: #4A6B4F; --sf-graphite: #23472A; --sf-ink: #0D2A12;
+  --sf-primary: #1D6B2B; --sf-accent: #12802A;
+  --sf-dot: rgba(29, 107, 43, 0.1);
+  --sf-glass: rgba(243, 241, 231, 0.86); --sf-glass-strong: rgba(249, 248, 242, 0.92);
+  --sf-scan: rgba(13, 42, 18, 0.05); --sf-glow: none;
+  --sf-shot-filter: grayscale(1) sepia(0.5) hue-rotate(60deg);
+}
+[data-theme="simplefolio"][data-skin="ascii"] { text-shadow: var(--sf-glow); }
+[data-theme="simplefolio"][data-skin="ascii"] { --sf-mark: #4DFF6A; }
+[data-theme="simplefolio"][data-skin="ascii"][data-mode="light"] { --sf-mark: #1D6B2B; }
+[data-theme="simplefolio"][data-skin="ascii"] .sf-ambient { background: radial-gradient(ellipse at center, color-mix(in srgb, var(--sf-accent) 7%, transparent), transparent 75%); }
+/* Scanlines over everything, like the CRT in the wallpaper */
+[data-theme="simplefolio"][data-skin="ascii"]::after {
+  content: ""; position: fixed; inset: 0; z-index: 60; pointer-events: none;
+  background: repeating-linear-gradient(transparent 0 2px, var(--sf-scan) 2px 3px);
+}
+[data-theme="simplefolio"][data-skin="ascii"] .sf-panel,
+[data-theme="simplefolio"][data-skin="ascii"] .sf-thumbnail { box-shadow: none; }
+[data-theme="simplefolio"][data-skin="ascii"] .sf-section-title { letter-spacing: -0.03em; }
+[data-theme="simplefolio"][data-skin="ascii"] .sf-section-title::before { content: "$ cd ~/" counter(sf-sec, decimal-leading-zero); color: var(--sf-accent); }
+[data-theme="simplefolio"][data-skin="ascii"] .sf-shot img,
+[data-theme="simplefolio"][data-skin="ascii"] .sf-browser img { filter: var(--sf-shot-filter); }
+
+/* ---------------------------------------------------------------- Halftone print */
+[data-theme="simplefolio"][data-skin="halftone"] {
+  --sf-paper: #0B0B0B; --sf-wash: #161616; --sf-display: #101010; --sf-rule: #444444;
+  --sf-ash: #a8a8a8; --sf-graphite: #dcdcdc; --sf-ink: #FFFFFF;
+  --sf-primary: #FF3B55; --sf-accent: #FFC21A;
+  --sf-dot: rgba(255, 31, 61, 0.34);
+  --sf-glass: #111111; --sf-glass-strong: #181818;
+}
+[data-theme="simplefolio"][data-skin="halftone"][data-mode="light"] {
+  --sf-paper: #F4EFE2; --sf-wash: #EAE3D2; --sf-display: #FBF8F0; --sf-rule: #8A8475;
+  --sf-ash: #555046; --sf-graphite: #2a2721; --sf-ink: #111111;
+  --sf-primary: #D6001C; --sf-accent: #B57E00;
+  --sf-dot: rgba(214, 0, 28, 0.22);
+  --sf-glass: #FBF8F0; --sf-glass-strong: #FFFFFF;
+}
+[data-theme="simplefolio"][data-skin="halftone"] { --sf-mark: #FF1F3D; }
+[data-theme="simplefolio"][data-skin="halftone"][data-mode="light"] { --sf-mark: #C8001A; }
+/* A dot screen that grows from nothing at the top left to full dots at the bottom right */
+[data-theme="simplefolio"][data-skin="halftone"] .sf-ambient {
+  background-image: radial-gradient(var(--sf-dot) 30%, transparent 32%);
+  background-size: 12px 12px;
+  -webkit-mask-image: linear-gradient(135deg, transparent 25%, #000 100%); mask-image: linear-gradient(135deg, transparent 25%, #000 100%);
+}
+[data-theme="simplefolio"][data-skin="halftone"] .sf-panel,
+[data-theme="simplefolio"][data-skin="halftone"] .sf-thumbnail {
+  background: var(--sf-glass); border: 2px solid var(--sf-ink); box-shadow: 7px 7px 0 var(--sf-primary);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+[data-theme="simplefolio"][data-skin="halftone"] .sf-section-title { font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; }
+
+/* ---------------------------------------------------------------- Swiss poster */
+/* Dark mode is the poster's red field: white type and black chips on red, and every surface (cards,
+   the site dialog, the theme menu, the chat prompt) is a solid slab, black in dark mode and white in light, with its
+   own colour roles (the aliases are re-derived there, as they resolve where they are declared) */
+[data-theme="simplefolio"][data-skin="swiss"] {
+  --sf-paper: #E3001B; --sf-wash: #C90018; --sf-display: #111111; --sf-rule: rgba(17, 17, 17, 0.4);
+  --sf-ash: #FFD6DA; --sf-graphite: #FFFFFF; --sf-ink: #FFFFFF;
+  --sf-primary: #111111; --sf-accent: #111111; --sf-in: #FFFFFF; --sf-out: #111111;
+  --sf-dot: transparent;
+  --sf-glass: #111111; --sf-glass-strong: #111111;
+}
+/* Light mode is the poster inverted: paper white ground, red headlines, mark and rules, black text */
+[data-theme="simplefolio"][data-skin="swiss"][data-mode="light"] {
+  --sf-paper: #F4F2ED; --sf-wash: #E9E6DF; --sf-display: #FFFFFF; --sf-rule: #CDC8BE;
+  --sf-ash: #5E5A54; --sf-graphite: #2B2926; --sf-ink: #0D0D0D;
+  --sf-primary: #E3001B; --sf-accent: #E3001B;
+  --sf-dot: transparent;
+  --sf-glass: #FFFFFF; --sf-glass-strong: #FFFFFF;
+}
+[data-theme="simplefolio"][data-skin="swiss"] :is(.sf-panel, .sf-thumbnail, .sf-browser, .sf-skins, .sf-ask-form) {
+  --sf-paper: #111111; --sf-wash: #1F1F1F; --sf-display: #161616; --sf-rule: #333333;
+  --sf-ash: #B0B0B0; --sf-graphite: #E8E8E8; --sf-ink: #FFFFFF;
+  --sf-primary: #FF3347; --sf-accent: #FF3347;
+  --sf-glass: #111111; --sf-glass-strong: #1A1A1A;
+  --sf-secondary: var(--sf-primary); --sf-gradient: linear-gradient(var(--sf-accent), var(--sf-accent));
+  --sf-on-accent: var(--sf-paper); --sf-bg: var(--sf-paper); --sf-text: var(--sf-graphite); --sf-muted: var(--sf-ash);
+  --sf-glass-border: var(--sf-rule); --sf-tag: color-mix(in srgb, var(--sf-accent) 16%, transparent); --sf-tag-ink: var(--sf-accent);
+  --sf-in: var(--sf-accent); --sf-out: var(--sf-primary);
+}
+[data-theme="simplefolio"][data-skin="swiss"][data-mode="light"] :is(.sf-panel, .sf-thumbnail, .sf-browser, .sf-skins, .sf-ask-form) {
+  --sf-paper: #FFFFFF; --sf-wash: #F0F0F0; --sf-display: #F7F7F7; --sf-rule: #D4D4D4;
+  --sf-ash: #5A5A5A; --sf-graphite: #222222; --sf-ink: #0D0D0D;
+  --sf-primary: #E3001B; --sf-accent: #E3001B;
+  --sf-glass: #FFFFFF; --sf-glass-strong: #FFFFFF;
+}
+[data-theme="simplefolio"][data-skin="swiss"] { --sf-mark: #FFFFFF; }
+[data-theme="simplefolio"][data-skin="swiss"][data-mode="light"] { --sf-mark: #E3001B; }
+[data-theme="simplefolio"][data-skin="swiss"] .sf-panel,
+[data-theme="simplefolio"][data-skin="swiss"] .sf-thumbnail {
+  background: var(--sf-glass); border: 0; border-top: 6px solid #FFFFFF; box-shadow: none;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+[data-theme="simplefolio"][data-skin="swiss"][data-mode="light"] :is(.sf-panel, .sf-thumbnail) { border-top-color: #E3001B; }
+[data-theme="simplefolio"][data-skin="swiss"][data-mode="light"] :is(.sf-hero-title, .sf-section-title) { color: #E3001B !important; }
+[data-theme="simplefolio"][data-skin="swiss"][data-mode="light"] .sf-hero-name { color: #111111; }
+/* Black on the red field is for large type only (the hero name, chips, buttons); small accent
+   text there turns white to stay readable */
+[data-theme="simplefolio"][data-skin="swiss"]:not([data-mode="light"]) :is(.sf-project-meta .sf-grad, .sf-cta--link, .sf-roll-item b):not(:is(.sf-panel, .sf-thumbnail, .sf-browser) *) { color: #FFFFFF; }
+/* GitHub heatmap as poster print: square cells and a heavy rule, one ink ramping up from an empty
+   outlined square (white on the red field, red on the light ground) */
+[data-theme="simplefolio"][data-skin="swiss"] .sf-gh { border-top: 3px solid #111111; }
+[data-theme="simplefolio"][data-skin="swiss"] .sf-gh i { border-radius: 0; background: transparent; outline: 1px solid rgba(255, 255, 255, 0.28); outline-offset: -1px; }
+[data-theme="simplefolio"][data-skin="swiss"] .sf-gh i[data-level="1"] { background: rgba(255, 255, 255, 0.32); outline: 0; }
+[data-theme="simplefolio"][data-skin="swiss"] .sf-gh i[data-level="2"] { background: rgba(255, 255, 255, 0.58); outline: 0; }
+[data-theme="simplefolio"][data-skin="swiss"] .sf-gh i[data-level="3"] { background: rgba(255, 255, 255, 0.82); outline: 0; }
+[data-theme="simplefolio"][data-skin="swiss"] .sf-gh i[data-level="4"] { background: #FFFFFF; outline: 0; }
+[data-theme="simplefolio"][data-skin="swiss"][data-mode="light"] .sf-gh i { outline-color: rgba(17, 17, 17, 0.16); }
+[data-theme="simplefolio"][data-skin="swiss"][data-mode="light"] .sf-gh i[data-level="1"] { background: rgba(227, 0, 27, 0.25); }
+[data-theme="simplefolio"][data-skin="swiss"][data-mode="light"] .sf-gh i[data-level="2"] { background: rgba(227, 0, 27, 0.5); }
+[data-theme="simplefolio"][data-skin="swiss"][data-mode="light"] .sf-gh i[data-level="3"] { background: rgba(227, 0, 27, 0.75); }
+[data-theme="simplefolio"][data-skin="swiss"][data-mode="light"] .sf-gh i[data-level="4"] { background: #E3001B; }
+[data-theme="simplefolio"][data-skin="swiss"] .sf-section-title { font-weight: 800; letter-spacing: -0.055em; }
+[data-theme="simplefolio"][data-skin="swiss"] .sf-section-title::before {
+  display: inline-block; padding: 4px 8px; background: #111111; color: #FFFFFF; font-family: var(--sf-font); font-weight: 700; letter-spacing: 0.02em;
+}
+
+/* ---------------------------------------------------------------- Moiré rings */
+[data-theme="simplefolio"][data-skin="moire"] {
+  --sf-paper: #070707; --sf-wash: #131313; --sf-display: #0d0d0d; --sf-rule: #322b26;
+  --sf-ash: #a89e97; --sf-graphite: #d6cec8; --sf-ink: #FFF6EE;
+  --sf-primary: #FF3B4E; --sf-accent: #F7B500;
+  --sf-ring-a: rgba(227, 0, 27, 0.32); --sf-ring-b: rgba(247, 181, 0, 0.26); --sf-ring-blend: screen;
+  --sf-glass: rgba(7, 7, 7, 0.86); --sf-glass-strong: rgba(15, 15, 15, 0.92);
+}
+[data-theme="simplefolio"][data-skin="moire"][data-mode="light"] {
+  --sf-paper: #FAF7F2; --sf-wash: #F0EBE3; --sf-display: #FFFFFF; --sf-rule: #DCD2C6;
+  --sf-ash: #6a5f57; --sf-graphite: #3f3630; --sf-ink: #160f0b;
+  --sf-primary: #B00016; --sf-accent: #9A6A00;
+  --sf-ring-a: rgba(227, 0, 27, 0.2); --sf-ring-b: rgba(247, 181, 0, 0.3); --sf-ring-blend: multiply;
+  --sf-glass: rgba(250, 247, 242, 0.88); --sf-glass-strong: rgba(255, 255, 255, 0.94);
+}
+[data-theme="simplefolio"][data-skin="moire"] { --sf-mark: #F7B500; }
+[data-theme="simplefolio"][data-skin="moire"][data-mode="light"] { --sf-mark: #B00016; }
+[data-theme="simplefolio"][data-skin="moire"] .sf-ambient::before {
+  background: repeating-radial-gradient(circle at 42% 48%, var(--sf-ring-a) 0 1.6px, transparent 1.6px 9px); mix-blend-mode: var(--sf-ring-blend);
+}
+[data-theme="simplefolio"][data-skin="moire"] .sf-ambient::after {
+  background: repeating-radial-gradient(circle at 58% 44%, var(--sf-ring-b) 0 1.6px, transparent 1.6px 9px); mix-blend-mode: var(--sf-ring-blend);
+}
+[data-theme="simplefolio"][data-skin="moire"] .sf-panel,
+[data-theme="simplefolio"][data-skin="moire"] .sf-thumbnail {
+  background: var(--sf-sheen), var(--sf-glass-strong); -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+
+/* ---------------------------------------------------------------- Boot screen */
+[data-theme="simplefolio"][data-skin="boot"] {
+  --sf-paper: #000000; --sf-wash: #0d0d0d; --sf-display: #060606; --sf-rule: #262626;
+  --sf-ash: #8f8f8f; --sf-graphite: #d0d0d0; --sf-ink: #F2F2F2;
+  --sf-primary: #FF4757; --sf-accent: #2FC7BC;
+  --sf-dot: transparent;
+  --sf-glass: rgba(0, 0, 0, 0.78); --sf-glass-strong: rgba(13, 13, 13, 0.9);
+  --sf-radius: 2px;
+}
+[data-theme="simplefolio"][data-skin="boot"][data-mode="light"] {
+  /* The grey of the console's case */
+  --sf-paper: #CFCFD3; --sf-wash: #C2C2C7; --sf-display: #DADADE; --sf-rule: #A3A3AA;
+  --sf-ash: #4d4d55; --sf-graphite: #2b2b31; --sf-ink: #0E0E12;
+  --sf-primary: #B3001A; --sf-accent: #007D74;
+  --sf-glass: rgba(207, 207, 211, 0.78); --sf-glass-strong: rgba(218, 218, 222, 0.9);
+}
+[data-theme="simplefolio"][data-skin="boot"] { --sf-mark: #E3001B; }
+[data-theme="simplefolio"][data-skin="boot"][data-mode="light"] { --sf-mark: #A80014; }
+[data-theme="simplefolio"][data-skin="boot"] .sf-ambient { background: radial-gradient(70% 55% at 50% 30%, color-mix(in srgb, var(--sf-ink) 7%, transparent), transparent 70%); }
+[data-theme="simplefolio"][data-skin="boot"] .sf-section-title,
+[data-theme="simplefolio"][data-skin="boot"] .sf-topbar-name { font-style: italic; font-weight: 600; letter-spacing: 0.01em; }
+[data-theme="simplefolio"][data-skin="boot"] .sf-section-title::before { font-style: normal; letter-spacing: 0.3em; }
+
+/* ---------------------------------------------------------------- Aurora mesh */
+[data-theme="simplefolio"][data-skin="aurora"] {
+  --sf-paper: #07070C; --sf-wash: #111119; --sf-display: #0b0b12; --sf-rule: #2c2c3d;
+  --sf-ash: #a9a9c0; --sf-graphite: #d8d8e8; --sf-ink: #F6F6FB;
+  --sf-primary: #6BB0FF; --sf-accent: #FF5FA2;
+  --sf-dot: transparent; --sf-blob: 0.38;
+  --sf-glass: rgba(10, 10, 16, 0.55); --sf-glass-strong: rgba(17, 17, 25, 0.72);
+  --sf-radius: 18px;
+}
+[data-theme="simplefolio"][data-skin="aurora"][data-mode="light"] {
+  --sf-paper: #F7F7FB; --sf-wash: #ECECF4; --sf-display: #FFFFFF; --sf-rule: #D6D6E4;
+  --sf-ash: #5d5d75; --sf-graphite: #383850; --sf-ink: #14141C;
+  --sf-primary: #1F5FBF; --sf-accent: #C2185B;
+  --sf-blob: 0.3;
+  --sf-glass: rgba(255, 255, 255, 0.55); --sf-glass-strong: rgba(255, 255, 255, 0.75);
+}
+[data-theme="simplefolio"][data-skin="aurora"] { --sf-mark: #F6F6F6; }
+[data-theme="simplefolio"][data-skin="aurora"][data-mode="light"] { --sf-mark: #1A1A24; }
+[data-theme="simplefolio"][data-skin="aurora"] .sf-ambient {
+  opacity: calc(var(--sf-blob) * 2.6);
+  background:
+    radial-gradient(45% 50% at 18% 25%, rgba(53, 135, 199, 0.5), transparent 70%),
+    radial-gradient(40% 45% at 82% 20%, rgba(50, 154, 109, 0.45), transparent 70%),
+    radial-gradient(45% 50% at 70% 82%, rgba(227, 0, 27, 0.42), transparent 70%),
+    radial-gradient(38% 45% at 22% 85%, rgba(247, 181, 0, 0.4), transparent 70%),
+    radial-gradient(28% 30% at 50% 50%, rgba(224, 6, 140, 0.35), transparent 70%);
+}
+[data-theme="simplefolio"][data-skin="aurora"] .sf-panel,
+[data-theme="simplefolio"][data-skin="aurora"] .sf-thumbnail {
+  border-color: color-mix(in srgb, var(--sf-ink) 12%, transparent);
+  -webkit-backdrop-filter: blur(32px) saturate(180%); backdrop-filter: blur(32px) saturate(180%);
+}
+[data-theme="simplefolio"][data-skin="aurora"] .sf-mode,
+[data-theme="simplefolio"][data-skin="aurora"] .sf-cta { border-radius: 12px; }
+
+/* ---------------------------------------------------------------- Holo card */
+[data-theme="simplefolio"][data-skin="holo"] {
+  --sf-paper: #07060C; --sf-wash: #12101C; --sf-display: #0c0a14; --sf-rule: #2c2840;
+  --sf-ash: #aba5c4; --sf-graphite: #dad5ec; --sf-ink: #F7F4FF;
+  --sf-primary: #FF9AD5; --sf-accent: #9AD5FF;
+  --sf-dot: transparent;
+  --sf-glass: rgba(13, 11, 20, 0.94); --sf-glass-strong: rgba(18, 16, 28, 0.96);
+  --sf-foil: conic-gradient(from 210deg, #FF9AD5, #9AD5FF, #B6FFB0, #FFE59A, #FF9AD5, #C7A3FF, #FF9AD5);
+  --sf-radius: 16px;
+}
+[data-theme="simplefolio"][data-skin="holo"][data-mode="light"] {
+  --sf-paper: #F6F3FA; --sf-wash: #ECE6F5; --sf-display: #FFFFFF; --sf-rule: #D6CDE6;
+  --sf-ash: #625a78; --sf-graphite: #3a334f; --sf-ink: #15111F;
+  --sf-primary: #9B1F78; --sf-accent: #0A6FA8;
+  --sf-glass: rgba(255, 255, 255, 0.95); --sf-glass-strong: rgba(255, 255, 255, 0.97);
+}
+[data-theme="simplefolio"][data-skin="holo"] { --sf-mark: #FF9AD5; }
+[data-theme="simplefolio"][data-skin="holo"][data-mode="light"] { --sf-mark: #9B1F78; }
+[data-theme="simplefolio"][data-skin="holo"] .sf-ambient {
+  background: radial-gradient(60% 50% at 50% 35%, color-mix(in srgb, #8A6BFF 18%, transparent), transparent 70%);
+}
+[data-theme="simplefolio"][data-skin="holo"] .sf-ambient::before { background: var(--sf-foil); opacity: 0.07; }
+/* Foil edges: the card face sits on the padding box, the foil shows through the border */
+[data-theme="simplefolio"][data-skin="holo"] .sf-panel,
+[data-theme="simplefolio"][data-skin="holo"] .sf-thumbnail {
+  border: 2px solid transparent;
+  background: linear-gradient(var(--sf-glass), var(--sf-glass)) padding-box, var(--sf-foil) border-box;
+  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.6);
+}
+[data-theme="simplefolio"][data-skin="holo"] .sf-mode,
+[data-theme="simplefolio"][data-skin="holo"] .sf-cta { border-radius: 10px; }
+[data-theme="simplefolio"][data-skin="holo"] .sf-section-title { background: var(--sf-foil); -webkit-background-clip: text; background-clip: text; color: transparent; }
+[data-theme="simplefolio"][data-skin="holo"][data-mode="light"] .sf-section-title { background: none; color: var(--sf-ink); }
+
+/* The page behind the root (overscroll, scrollbar) follows the skin's paper */
+html:has([data-theme="simplefolio"][data-skin="neon"]), html:has([data-theme="simplefolio"][data-skin="neon"]) body { background: #060606; }
+html:has([data-theme="simplefolio"][data-skin="pop"]), html:has([data-theme="simplefolio"][data-skin="pop"]) body { background: #0E0E10; }
+html:has([data-theme="simplefolio"][data-skin="blueprint"]), html:has([data-theme="simplefolio"][data-skin="blueprint"]) body { background: #0E3A6B; }
+html:has([data-theme="simplefolio"][data-skin="exploded"]), html:has([data-theme="simplefolio"][data-skin="exploded"]) body { background: #131313; }
+html:has([data-theme="simplefolio"][data-skin="ascii"]), html:has([data-theme="simplefolio"][data-skin="ascii"]) body { background: #030703; }
+html:has([data-theme="simplefolio"][data-skin="halftone"]), html:has([data-theme="simplefolio"][data-skin="halftone"]) body { background: #0B0B0B; }
+html:has([data-theme="simplefolio"][data-skin="swiss"]), html:has([data-theme="simplefolio"][data-skin="swiss"]) body { background: #E3001B; }
+html:has([data-theme="simplefolio"][data-skin="moire"]), html:has([data-theme="simplefolio"][data-skin="moire"]) body { background: #070707; }
+html:has([data-theme="simplefolio"][data-skin="boot"]), html:has([data-theme="simplefolio"][data-skin="boot"]) body { background: #000000; }
+html:has([data-theme="simplefolio"][data-skin="aurora"]), html:has([data-theme="simplefolio"][data-skin="aurora"]) body { background: #07070C; }
+html:has([data-theme="simplefolio"][data-skin="holo"]), html:has([data-theme="simplefolio"][data-skin="holo"]) body { background: #07060C; }
+html:has([data-theme="simplefolio"][data-skin="neon"][data-mode="light"]), html:has([data-theme="simplefolio"][data-skin="neon"][data-mode="light"]) body { background: #FBF6F2; }
+html:has([data-theme="simplefolio"][data-skin="pop"][data-mode="light"]), html:has([data-theme="simplefolio"][data-skin="pop"][data-mode="light"]) body { background: #F4F4F1; }
+html:has([data-theme="simplefolio"][data-skin="blueprint"][data-mode="light"]), html:has([data-theme="simplefolio"][data-skin="blueprint"][data-mode="light"]) body { background: #F7FAFE; }
+html:has([data-theme="simplefolio"][data-skin="exploded"][data-mode="light"]), html:has([data-theme="simplefolio"][data-skin="exploded"][data-mode="light"]) body { background: #E6E6E3; }
+html:has([data-theme="simplefolio"][data-skin="ascii"][data-mode="light"]), html:has([data-theme="simplefolio"][data-skin="ascii"][data-mode="light"]) body { background: #F3F1E7; }
+html:has([data-theme="simplefolio"][data-skin="halftone"][data-mode="light"]), html:has([data-theme="simplefolio"][data-skin="halftone"][data-mode="light"]) body { background: #F4EFE2; }
+html:has([data-theme="simplefolio"][data-skin="swiss"][data-mode="light"]), html:has([data-theme="simplefolio"][data-skin="swiss"][data-mode="light"]) body { background: #F4F2ED; }
+html:has([data-theme="simplefolio"][data-skin="moire"][data-mode="light"]), html:has([data-theme="simplefolio"][data-skin="moire"][data-mode="light"]) body { background: #FAF7F2; }
+html:has([data-theme="simplefolio"][data-skin="boot"][data-mode="light"]), html:has([data-theme="simplefolio"][data-skin="boot"][data-mode="light"]) body { background: #CFCFD3; }
+html:has([data-theme="simplefolio"][data-skin="aurora"][data-mode="light"]), html:has([data-theme="simplefolio"][data-skin="aurora"][data-mode="light"]) body { background: #F7F7FB; }
+html:has([data-theme="simplefolio"][data-skin="holo"][data-mode="light"]), html:has([data-theme="simplefolio"][data-skin="holo"][data-mode="light"]) body { background: #F6F3FA; }
+
+/* Printing is always the plain résumé: no scanlines, glow or backdrop */
+@media print {
+  [data-theme="simplefolio"][data-skin]::after { display: none !important; }
+  [data-theme="simplefolio"][data-skin] { text-shadow: none !important; }
+}
