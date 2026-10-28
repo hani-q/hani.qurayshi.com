@@ -5,7 +5,7 @@ export const products = [
     id: "sf-proj-flowsense",
     name: "FlowSense.AI",
     kicker: "ArkaType Intelligence · macOS",
-    tagline: "Agentic cyber intelligence. Every flow, identified in real time.",
+    tagline: "Agentic Cyber Intelligence. Every flow, identified in real time.",
     when: "Launching 2026",
     where: "macOS app by ArkaType Intelligence",
     site: { label: "getflowsense.com", image: "/sites/flowsense.jpg", tag: "launching soon" },

@@ -9,7 +9,7 @@ interface Props {
 
 const {
   title,
-  description = `Founder of ArkaType Intelligence, building agentic cyber intelligence. ${resume.yearsOfExperience}+ years in Network Intelligence, Cloud Architecture, and Cyber Security.`,
+  description = `Founder of ArkaType Intelligence, building Agentic Cyber Intelligence. ${resume.yearsOfExperience}+ years in Network Intelligence, Cloud Architecture, and Cyber Security.`,
 } = Astro.props;
 ---
 
@@ -26,7 +26,7 @@ const {
     <meta name="theme-color" content="#0D0D0D" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="author" content="Hani Quraishi" />
+    <meta name="author" content={resume.name} />
     <meta
       name="keywords"
       content="Founder,ArkaType Intelligence,Agentic AI,FlowSense,Engineering Leader,Cloud Architecture,Network Intelligence,DPDK,AWS,DevSecOps,MLOps,Cyber Security"
