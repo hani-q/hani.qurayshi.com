@@ -117,7 +117,7 @@ const tidbits = [
   "{name} built network intelligence for operators serving 30M+ subscribers.",
   "{name} is building FlowSense.AI, which names every network flow without decrypting it.",
   "{name} maintains qstack: 33 open-source agent skills for Claude Code and Codex.",
-  "{name} runs engineering agentic-first at DNI.",
+  "{name} led adoption of AI-assisted development at a stealth startup.",
   "{name} co-founded Vincere Systems in 2016.",
   "{name} holds three AWS certifications, Solutions Architect Professional included.",
 ];
@@ -131,7 +131,7 @@ const capabilities = [
     title: "Agentic Engineering Leadership",
     claim: "Runs engineering through specifications, agent implementation, and governed review.",
     proof: [
-      "DNI: engineering run agentic-first across five teams",
+      "Stealth Startup: led AI-assisted development and wrote guidelines for coding agents",
       "ArkaType: FlowSense.AI built agentic-first",
       "qstack: 33 open-source agent skills for planning, execution and review",
     ],
@@ -156,19 +156,17 @@ const capabilities = [
   },
   {
     title: "Engineering Organization Building",
-    claim: "Builds engineering teams from zero, including a 20+ person organization across five teams.",
+    claim: "Builds engineering teams from zero, including a dedicated Agentic Software Engineering team.",
     proof: [
-      "DNI: org structure, team charters and hiring from a greenfield start",
+      "Stealth Startup: set up and led an Agentic Software Engineering team as part of building the engineering org from scratch",
       "Sandvine: led a five-engineer Centre of Excellence",
       "Founded Vincere Systems and ArkaType Intelligence",
     ],
   },
   {
     title: "Technical Product Leadership",
-    claim: "Owns DPI product direction and is developing FlowSense.AI, a pre-launch cyber-intelligence product.",
+    claim: "Leads product and engineering for FlowSense.AI, a pre-launch cyber-intelligence product.",
     proof: [
-      "DNI: product management across the full DPI stack",
-      "DNI: FCAPS, analytics and deployment products",
       "ArkaType: building FlowSense.AI from zero toward launch",
     ],
   },
@@ -177,7 +175,7 @@ const capabilities = [
     claim: "Designs programmable network infrastructure and the automation that deploys it.",
     proof: [
       "PLUMgrid: SDN, VXLAN/VTEP overlays and microsegmentation for OpenStack",
-      "DNI: DevSecOps, GitOps and infrastructure as code",
+      "Sandvine: CI/CD pipelines using Jenkins and Docker",
       "AWS Solutions Architect Professional, Terraform Associate",
     ],
   },
@@ -269,7 +267,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
       {resume.experience.map((job) => (
         <div class="sf-cv-job">
           <h3>{job.title}</h3>
-          <p class="sf-cv-meta">{job.company} | {job.location} | {job.period}</p>
+          <p class="sf-cv-meta">{job.company}{job.employmentType && ` · ${job.employmentType}`} | {job.location} | {job.period}</p>
           <ul>{job.bullets.map((b) => <li>{b}</li>)}</ul>
         </div>
       ))}
@@ -426,7 +424,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
                 <h3 class="sf-project-title">{c.company}</h3>
                 <p class="sf-project-meta"><span class="sf-grad">{c.range}</span> · {c.location}</p>
                 <ul class="sf-project-roles">
-                  {c.roles.map((r) => <li><strong>{r.title}</strong><span>{r.period}</span></li>)}
+                  {c.roles.map((r) => <li><strong>{r.title}{r.employmentType && ` · ${r.employmentType}`}</strong><span>{r.period}</span></li>)}
                 </ul>
                 <p class="sf-project-lead">{c.lead[0]}</p>
                 <div class="sf-project-actions">
@@ -445,7 +443,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
                       <i></i><i></i><i></i>
                       <span class="sf-url">{c.site.label}</span>
                       {c.site.archived && <em class="sf-url-tag">archived {c.site.archived}</em>}
-                      {!c.site.image && <em class="sf-url-tag">offline</em>}
+                      {c.site.tag ? <em class="sf-url-tag">{c.site.tag}</em> : !c.site.image && <em class="sf-url-tag">offline</em>}
                       <span class="sf-expand">Expand ↗</span>
                     </div>
                     {c.site.image ? (
@@ -461,7 +459,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
                         <span class="sf-shot-initial">{c.initial}</span>
                         <span class="sf-shot-years">{c.years}</span>
                         <span class="sf-shot-name">{c.company}</span>
-                        <span class="sf-shot-role">This site is no longer online.</span>
+                        <span class="sf-shot-role">{c.site.placeholder ?? "This site is no longer online."}</span>
                         <span class="sf-shot-stats">
                           <span><b>{c.roles.length}</b> {c.roles.length === 1 ? "role" : "roles"}</span>
                           <span><b>{c.highlights}</b> highlights</span>
@@ -474,12 +472,12 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
             </div>
             <div class="sf-col-12">
               <div class="sf-details" id={`${c.id}-details`} data-company={c.company} data-range={c.range} data-location={c.location}
-                data-site-label={c.site.label} data-site-url={c.site.url} data-site-image={c.site.image} data-site-archived={c.site.archived}>
+                data-site-label={c.site.label} data-site-url={c.site.url} data-site-image={c.site.image} data-site-archived={c.site.archived} data-site-tag={c.site.tag} data-site-placeholder={c.site.placeholder}>
                 <div class="sf-details-inner">
                   {c.roles.map((r) => (
                     <article class="sf-detail-role">
                       <h4>{r.title}</h4>
-                      <p class="sf-detail-meta">{r.period} · {r.location}</p>
+                      <p class="sf-detail-meta">{r.period} · {r.location}{r.employmentType && ` · ${r.employmentType}`}</p>
                       <ul>{r.bullets.map((b) => <li>{b}</li>)}</ul>
                     </article>
                   ))}
@@ -1040,7 +1038,11 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
         } else {
           var off = document.createElement('div');
           off.className = 'sf-browser-offline';
-          off.innerHTML = '<span>' + d.dataset.company.charAt(0) + '</span><p>This site is no longer online.</p>';
+          var initial = document.createElement('span');
+          initial.textContent = d.dataset.company.charAt(0);
+          var message = document.createElement('p');
+          message.textContent = d.dataset.sitePlaceholder || 'This site is no longer online.';
+          off.append(initial, message);
           page.appendChild(off);
         }
         dlg.querySelector('.sf-browser-label').textContent = d.dataset.kind || 'Experience';

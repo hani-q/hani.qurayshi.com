@@ -85,7 +85,7 @@ export function buildKnowledge(projects: ChatProject[]) {
   );
 
   for (const job of resume.experience) {
-    const head = `${job.title} at ${job.company}`;
+    const head = `${job.title} at ${job.company}${job.employmentType ? ` (${job.employmentType})` : ""}`;
     const [start, end] = job.period.split(" - ");
     add(`Experience · ${job.company}`, end === "Present" ? `${first} is currently ${head}, ${job.location}, since ${start}.` : `${first} worked as ${head}, ${job.location}, ${job.period}.`);
     for (const b of job.bullets) add(`Experience · ${job.company}`, `At ${job.company} (${job.title}, ${short(job.period)}): ${b}`);

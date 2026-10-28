@@ -39,7 +39,7 @@ export const resume = {
       `Founder of ArkaType Intelligence, building agentic cyber intelligence: FlowSense.AI, a Deep Packet Intelligence engine that explains what network traffic is doing without decrypting it. ${yearsOfExperience}+ years across Network Intelligence, Cloud Architecture, and Cyber Security, leading engineering teams and running engineering agentic-first. An <a href="https://www.rfc-editor.org/rfc/rfc1925" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-500">RFC 1925</a>-compatible engineer.`,
     highlights: [
       "Founder of ArkaType Intelligence (2026), building FlowSense.AI: on-device Deep Packet Intelligence, with agents that act on what it finds under rules you control",
-      "Head of Engineering at DNI, running engineering agentic-first across DPI, FCAPS, and analytics products",
+      "Consultant Agentic Engineering at Stealth Startup, setting up a dedicated Agentic Software Engineering team and leading adoption of AI-assisted development",
       "Extensive experience in DPI, Network Analytics, and Cloud Solutions with proven track record at Sandvine and PLUMgrid (acquired by VMware)",
       "Full-stack engineer across React, React Native, Next.js, Node.js, Java Spring and Go, from payment back ends to finance dashboards",
       "Strong background in Cloud Architecture with triple AWS certifications and expertise in DevSecOps, MLOps, and Infrastructure as Code",
@@ -106,16 +106,15 @@ export const resume = {
       ],
     },
     {
-      title: "Head of Engineering",
-      company: "Dynamic Network Intelligence (DNI)",
-      location: "Dubai, UAE (Hybrid)",
-      period: "October 2023 - Present",
+      title: "Consultant Agentic Engineering",
+      company: "Stealth Startup",
+      employmentType: "Full-time",
+      location: "Makkah, Saudi Arabia (Remote)",
+      period: "September 2024 - July 2026",
       bullets: [
-        "Built the engineering organization from the ground up at a greenfield startup: org structure, team charters, and hiring of 20+ engineers across Application, Data Engineering, DevSecOps, QA, and Agentic Software Engineering.",
-        "Run engineering agentic-first: specifications become reviewable plans that agents implement, with team conventions encoded as repository rules and AGENTS.md files, risk-based multi-agent review, and governed use of Claude Code, OpenAI Codex, and self-hosted models.",
-        "Build DNI's operations products through agentic development: FCAPS tooling (fault, configuration, accounting, performance, and security management), analytics, and deployment automation for the DPI platform.",
-        "Own product management for the DPI stack across management and configuration, signatures, control plane, data plane, analytics, and observability.",
-        "Established DevSecOps with CI/CD (GitHub Actions, ArgoCD), GitOps, and infrastructure as code (Terraform/OpenTofu, Ansible) for high-performance network intelligence built on DPDK, Redpanda, and ClickHouse.",
+        "Set up and led a dedicated Agentic Software Engineering team as part of building the engineering org from scratch.",
+        "Led adoption of AI-assisted development across engineering, using Claude Code, OpenAI Codex, and self-hosted models.",
+        "Wrote the org's guidelines and best practices for using coding agents safely.",
       ],
     },
     {

@@ -73,11 +73,13 @@ export interface CompanySite {
   url?: string;
   image?: string;
   archived?: string;
+  tag?: string;
+  placeholder?: string;
 }
 
 export const companySites: Record<string, CompanySite> = {
   "ArkaType Intelligence": { label: "www.arka-type.com", url: "https://www.arka-type.com/", image: "/sites/arkatype.jpg" },
-  "Dynamic Network Intelligence (DNI)": { label: "www.dnisolutions.com", url: "https://www.dnisolutions.com/", image: "/sites/dni.jpg" },
+  "Stealth Startup": { label: "Stealth Startup", tag: "stealth", placeholder: "Company details are private." },
   Sandvine: { label: "www.sandvine.com", url: "https://web.archive.org/web/20200108112459/https://www.sandvine.com/", image: "/sites/sandvine.jpg", archived: "Jan 2020" },
   SNSKIES: { label: "snskies.com", url: "https://snskies.com/", image: "/sites/snskies.jpg" },
   "Simplus Innovation": { label: "www.glasc.io", url: "https://web.archive.org/web/20240304113911/https://glasc.io/", image: "/sites/glasc.jpg", archived: "Mar 2024" },
