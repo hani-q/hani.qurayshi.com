@@ -24,7 +24,9 @@ const yearsOfExperience = Math.floor(
 
 export const resume = {
   yearsOfExperience,
-  name: "Hani Quraishi",
+  name: "Hani Qurayshi",
+  nickname: "Hani Q",
+  officialName: "Hanan Ilyas Qureshi",
   title: "Founder, ArkaType Intelligence",
   workEmail: "hani@arka-type.com",
   email: "hanan.ilyas@gmail.com",
@@ -36,7 +38,7 @@ export const resume = {
 
   overview: {
     summary:
-      `Founder of ArkaType Intelligence, building agentic cyber intelligence: FlowSense.AI, a Deep Packet Intelligence engine that explains what network traffic is doing without decrypting it. ${yearsOfExperience}+ years across Network Intelligence, Cloud Architecture, and Cyber Security, leading engineering teams and running engineering agentic-first. An <a href="https://www.rfc-editor.org/rfc/rfc1925" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-500">RFC 1925</a>-compatible engineer.`,
+      `Founder of ArkaType Intelligence, building Agentic Cyber Intelligence: FlowSense.AI, a Deep Packet Intelligence engine that explains what network traffic is doing without decrypting it. ${yearsOfExperience}+ years across Network Intelligence, Cloud Architecture, and Cyber Security, leading engineering teams and running engineering agentic-first. An <a href="https://www.rfc-editor.org/rfc/rfc1925" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-500">RFC 1925</a>-compatible engineer.`,
     highlights: [
       "Founder of ArkaType Intelligence (2026), building FlowSense.AI: on-device Deep Packet Intelligence, with agents that act on what it finds under rules you control",
       "Consultant Agentic Engineering at Stealth Startup, setting up a dedicated Agentic Software Engineering team and leading adoption of AI-assisted development",
@@ -98,7 +100,7 @@ export const resume = {
       location: "Delaware, USA (Remote)",
       period: "January 2026 - Present",
       bullets: [
-        "Founded ArkaType Intelligence Inc. on 5 January 2026 to build agentic cyber intelligence: network intelligence that explains what traffic is doing without reading what it carries.",
+        "Founded ArkaType Intelligence Inc. on 5 January 2026 to build Agentic Cyber Intelligence: network intelligence that explains what traffic is doing without reading what it carries.",
         "Lead product and engineering of FlowSense.AI, a Deep Packet Intelligence engine that recognizes applications in encrypted traffic without decrypting it, combining custom-trained ML models, behavioral heuristics, signatures, and protocol parsers for TLS, QUIC, HTTP, and DNS.",
         "Designed its three-stage pipeline: recognize the application, score the experience (delay, throughput, time to first response), and use anomaly models to turn evidence into a likely cause and a suggested next step.",
         "Set a privacy-first architecture, \"inspection without surveillance\": analyze packet sizes, timing, and flow behavior, never message content, call media, or model prompts, with processing on hardware the user owns.",
@@ -229,6 +231,7 @@ export const resume = {
       location: "Stockholm, Sweden",
       period: "September 2011 - November 2013",
       bullets: [
+        "Worked on the Djibouti Telecom CBIO Implementation project, associated with Seamless Distribution AB, starting in September 2012.",
         "Designed and implemented core payment processing modules for SEQR mobile payment platform using Java and Spring Framework",
         "Built scalable backend services processing 50K+ concurrent transactions with sub-second response time",
         "Developed integration modules for major banks and payment providers across Europe",

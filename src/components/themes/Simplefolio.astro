@@ -189,7 +189,7 @@ const skinIds = skins.map((s) => s.id);
 const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.id, `https://fonts.googleapis.com/css2?${s.fonts}&display=swap`]));
 ---
 
-<div data-theme="simplefolio" data-mode="dark" class="sf-root" id="sf-top" data-cv-title={`${resume.name} - Resume`}>
+<div data-theme="simplefolio" data-mode="dark" class="sf-root" id="sf-top" data-cv-title={`${resume.officialName} - Resume`}>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -219,11 +219,11 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
   <header class="sf-topbar" aria-hidden="true">
     <span class="sf-topbar-slot" style={`aspect-ratio: ${hqLogo.viewBox[2]} / ${hqLogo.viewBox[3]}`}></span>
     <span class="sf-topbar-id">
-      <span class="sf-topbar-name">{resume.name}</span>
+      <span class="sf-topbar-name" title={resume.officialName}>{resume.name}</span>
       <span class="sf-topbar-sec" data-sf-sec><span class="sf-topbar-sep"></span><span class="sf-topbar-roll"></span></span>
     </span>
   </header>
-  <a class="sf-brand" href="#sf-top" aria-label={`${resume.name}, back to top`} data-hq-palettes={JSON.stringify(hqLogo.palettes)}>
+  <a class="sf-brand" href="#sf-top" title={resume.officialName} aria-label={`${resume.name}, back to top`} data-hq-palettes={JSON.stringify(hqLogo.palettes)}>
     <svg viewBox={hqLogo.viewBox.join(" ")} aria-hidden="true" set:html={hqLogo.logo} />
   </a>
   <div class="sf-tools">
@@ -250,7 +250,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
   <!-- Print-only résumé: plain single column with standard headings so ATS parsers read it cleanly -->
   <article class="sf-cv" aria-hidden="true">
     <header>
-      <h1>{resume.name}</h1>
+      <h1>{resume.officialName}</h1>
       <p class="sf-cv-title">{resume.title}</p>
       <p class="sf-cv-contact">
         {resume.phone} | {resume.workEmail} | {resume.email}<br />
@@ -304,7 +304,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
   <section class="sf-hero" id="sf-hero">
     <div class="sf-container sf-hero-inner">
       <div class="sf-hero-copy">
-      <h1 class="sf-hero-title" data-sf-welcomes={JSON.stringify(welcomes)} data-sf-tidbits={JSON.stringify(tidbits)} data-sf-truths={JSON.stringify(truths)}><span class="sf-welcome">{welcomeBefore}<span class="sf-grad sf-hero-name">{resume.name}</span>{welcomeAfter}</span></h1>
+      <h1 class="sf-hero-title" data-sf-welcomes={JSON.stringify(welcomes)} data-sf-tidbits={JSON.stringify(tidbits)} data-sf-truths={JSON.stringify(truths)}><span class="sf-welcome">{welcomeBefore}<span class="sf-grad sf-hero-name" title={resume.officialName}>{resume.name}</span>{welcomeAfter}</span></h1>
       <AskChat />
       </div>
       <div class="sf-hero-mark" aria-hidden="true" style={`aspect-ratio: ${hqLogo.viewBox[2]} / ${hqLogo.viewBox[3]}`}></div>
@@ -332,7 +332,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
         </div>
         <div class="sf-col-md-6">
           <div class="sf-about-info">
-            <p class="sf-about-text">{summaryText}</p>
+            <p class="sf-about-text">I'm {resume.officialName}, and I go by <span title={resume.officialName}>{resume.name}</span> or <span title={resume.officialName}>{resume.nickname}</span>. {summaryText}</p>
             <p class="sf-about-text">
               {stats.years}+ years, <span class="sf-important">{stats.companies} companies</span> and
               <span class="sf-important">{stats.countries} countries</span> ({countries.join(", ")}), from startups to telecom operators serving millions of subscribers.
@@ -667,7 +667,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
               <header class="sf-post-head">
                 <img class="sf-post-avatar" src={post.author.avatar} alt="" width="40" height="40" loading="lazy" />
                 <span class="sf-post-who">
-                  <b>{post.author.name}{post.author.verified && <svg class="sf-post-check" viewBox="0 0 24 24" width="15" height="15" aria-label="Verified"><path fill="currentColor" d="M12 1.5l2.6 2.1 3.3-.3.9 3.2 2.9 1.6-1.2 3.1 1.2 3.1-2.9 1.6-.9 3.2-3.3-.3L12 22.5l-2.6-2.1-3.3.3-.9-3.2-2.9-1.6 1.2-3.1-1.2-3.1 2.9-1.6.9-3.2 3.3.3z" /><path fill="none" stroke="var(--sf-paper)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M8 12.2l2.7 2.6L16.2 9" /></svg>}</b>
+                  <b title={post.author.handle === twitterHandle ? resume.officialName : undefined}>{post.author.handle === twitterHandle ? resume.name : post.author.name}{post.author.verified && <svg class="sf-post-check" viewBox="0 0 24 24" width="15" height="15" aria-label="Verified"><path fill="currentColor" d="M12 1.5l2.6 2.1 3.3-.3.9 3.2 2.9 1.6-1.2 3.1 1.2 3.1-2.9 1.6-.9 3.2-3.3-.3L12 22.5l-2.6-2.1-3.3.3-.9-3.2-2.9-1.6 1.2-3.1-1.2-3.1 2.9-1.6.9-3.2 3.3.3z" /><path fill="none" stroke="var(--sf-paper)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M8 12.2l2.7 2.6L16.2 9" /></svg>}</b>
                   <span>@{post.author.handle} · {new Date(post.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
                 </span>
                 <a class="sf-post-x" href={post.url} target="_blank" rel="noreferrer" aria-label="View on X">
@@ -760,7 +760,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
       </a>
       <hr />
       <p class="sf-footer-text">
-        © {year} {resume.name}
+        © {year} <span title={resume.officialName}>{resume.name}</span>
       </p>
     </div>
   </footer>
@@ -1339,7 +1339,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
   [data-theme="simplefolio"] .sf-roll-in { transform: translateY(100%); opacity: 0; transition: none; }
   [data-theme="simplefolio"] .sf-roll-out { transform: translateY(-100%); opacity: 0; }
   /* The bar name fades in as the hero name fades out */
-  [data-theme="simplefolio"] .sf-topbar-name { font-size: 19px; font-weight: 700; letter-spacing: -0.045em; white-space: nowrap; color: var(--sf-ink); opacity: clamp(0, calc(var(--sf-bar) * 2.2 - 1.2), 1); }
+  [data-theme="simplefolio"] .sf-topbar-name { font-size: 19px; font-weight: 700; letter-spacing: -0.045em; white-space: nowrap; color: var(--sf-ink); opacity: clamp(0, calc(var(--sf-bar) * 2.2 - 1.2), 1); pointer-events: auto; }
   [data-theme="simplefolio"] .sf-hero-name { white-space: nowrap; }
   [data-theme="simplefolio"] .sf-brand:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; }
   [data-theme="simplefolio"] .sf-tools { position: fixed; z-index: 53; top: 16px; right: 16px; display: flex; gap: 8px; }

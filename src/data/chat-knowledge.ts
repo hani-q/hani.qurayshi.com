@@ -69,8 +69,10 @@ export function buildKnowledge(projects: ChatProject[]) {
   const passages: Passage[] = [];
   const add = (label: string, text: string) => passages.push({ label, text });
 
+  const identity = `${name} is the name he uses publicly. He also goes by ${resume.nickname}. His official name is ${resume.officialName}.`;
+  add("Name", identity);
   const current = resume.experience.filter((j) => j.period.endsWith("Present")).map((j) => `${j.title} at ${j.company}`);
-  add("Now", `What ${first} is working on and building now: currently ${current.join(" and ")}. At ArkaType Intelligence, he is building FlowSense.AI, agentic cyber intelligence.`);
+  add("Now", `What ${first} is working on and building now: currently ${current.join(" and ")}. At ArkaType Intelligence, he is building FlowSense.AI, Agentic Cyber Intelligence.`);
   add("About", `${first} has ${resume.yearsOfExperience}+ years of experience across network intelligence, cloud architecture and cyber security.`);
   // Where the career began: every role at the first employer, oldest first.
   const firstJob = resume.experience[resume.experience.length - 1];
@@ -116,6 +118,7 @@ export function buildKnowledge(projects: ChatProject[]) {
 
   const facts = [
     `${name}: ${resume.title}, ${resume.yearsOfExperience}+ years of experience.`,
+    identity,
     ...(age != null ? [`${first} is ${age} years old (his birth date is private; never state it).`] : []),
     `Current roles: ${current.join("; ")}.`,
     careerStart,
