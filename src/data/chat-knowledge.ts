@@ -90,7 +90,7 @@ export function buildKnowledge(projects: ChatProject[]) {
     const head = `${job.title} at ${job.company}${job.employmentType ? ` (${job.employmentType})` : ""}`;
     const [start, end] = job.period.split(" - ");
     add(`Experience · ${job.company}`, end === "Present" ? `${first} is currently ${head}, ${job.location}, since ${start}.` : `${first} worked as ${head}, ${job.location}, ${job.period}.`);
-    for (const b of job.bullets) add(`Experience · ${job.company}`, `At ${job.company} (${job.title}, ${short(job.period)}): ${b}`);
+    for (const b of job.bullets) add(`Experience · ${job.company}`, `At ${job.company} (${job.title}${job.employmentType ? `, ${job.employmentType}` : ""}, ${short(job.period)}): ${b}`);
   }
 
   for (const p of projects) {
@@ -106,6 +106,10 @@ export function buildKnowledge(projects: ChatProject[]) {
   add("Certifications", `${first}'s certifications: ${certifications.map((c) => `${c.name} (${c.issuer}, ${c.year})`).join("; ")}.`);
 
   add("Education", `Education: ${first} studied at ${education.school}, ${education.location}, graduating in ${education.year} with a ${education.degree} (${education.major}).`);
+
+  for (const honor of resume.honors) {
+    add("Honors & Awards", `${honor.title}, ${honor.issuer}, ${honor.date}: ${honor.description}`);
+  }
 
   for (const n of notes) add(n.label, n.text);
 

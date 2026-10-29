@@ -22,6 +22,18 @@ const yearsOfExperience = Math.floor(
   (now.getTime() - careerStartDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
 );
 
+interface Experience {
+  title: string;
+  company: string;
+  location: string;
+  period: string;
+  employmentType?: string;
+  presentation: "featured" | "compact" | "earlier";
+  summaryGroup?: "short-2017";
+  summaryBullets?: string[];
+  bullets: string[];
+}
+
 export const resume = {
   yearsOfExperience,
   name: "Hani Qurayshi",
@@ -41,7 +53,7 @@ export const resume = {
       `Founder of ArkaType Intelligence, building Agentic Cyber Intelligence: FlowSense.AI, a Deep Packet Intelligence engine that explains what network traffic is doing without decrypting it. ${yearsOfExperience}+ years across Network Intelligence, Cloud Architecture, and Cyber Security, leading engineering teams and running engineering agentic-first. An <a href="https://www.rfc-editor.org/rfc/rfc1925" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-500">RFC 1925</a>-compatible engineer.`,
     highlights: [
       "Founder of ArkaType Intelligence (2026), building FlowSense.AI: on-device Deep Packet Intelligence, with agents that act on what it finds under rules you control",
-      "Consultant Agentic Engineering at Stealth Startup, setting up a dedicated Agentic Software Engineering team and leading adoption of AI-assisted development",
+      "Consultant Agentic Engineering at Stealth Startup (Contract), setting up a dedicated Agentic Software Engineering team and leading adoption of AI-assisted development",
       "Extensive experience in DPI, Network Analytics, and Cloud Solutions with proven track record at Sandvine and PLUMgrid (acquired by VMware)",
       "Full-stack engineer across React, React Native, Next.js, Node.js, Java Spring and Go, from payment back ends to finance dashboards",
       "Strong background in Cloud Architecture with triple AWS certifications and expertise in DevSecOps, MLOps, and Infrastructure as Code",
@@ -83,12 +95,11 @@ export const resume = {
       "GitOps",
       "Kafka/Redpanda",
       "Gerrit",
-      "Greptile",
     ],
     databases: ["PostgreSQL", "MySQL", "MongoDB", "Redis", "CockroachDB", "ClickHouse", "Firebase", "AWS Amplify"],
     observability: ["Elasticsearch", "Logstash", "Kibana", "Grafana", "Prometheus", "Vector"],
     networking: ["DPDK", "DPI", "NFV/VNF", "PCRF", "Network Analytics", "Traffic Management"],
-    aiMl: ["TensorFlow", "PyTorch", "MLOps", "Agentic AI (Claude Code, Codex, OpenClaw)", "LLM Integration", "Reinforcement Learning"],
+    aiMl: ["TensorFlow", "PyTorch", "MLOps", "Agentic AI (Claude Code, Codex, OpenClaw, Greptile)", "LLM Integration", "Reinforcement Learning"],
     security: ["DevSecOps", "Cyber Security", "Regulatory Compliance"],
     leadership: ["Agile/Scrum", "Kanban/Scrumban", "Team Building & Scaling", "Engineering Culture", "Cross-functional Leadership", "Hiring & Mentoring", "OKRs & Roadmapping", "Vendor & Stakeholder Management"],
   },
@@ -99,6 +110,12 @@ export const resume = {
       company: "ArkaType Intelligence",
       location: "Delaware, USA (Remote)",
       period: "January 2026 - Present",
+      presentation: "featured",
+      summaryBullets: [
+        "Founded ArkaType Intelligence to build FlowSense.AI, a Deep Packet Intelligence engine for encrypted network traffic.",
+        "Lead product and engineering across application recognition, experience scoring, and anomaly analysis.",
+        "Designed an on-device, privacy-first architecture that analyzes traffic behavior without decrypting content.",
+      ],
       bullets: [
         "Founded ArkaType Intelligence Inc. on 5 January 2026 to build Agentic Cyber Intelligence: network intelligence that explains what traffic is doing without reading what it carries.",
         "Lead product and engineering of FlowSense.AI, a Deep Packet Intelligence engine that recognizes applications in encrypted traffic without decrypting it, combining custom-trained ML models, behavioral heuristics, signatures, and protocol parsers for TLS, QUIC, HTTP, and DNS.",
@@ -110,9 +127,10 @@ export const resume = {
     {
       title: "Consultant Agentic Engineering",
       company: "Stealth Startup",
-      employmentType: "Full-time",
+      employmentType: "Contract",
       location: "Makkah, Saudi Arabia (Remote)",
-      period: "September 2024 - July 2026",
+      period: "November 2024 - July 2026",
+      presentation: "featured",
       bullets: [
         "Set up and led a dedicated Agentic Software Engineering team as part of building the engineering org from scratch.",
         "Led adoption of AI-assisted development across engineering, using Claude Code, OpenAI Codex, and self-hosted models.",
@@ -123,17 +141,23 @@ export const resume = {
       title: "Solutions Engineer",
       company: "Sandvine",
       location: "Riyadh, Saudi Arabia",
-      period: "November 2017 - October 2023",
+      period: "November 2017 - October 2024",
+      presentation: "featured",
+      summaryBullets: [
+        "Delivered network intelligence solutions using DPI, PCRF, and NFV for telecom operators in the Middle East.",
+        "Led the Centre of Excellence for Traffic Classification, including signature development.",
+        "Developed deployment designs, an automated packet-capture analysis portal, and CI/CD pipelines with Jenkins and Docker.",
+        "Provided technical leadership for pre-sales, customer training, and engineer mentoring.",
+      ],
       bullets: [
         "Led implementation of large-scale network intelligence and analytics solutions using Sandvine's DPI, PCRF, NFV technologies for major telecom operators in the Middle East",
-        "Architected and deployed complex network solutions integrating regulatory compliance, traffic management, and analytics systems serving 30M+ subscribers",
+        "Architected and deployed network solutions integrating regulatory compliance, traffic management, and analytics systems for telecom operators",
         "Developed High-Level and Low-Level Designs (HLD/LLD) for critical deployments and migration projects, ensuring minimal service disruption",
-        "Established and led the Centre of Excellence for Traffic Classification, managing a team of 5 engineers for signature development",
-        "Created an automated packet capture analysis portal integrating CDN and AS information, improving troubleshooting efficiency by 60%",
-        "Implemented ML-based traffic classification models, achieving 95% accuracy in identifying encrypted applications",
-        "Designed custom data models and signatures for network traffic analysis using proprietary languages and tools",
-        "Set up CI/CD pipelines using Jenkins and Docker, reducing deployment time by 70% and improving code quality",
-        "Provided technical leadership in pre-sales activities, contributing to successful deals worth $10M+",
+        "Led the Centre of Excellence for Traffic Classification, including signature development.",
+        "Created an automated packet capture analysis portal integrating CDN and AS information for troubleshooting",
+        "Designed custom signatures for network traffic analysis using proprietary languages and tools",
+        "Set up CI/CD pipelines using Jenkins and Docker",
+        "Provided technical leadership in pre-sales activities",
         "Mentored junior engineers and conducted technical training sessions for customers and internal teams",
       ],
     },
@@ -142,10 +166,15 @@ export const resume = {
       company: "SNSKIES",
       location: "Islamabad, Pakistan",
       period: "May 2017 - October 2017",
+      presentation: "compact",
+      summaryGroup: "short-2017",
+      summaryBullets: [
+        "Led professional services delivery and an engineering team, working with Cisco, Sandvine, and Sangfor.",
+      ],
       bullets: [
-        "Led a team of 5 engineers, driving successful project delivery for customers.",
-        "Achieved an average project completion rate of 90% within agreed timeline and budget.",
-        "Maintained a customer satisfaction rating of 90% based on feedback surveys.",
+        "Led an engineering team delivering projects for customers.",
+        "Managed project delivery against agreed timelines and budgets.",
+        "Used customer feedback surveys to assess service delivery.",
         "Collaborated with industry partners including Cisco, Sandvine, and Sangfor.",
       ],
     },
@@ -154,6 +183,11 @@ export const resume = {
       company: "Simplus Innovation",
       location: "Islamabad, Pakistan",
       period: "April 2017 - October 2017",
+      presentation: "compact",
+      summaryGroup: "short-2017",
+      summaryBullets: [
+        "Established the Pakistan office and built analytics products with React, TypeScript, MongoDB, and AWS.",
+      ],
       bullets: [
         "Collaborated with product management to deliver tailored analytics solutions.",
         "Implemented Agile methodologies for efficient project management.",
@@ -166,6 +200,10 @@ export const resume = {
       company: "Vincere Systems",
       location: "Islamabad, Pakistan",
       period: "June 2016 - September 2017",
+      presentation: "compact",
+      summaryBullets: [
+        "Co-founded a telecom software business and delivered a customized ACS product to wi-tribe Pakistan.",
+      ],
       bullets: [
         "Founded a company specializing in custom solutions for telecom and ISP domain.",
         "Delivered a customized ACS product to wi-tribe Pakistan.",
@@ -177,6 +215,11 @@ export const resume = {
       company: "Zigron Inc.",
       location: "Islamabad, Pakistan",
       period: "March 2017 - May 2017",
+      presentation: "compact",
+      summaryGroup: "short-2017",
+      summaryBullets: [
+        "Led teams working across DPI, IoT, analytics, cloud, and network function virtualization.",
+      ],
       bullets: [
         "Led technical teams in DPI, IoT, Analytics, Cloud, and VNF domains.",
         "Developed and executed the company's technical strategic goals.",
@@ -188,10 +231,15 @@ export const resume = {
       company: "PTCL",
       location: "Islamabad, Pakistan",
       period: "January 2017 - March 2017",
+      presentation: "compact",
+      summaryGroup: "short-2017",
+      summaryBullets: [
+        "Managed cloud products, service development, and corporate pre-sales.",
+      ],
       bullets: [
         "Managed Cloud Digital Products & Service Development.",
         "Oversaw product management, pre-sales, and relationship management for corporate segment.",
-        "Drove 60% increase in sales and customer adoption of cloud services.",
+        "Supported sales and customer adoption of cloud services.",
       ],
     },
     {
@@ -199,11 +247,17 @@ export const resume = {
       company: "PLUMgrid Inc. (Acquired by VMware)",
       location: "Santa Clara, California",
       period: "May 2014 - January 2017",
+      presentation: "featured",
+      summaryBullets: [
+        "Developed OpenStack networking and security features, including microsegmentation, VXLAN overlays, and L2 VTEP services.",
+        "Built the PLUMgrid Object Model API with Node.js and maintained automated regression-testing infrastructure.",
+        "Contributed to NFV platform development, technical roadmaps, and customer-facing architecture discussions.",
+      ],
       bullets: [
         "Architected and implemented security policy VNF features enabling microsegmentation and zero-trust networking for OpenStack environments",
         "Designed and developed L2 VTEP service supporting VXLAN overlay networks, improving network scalability for multi-tenant cloud deployments",
         "Spearheaded development of PLUMgrid Object Model API using Node.js, creating a unified interface for network service configuration",
-        "Built and maintained automated testing infrastructure (PITA) reducing regression testing time by 60% and improving release quality",
+        "Built and maintained automated testing infrastructure (PITA) for regression testing and release quality",
         "Contributed to core platform development including network function virtualization (VNF), infrastructure automation, and web services",
         "Collaborated with product management to define technical roadmap and feature prioritization for cloud networking products",
         "Mentored junior engineers and led knowledge sharing sessions on cloud networking technologies and best practices",
@@ -216,12 +270,16 @@ export const resume = {
       company: "Seamless Payments AB",
       location: "Stockholm, Sweden",
       period: "November 2013 - April 2014",
+      presentation: "earlier",
+      summaryBullets: [
+        "Developed Java Spring services for mobile payments and led Agile delivery as SCRUM Master.",
+      ],
       bullets: [
-        "Led Agile transformation as SCRUM Master for a team of 8 developers, improving sprint velocity by 40% within 3 months",
-        "Architected and implemented real-time transaction processing system handling 100K+ daily mobile payments",
+        "Led Agile transformation as SCRUM Master for the development team",
+        "Architected and implemented a real-time transaction processing system for mobile payments",
         "Developed high-performance REST APIs using Java Spring Framework for mobile money transfer services",
-        "Implemented automated CI/CD pipelines reducing deployment time from days to hours",
-        "Established code review practices and quality metrics improving overall code quality by 50%",
+        "Implemented automated CI/CD pipelines",
+        "Established code review practices and quality metrics",
         "Conducted daily stand-ups, sprint planning, and retrospective meetings to ensure team alignment and continuous improvement",
       ],
     },
@@ -230,34 +288,46 @@ export const resume = {
       company: "Seamless Payments AB",
       location: "Stockholm, Sweden",
       period: "September 2011 - November 2013",
+      presentation: "earlier",
+      summaryBullets: [
+        "Built SEQR payment-processing services and worked on the Djibouti Telecom CBIO Implementation project, associated with Seamless Distribution AB.",
+      ],
       bullets: [
         "Worked on the Djibouti Telecom CBIO Implementation project, associated with Seamless Distribution AB, starting in September 2012.",
         "Designed and implemented core payment processing modules for SEQR mobile payment platform using Java and Spring Framework",
-        "Built scalable backend services processing 50K+ concurrent transactions with sub-second response time",
+        "Built backend services for concurrent transaction processing",
         "Developed integration modules for major banks and payment providers across Europe",
-        "Created automated testing framework reducing regression testing time by 70%",
+        "Created an automated testing framework for regression testing",
         "Implemented monitoring and alerting systems using ELK stack for real-time transaction tracking",
-        "Optimized database queries and cache implementations improving system performance by 60%",
+        "Optimized database queries and cache implementations",
         "Collaborated with cross-functional teams across Sweden, Pakistan, and Ghana for feature delivery",
-        "Participated in 24/7 on-call support rotation ensuring 99.99% system availability",
+        "Participated in on-call support rotation for system availability",
         "Mentored junior developers and conducted technical training sessions on payment systems",
       ],
     },
     {
-      title: "Executive Technical",
+      title: "Technical Executive (North)",
       company: "wi-tribe",
       location: "Islamabad, Pakistan",
       period: "December 2008 - August 2011",
+      presentation: "earlier",
+      summaryBullets: [
+        "Built an in-house WiMAX analytics platform with another engineer, replacing Motorola's licensed product and ending payments for it.",
+        "Built network-data collection and customer-care tools, including DeReg, to investigate CPE connectivity and signal issues.",
+      ],
       bullets: [
-        "Led network operations and service delivery for 100K+ broadband subscribers across multiple regions",
-        "Designed and implemented automated network monitoring system reducing MTTR by 65% and improving customer satisfaction",
-        "Spearheaded migration from legacy billing system to convergent billing platform for 50K+ subscribers with zero service interruption",
-        "Developed custom Python scripts for network performance analysis and automated reporting, saving 20+ man-hours weekly",
-        "Implemented QoS policies and traffic shaping rules improving network performance by 40% during peak hours",
-        "Managed relationships with vendors including Cisco, Juniper, and Huawei for network equipment and services",
+        "Built an in-house WiMAX analytics platform in 2009 with one other engineer, replacing Motorola's expensive, separately licensed network analytics product; wi-tribe stopped paying Motorola for it",
+        "Wrote crawlers to log in over SSH to more than 150 base stations across Islamabad/Rawalpindi, Lahore, and Karachi and scrape data into a database on a schedule; built an Advanced Analytics Portal on top",
+        "Built the DeReg tool for customer care: agents entered a customer's CPE (modem) ID to see which cell sites it had connected to and why it was not getting a proper signal, the network's most critical support issue; every customer care agent used it on 24/7 shifts",
+        "Led network operations and service delivery for broadband subscribers across Islamabad/Rawalpindi, Lahore, and Karachi",
+        "Designed and implemented a custom network monitoring portal built with MRTG and Adobe Flex, to speed up fault finding and repair",
+        "Led the migration from a legacy billing system to a convergent billing platform",
+        "Wrote Python scripts for network performance analysis and automated reporting",
+        "Implemented QoS policies and traffic shaping rules to manage peak-hour congestion",
+        "Managed relationships with vendors including Motorola (wi-tribe's WiMAX network vendor), Cisco, Juniper, and Huawei for network equipment and services",
         "Created comprehensive network documentation and standard operating procedures (SOPs) for technical teams",
         "Led technical training programs for new hires and existing staff on networking fundamentals and troubleshooting",
-        "Participated in 24/7 escalation team ensuring 99.9% network availability across all regions",
+        "Member of the 24/7 escalation team for network availability across all regions",
       ],
     },
     {
@@ -265,6 +335,8 @@ export const resume = {
       company: "wi-tribe",
       location: "Islamabad, Pakistan",
       period: "September 2008 - November 2008",
+      presentation: "earlier",
+      summaryBullets: [],
       bullets: [
         "Assisted in network deployment and configuration for WiMAX broadband services",
         "Developed monitoring scripts using Python and Shell for automated health checks of network elements",
@@ -274,7 +346,7 @@ export const resume = {
         "Gained hands-on experience with WiMAX technology, network monitoring tools, and Linux systems",
       ],
     },
-  ],
+  ] satisfies Experience[],
 
   certifications: [
     "Claude Code in Action | Anthropic | 2026",
@@ -293,6 +365,21 @@ export const resume = {
 
   education:
     "Bachelor of Electrical Engineering | Computer | Centre for Advanced Studies in Engineering (CASE), UET Taxila | Islamabad, Pakistan | 2009",
+
+  honors: [
+    {
+      title: "Best Engineering Design",
+      issuer: "National Engineering Robotics Contest (NERC), EME, NUST, Pakistan",
+      date: "July 2009",
+      description: "Won the Best Engineering Design award at the National Engineering Robotics Contest held at EME, NUST on 11 July 2009.",
+    },
+    {
+      title: "Outstanding Performance (A+) rating, 2009",
+      issuer: "wi-tribe Pakistan",
+      date: "April 2010",
+      description: "Rated A+ (Outstanding Performance) in the 2009 annual appraisal and awarded performance pay.",
+    },
+  ],
 
   involvement: {
     organization: "Qasmia Welfare Trust",

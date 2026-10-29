@@ -63,6 +63,36 @@ export const experienceByCompany: { company: string; roles: Job[] }[] = resume.e
   [],
 );
 
+/** Relevance determines prominence; full role details stay available on the website. */
+export const experienceSections = [
+  { id: "featured", title: "Professional Experience", label: "Selected experience" },
+  { id: "compact", title: "Additional Experience", label: "Additional experience" },
+  { id: "earlier", title: "Earlier Experience", label: "Earlier experience" },
+].map((section) => {
+  const companies = experienceByCompany
+    .filter((group) => group.roles[0].presentation === section.id)
+    .map((group) => ({
+      ...group,
+      summaryBullets: group.roles.flatMap((role) => role.summaryBullets ?? role.bullets),
+    }));
+  const shortRoles = companies.flatMap((company) => company.roles).filter((role) => role.summaryGroup === "short-2017");
+  const companyEntries = companies
+    .filter((company) => !company.roles.some((role) => role.summaryGroup === "short-2017"))
+    .map((company) => ({ kind: "company" as const, company }));
+  return {
+    ...section,
+    companies,
+    entries: [
+      ...(shortRoles.length ? [{
+        kind: "short-roles" as const,
+        label: `Short roles, ${shortRoles[0].location}, ${shortRoles[0].period.match(/\d{4}/)?.[0]}`,
+        roles: shortRoles,
+      }] : []),
+      ...companyEntries,
+    ],
+  };
+});
+
 /**
  * Each employer's website, keyed by company name. `image` is a screenshot in
  * public/sites; companies whose site is gone or rebranded use a Wayback Machine

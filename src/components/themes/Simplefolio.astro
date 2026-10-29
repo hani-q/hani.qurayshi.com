@@ -10,7 +10,7 @@ import {
   skillCategories,
   certifications,
   education,
-  experienceByCompany,
+  experienceSections,
   countries,
   stats,
   summaryText,
@@ -47,7 +47,7 @@ const issuerLogos: Record<string, { svg?: string; img?: string }> = {
   "Stanford University": { img: "/logos/stanford.png" },
 };
 
-const companies = experienceByCompany.map((group, index) => {
+const companies = experienceSections.flatMap((section) => section.companies).map((group, index) => {
   const newest = group.roles[0];
   const oldest = group.roles[group.roles.length - 1];
   const start = oldest.period.split(" - ")[0] ?? "";
@@ -60,13 +60,21 @@ const companies = experienceByCompany.map((group, index) => {
     range: `${start} – ${end}`,
     years: startYear === endYear ? startYear : `${startYear} — ${endYear}`,
     location: newest.location,
+    presentation: newest.presentation,
     highlights: group.roles.reduce((n, r) => n + r.bullets.length, 0),
-    lead: newest.bullets.slice(0, 2),
     initial: group.company.charAt(0),
     tone: ["teal", "navy", "light"][index % 3],
     site: companySites[group.company] ?? { label: group.company },
   };
 });
+const featuredCompanies = companies.filter((company) => company.presentation === "featured");
+const companyCards = new Map(companies.map((company) => [company.company, company]));
+const compactExperienceSections = experienceSections.slice(1).map((section) => ({
+  ...section,
+  entries: section.entries.map((entry) => entry.kind === "company"
+    ? { kind: entry.kind, company: companyCards.get(entry.company.company)! }
+    : { ...entry, roles: entry.roles.map((role) => ({ ...role, companyId: companyCards.get(role.company)!.id })) }),
+}));
 
 const socials = [
   { label: "X (Twitter)", href: resume.twitter, path: "M18.9 1.2h3.7l-8 9.2L24 22.8h-7.4l-5.8-7.6-6.6 7.6H.5l8.6-9.8L0 1.2h7.6l5.2 6.9 6.1-6.9Zm-1.3 19.4h2L6.5 3.2H4.3l13.3 17.4Z" },
@@ -114,10 +122,10 @@ const tidbits = [
   "{name} started his career in 2008 at wi-tribe in Islamabad.",
   "{name} has worked across the UAE, Saudi Arabia, the USA, Sweden and Pakistan.",
   "At Sandvine, {name} led the Centre of Excellence for Traffic Classification.",
-  "{name} built network intelligence for operators serving 30M+ subscribers.",
+  "{name} built network intelligence for telecom operators.",
   "{name} is building FlowSense.AI, which names every network flow without decrypting it.",
   "{name} maintains qstack: 33 open-source agent skills for Claude Code and Codex.",
-  "{name} led adoption of AI-assisted development at a stealth startup.",
+  "{name} led adoption of AI-assisted development as an independent contractor at a stealth startup.",
   "{name} co-founded Vincere Systems in 2016.",
   "{name} holds three AWS certifications, Solutions Architect Professional included.",
 ];
@@ -131,17 +139,17 @@ const capabilities = [
     title: "Agentic Engineering Leadership",
     claim: "Runs engineering through specifications, agent implementation, and governed review.",
     proof: [
-      "Stealth Startup: led AI-assisted development and wrote guidelines for coding agents",
+      "Stealth Startup (Contract): led AI-assisted development and wrote guidelines for coding agents",
       "ArkaType: FlowSense.AI built agentic-first",
       "qstack: 33 open-source agent skills for planning, execution and review",
     ],
   },
   {
     title: "Network & Packet Intelligence",
-    claim: "Builds traffic-classification systems spanning carrier-scale DPI, applied ML, and on-device intelligence.",
+    claim: "Builds traffic-classification systems spanning carrier-scale DPI and on-device intelligence.",
     proof: [
-      "Sandvine: DPI, PCRF and NFV for operators serving 30M+ subscribers",
-      "Led the Traffic Classification Centre of Excellence; ML models at 95% accuracy on encrypted applications",
+      "Sandvine: DPI, PCRF and NFV for telecom operators",
+      "Sandvine: led the Centre of Excellence for Traffic Classification, including signature development",
       "FlowSense.AI: on-device classification of encrypted traffic (pre-launch)",
     ],
   },
@@ -151,15 +159,15 @@ const capabilities = [
     proof: [
       "Simplus Innovation: full-stack engineer on React, TypeScript, Redux, MongoDB and AWS",
       "Qasmia Welfare Trust: Next.js and AWS Amplify finance system with live dashboards",
-      "Seamless Payments: Java Spring back ends handling 50K+ concurrent transactions",
+      "Seamless Payments: Java Spring back ends for transaction processing",
     ],
   },
   {
     title: "Engineering Organization Building",
     claim: "Builds engineering teams from zero, including a dedicated Agentic Software Engineering team.",
     proof: [
-      "Stealth Startup: set up and led an Agentic Software Engineering team as part of building the engineering org from scratch",
-      "Sandvine: led a five-engineer Centre of Excellence",
+      "Stealth Startup (Contract): set up and led an Agentic Software Engineering team as part of building the engineering org from scratch",
+      "Sandvine: led the Traffic Classification Centre of Excellence",
       "Founded Vincere Systems and ArkaType Intelligence",
     ],
   },
@@ -260,18 +268,30 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
     <section>
       <h2>Professional Summary</h2>
       <p>{summaryText}</p>
-      <ul>{resume.overview.highlights.map((h) => <li>{h}</li>)}</ul>
     </section>
-    <section>
-      <h2>Professional Experience</h2>
-      {resume.experience.map((job) => (
-        <div class="sf-cv-job">
-          <h3>{job.title}</h3>
-          <p class="sf-cv-meta">{job.company}{job.employmentType && ` · ${job.employmentType}`} | {job.location} | {job.period}</p>
-          <ul>{job.bullets.map((b) => <li>{b}</li>)}</ul>
-        </div>
-      ))}
-    </section>
+    {experienceSections.map((section) => (
+      <section>
+        <h2>{section.title}</h2>
+        {section.entries.map((entry) => entry.kind === "short-roles" ? (
+          <div class="sf-cv-job sf-cv-short-roles">
+            <h3>{entry.label}</h3>
+            {entry.roles.map((job) => (
+              <p class="sf-cv-meta"><strong>{job.company}</strong> — {job.title} | {job.period}</p>
+            ))}
+          </div>
+        ) : (
+          <div class="sf-cv-job">
+            <h3>{entry.company.company}</h3>
+            {entry.company.roles.map((job) => (
+              <div>
+                <p class="sf-cv-meta"><strong>{job.title}</strong>{job.employmentType && ` · ${job.employmentType}`} | {job.location} | {job.period}</p>
+                {(job.summaryBullets ?? job.bullets).length > 0 && <ul>{(job.summaryBullets ?? job.bullets).map((bullet) => <li>{bullet}</li>)}</ul>}
+              </div>
+            ))}
+          </div>
+        ))}
+      </section>
+    ))}
     <section>
       <h2>Products and Open Source</h2>
       {[...products, ...openSource].map((pr) => (
@@ -293,6 +313,16 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
     <section>
       <h2>Education</h2>
       <p><strong>{education.degree} (Major: {education.major})</strong><br />{education.school}, {education.location} | {education.year}</p>
+    </section>
+    <section>
+      <h2>Honors &amp; Awards</h2>
+      {resume.honors.map((honor) => (
+        <div class="sf-cv-job">
+          <h3>{honor.title}</h3>
+          <p class="sf-cv-meta">{honor.issuer} | {honor.date}</p>
+          <p>{honor.description}</p>
+        </div>
+      ))}
     </section>
     <section>
       <h2>Volunteer Experience</h2>
@@ -417,7 +447,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
       <div class="sf-project-wrapper">
         <h2 class="sf-section-title sf-dark">Experience</h2>
 
-        {companies.map((c, i) => (
+        {featuredCompanies.map((c, i) => (
           <div class="sf-row sf-project" id={c.id}>
             <div class="sf-col-lg-4">
               <div class="sf-project-text">
@@ -426,11 +456,11 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
                 <ul class="sf-project-roles">
                   {c.roles.map((r) => <li><strong>{r.title}{r.employmentType && ` · ${r.employmentType}`}</strong><span>{r.period}</span></li>)}
                 </ul>
-                <p class="sf-project-lead">{c.lead[0]}</p>
+                <ul class="sf-experience-highlights">{c.summaryBullets.map((bullet) => <li>{bullet}</li>)}</ul>
                 <div class="sf-project-actions">
                   <button type="button" class="sf-cta sf-cta--hero" data-sf-open={c.id}>Open experience</button>
-                  <a class="sf-cta sf-grad sf-cta--link" href={i < companies.length - 1 ? `#${companies[i + 1].id}` : "#sf-skills"}>
-                    {i < companies.length - 1 ? "Next role" : "Skills"}
+                  <a class="sf-cta sf-grad sf-cta--link" href={i < featuredCompanies.length - 1 ? `#${featuredCompanies[i + 1].id}` : "#sf-experience-compact"}>
+                    {i < featuredCompanies.length - 1 ? "Next role" : "More experience"}
                   </a>
                 </div>
               </div>
@@ -470,19 +500,49 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
                 </button>
               </div>
             </div>
-            <div class="sf-col-12">
-              <div class="sf-details" id={`${c.id}-details`} data-company={c.company} data-range={c.range} data-location={c.location}
-                data-site-label={c.site.label} data-site-url={c.site.url} data-site-image={c.site.image} data-site-archived={c.site.archived} data-site-tag={c.site.tag} data-site-placeholder={c.site.placeholder}>
-                <div class="sf-details-inner">
-                  {c.roles.map((r) => (
-                    <article class="sf-detail-role">
-                      <h4>{r.title}</h4>
-                      <p class="sf-detail-meta">{r.period} · {r.location}{r.employmentType && ` · ${r.employmentType}`}</p>
-                      <ul>{r.bullets.map((b) => <li>{b}</li>)}</ul>
-                    </article>
+          </div>
+        ))}
+
+        {compactExperienceSections.map((section) => (
+          <div class="sf-career-group" id={`sf-experience-${section.id}`}>
+            <h3 class="sf-career-heading">{section.label}</h3>
+            <div class="sf-career-list">
+              {section.entries.map((entry) => entry.kind === "short-roles" ? (
+                <article class="sf-career-entry sf-career-short-roles" id="sf-short-roles-2017">
+                  <h4>{entry.label}</h4>
+                  <ul class="sf-short-role-list">
+                    {entry.roles.map((role) => (
+                      <li><button type="button" class="sf-short-role-company" data-sf-open={role.companyId} aria-label={`Open full ${role.company} experience`}>{role.company}</button> — {role.title} <span>· {role.period}</span></li>
+                    ))}
+                  </ul>
+                </article>
+              ) : (
+                <article class="sf-career-entry" id={entry.company.id}>
+                  <h4>{entry.company.company}</h4>
+                  {entry.company.roles.map((role) => (
+                    <div>
+                      <p class="sf-career-role"><strong>{role.title}</strong>{role.employmentType && ` · ${role.employmentType}`}<br /><span>{role.period} · {role.location}</span></p>
+                      {(role.summaryBullets ?? role.bullets).length > 0 && <ul class="sf-experience-highlights">{(role.summaryBullets ?? role.bullets).map((bullet) => <li>{bullet}</li>)}</ul>}
+                    </div>
                   ))}
-                </div>
-              </div>
+                  <button type="button" class="sf-cta sf-cta--link" data-sf-open={entry.company.id} aria-label={`Open full ${entry.company.company} experience`}>Full experience ↗</button>
+                </article>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {companies.map((company) => (
+          <div class="sf-details" id={`${company.id}-details`} data-company={company.company} data-range={company.range} data-location={company.location}
+            data-site-label={company.site.label} data-site-url={company.site.url} data-site-image={company.site.image} data-site-archived={company.site.archived} data-site-tag={company.site.tag} data-site-placeholder={company.site.placeholder}>
+            <div class="sf-details-inner">
+              {company.roles.map((role) => (
+                <article class="sf-detail-role">
+                  <h4>{role.title}</h4>
+                  <p class="sf-detail-meta">{role.period} · {role.location}{role.employmentType && ` · ${role.employmentType}`}</p>
+                  <ul>{role.bullets.map((bullet) => <li>{bullet}</li>)}</ul>
+                </article>
+              ))}
             </div>
           </div>
         ))}
@@ -595,7 +655,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
   </section>
 
   <!-- Education -->
-  <section class="sf-plain sf-plain--last" id="sf-education">
+  <section class="sf-plain" id="sf-education">
     <div class="sf-container">
       <h2 class="sf-section-title sf-dark">Education</h2>
       <div class="sf-row sf-project">
@@ -646,6 +706,22 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Honors and awards -->
+  <section class="sf-plain sf-plain--last" id="sf-honors">
+    <div class="sf-container">
+      <h2 class="sf-section-title sf-dark">Honors &amp; Awards</h2>
+      <div class="sf-career-list">
+        {resume.honors.map((honor) => (
+          <article class="sf-career-entry">
+            <h3 class="sf-project-title">{honor.title}</h3>
+            <p class="sf-project-meta"><span class="sf-grad">{honor.date}</span> · {honor.issuer}</p>
+            <p class="sf-project-lead">{honor.description}</p>
+          </article>
+        ))}
       </div>
     </div>
   </section>
@@ -1494,6 +1570,22 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
   [data-theme="simplefolio"] .sf-project-roles li { display: flex; flex-direction: column; margin-bottom: 8px; font-size: 14px; line-height: 1.4; color: var(--sf-ink); }
   [data-theme="simplefolio"] .sf-project-roles span { font-family: var(--sf-mono); font-size: 11.5px; color: var(--sf-muted); }
   [data-theme="simplefolio"] .sf-project-lead { margin-bottom: 24px; font-size: 15px; color: var(--sf-text); }
+  [data-theme="simplefolio"] .sf-experience-highlights { margin: 0 0 20px; padding-left: 18px; color: var(--sf-text); font-size: 15px; line-height: 1.65; }
+  [data-theme="simplefolio"] .sf-experience-highlights li + li { margin-top: 8px; }
+  [data-theme="simplefolio"] .sf-career-group { margin-top: 56px; scroll-margin-top: 96px; text-align: left; }
+  [data-theme="simplefolio"] .sf-career-heading { margin: 0 0 24px; font-size: 26px; font-weight: 600; letter-spacing: -0.03em; color: var(--sf-ink); }
+  [data-theme="simplefolio"] .sf-career-list { border-top: 1px solid var(--sf-rule); }
+  [data-theme="simplefolio"] .sf-career-entry { padding: 24px 0; border-bottom: 1px solid var(--sf-rule); scroll-margin-top: 96px; }
+  [data-theme="simplefolio"] .sf-career-entry h4 { margin: 0 0 12px; font-size: 21px; font-weight: 600; letter-spacing: -0.02em; color: var(--sf-ink); }
+  [data-theme="simplefolio"] .sf-career-role { margin: 0 0 12px; color: var(--sf-text); font-size: 14px; line-height: 1.6; }
+  [data-theme="simplefolio"] .sf-career-role span { color: var(--sf-muted); font-family: var(--sf-mono); font-size: 12px; }
+  [data-theme="simplefolio"] .sf-career-entry .sf-experience-highlights { margin-bottom: 12px; }
+  [data-theme="simplefolio"] .sf-short-role-list { list-style: none; margin: 0; padding: 0; font-size: 14px; line-height: 1.7; color: var(--sf-text); }
+  [data-theme="simplefolio"] .sf-short-role-list li + li { margin-top: 8px; }
+  [data-theme="simplefolio"] .sf-short-role-list span { font-family: var(--sf-mono); font-size: 12px; color: var(--sf-muted); }
+  [data-theme="simplefolio"] .sf-short-role-company { padding: 0; border: 0; background: none; color: var(--sf-ink); font: inherit; font-weight: 600; cursor: pointer; }
+  [data-theme="simplefolio"] .sf-short-role-company:hover { text-decoration: underline; }
+  [data-theme="simplefolio"] .sf-short-role-company:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 3px; }
   [data-theme="simplefolio"] .sf-project-actions { display: flex; flex-wrap: wrap; gap: 8px; }
   [data-theme="simplefolio"] .sf-project-actions .sf-cta { font-size: 15px; }
   [data-theme="simplefolio"] .sf-project-image { width: 90%; margin: 0 auto; }
