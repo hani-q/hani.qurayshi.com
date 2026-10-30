@@ -20,21 +20,21 @@ const json = JSON.stringify(knowledge).replace(/</g, "\\u003c");
   <div class="sf-ask-log" aria-live="polite"></div>
   <form class="sf-ask-form">
     <div class="sf-ask-field">
-      <div class="sf-ask-line" aria-hidden="true"><span class="sf-ask-typed"></span><span class="sf-type-caret"></span><span class="sf-ask-ph">Enter your prompt here</span></div>
+      <div class="sf-ask-line" aria-hidden="true"><span class="sf-ask-typed"></span><span class="sf-type-caret"></span><span class="sf-ask-ph">Ask a question</span></div>
       <input class="sf-ask-input" type="text" aria-label={`Ask a question about ${knowledge.first}`} autocomplete="off" autocapitalize="sentences" enterkeyhint="send" maxlength="300" />
     </div>
     <div class="sf-ask-bar">
       <div class="sf-ask-opts" hidden>
-        <button type="button" class="sf-ask-chip" data-sf-opt="smart" aria-pressed="false" aria-label="Qwen3 0.6B: smarter answers, about 350 MB download" title="Qwen3 0.6B · smarter answers · ~350 MB" hidden set:html={qwenLogo} />
-        <button type="button" class="sf-ask-chip" data-sf-opt="gemini" aria-pressed="false" aria-label="Gemini Nano, built into Chrome" title="Gemini Nano · built into Chrome" hidden set:html={geminiLogo} />
+        <button type="button" class="sf-ask-chip" data-sf-opt="smart" aria-pressed="false" aria-label="Qwen3 0.6B: smarter answers, about 350 MB download" title="Qwen3 0.6B · Smarter Answers · ~350 MB" hidden set:html={qwenLogo} />
+        <button type="button" class="sf-ask-chip" data-sf-opt="gemini" aria-pressed="false" aria-label="Gemini Nano, built into Chrome" title="Gemini Nano · Built into Chrome" hidden set:html={geminiLogo} />
       </div>
       <span class="sf-sl-engine" data-engine="search" title="The model answering your questions">
         <span class="sf-sl-engine-ico" data-for="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2" /></svg></span>
         <span class="sf-sl-engine-ico" data-for="smart" aria-hidden="true" set:html={qwenLogo} />
         <span class="sf-sl-engine-ico" data-for="gemini" aria-hidden="true" set:html={geminiLogo} />
-        <span class="sf-sl-engine-name">Résumé search · MiniLM</span>
+        <span class="sf-sl-engine-name">Résumé Search · MiniLM</span>
       </span>
-      <span class="sf-ask-info" tabindex="0" role="img" aria-label="Runs on your device: your questions never leave your browser." data-tip="Runs on your device: your questions never leave your browser.">
+      <span class="sf-ask-info" tabindex="0" role="img" aria-label="Runs on your device. Your questions stay in your browser." data-tip="Runs on your device. Your questions stay in your browser.">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 7.5v.01" /></svg>
       </span>
       <span class="sf-sl-state" role="status"></span>
@@ -42,7 +42,7 @@ const json = JSON.stringify(knowledge).replace(/</g, "\\u003c");
     </div>
     <div class="sf-ask-progress" aria-hidden="true"></div>
   </form>
-  <a class="sf-ask-below" href="#sf-about">scroll ↓</a>
+  <a class="sf-ask-below" href="#sf-about">Scroll ↓</a>
 </div>
 
 <script>

@@ -50,14 +50,14 @@ export const resume = {
 
   overview: {
     summary:
-      `Founder of ArkaType Intelligence, building Agentic Cyber Intelligence: FlowSense.AI, a Deep Packet Intelligence engine that explains what network traffic is doing without decrypting it. ${yearsOfExperience}+ years across Network Intelligence, Cloud Architecture, and Cyber Security, leading engineering teams and running engineering agentic-first. An <a href="https://www.rfc-editor.org/rfc/rfc1925" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-500">RFC 1925</a>-compatible engineer.`,
+      `Founder of ArkaType Intelligence, building Agentic Cyber Intelligence with FlowSense.AI. Its Deep Packet Intelligence engine explains what network traffic is doing without decrypting it. ${yearsOfExperience}+ years in Network Intelligence, Cloud Architecture and Cyber Security, leading teams and using coding agents throughout engineering. An <a href="https://www.rfc-editor.org/rfc/rfc1925" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-500">RFC 1925</a>-compatible engineer.`,
     highlights: [
       "Founder of ArkaType Intelligence (2026), building FlowSense.AI: on-device Deep Packet Intelligence, with agents that act on what it finds under rules you control",
-      "Consultant Agentic Engineering at Stealth Startup (Contract), setting up a dedicated Agentic Software Engineering team and leading adoption of AI-assisted development",
-      "Extensive experience in DPI, Network Analytics, and Cloud Solutions with proven track record at Sandvine and PLUMgrid (acquired by VMware)",
-      "Full-stack engineer across React, React Native, Next.js, Node.js, Java Spring and Go, from payment back ends to finance dashboards",
-      "Strong background in Cloud Architecture with triple AWS certifications and expertise in DevSecOps, MLOps, and Infrastructure as Code",
-      "Proven leadership experience managing cross-functional teams and establishing Centers of Excellence",
+      "Consultant Agentic Engineering at Stealth Startup (Contract), where I set up a dedicated Agentic Software Engineering team and led adoption of AI-assisted development",
+      "Experience in DPI, Network Analytics and Cloud Solutions at Sandvine and PLUMgrid (acquired by VMware)",
+      "Full-stack engineer using React, React Native, Next.js, Node.js, Java Spring and Go, with work on payment back ends and finance dashboards",
+      "Three AWS certifications, with experience in Cloud Architecture, DevSecOps, MLOps and Infrastructure as Code",
+      "Led cross-functional teams and established Centers of Excellence",
       "Technical expertise: Agentic AI, Network Security, DPDK, Cloud Architecture, Kubernetes, AI/ML, DevSecOps, Terraform/OpenTofu",
       "Global work experience across UAE, KSA, USA, Sweden, and Pakistan in both startup and enterprise environments",
     ],
@@ -256,7 +256,7 @@ export const resume = {
       bullets: [
         "Architected and implemented security policy VNF features enabling microsegmentation and zero-trust networking for OpenStack environments",
         "Designed and developed L2 VTEP service supporting VXLAN overlay networks, improving network scalability for multi-tenant cloud deployments",
-        "Spearheaded development of PLUMgrid Object Model API using Node.js, creating a unified interface for network service configuration",
+        "Led development of the PLUMgrid Object Model API in Node.js, giving network services one configuration interface",
         "Built and maintained automated testing infrastructure (PITA) for regression testing and release quality",
         "Contributed to core platform development including network function virtualization (VNF), infrastructure automation, and web services",
         "Collaborated with product management to define technical roadmap and feature prioritization for cloud networking products",
@@ -325,7 +325,7 @@ export const resume = {
         "Wrote Python scripts for network performance analysis and automated reporting",
         "Implemented QoS policies and traffic shaping rules to manage peak-hour congestion",
         "Managed relationships with vendors including Motorola (wi-tribe's WiMAX network vendor), Cisco, Juniper, and Huawei for network equipment and services",
-        "Created comprehensive network documentation and standard operating procedures (SOPs) for technical teams",
+        "Created network documentation and standard operating procedures (SOPs) for technical teams",
         "Led technical training programs for new hires and existing staff on networking fundamentals and troubleshooting",
         "Member of the 24/7 escalation team for network availability across all regions",
       ],
@@ -374,7 +374,7 @@ export const resume = {
       description: "Won the Best Engineering Design award at the National Engineering Robotics Contest held at EME, NUST on 11 July 2009.",
     },
     {
-      title: "Outstanding Performance (A+) rating, 2009",
+      title: "Outstanding Performance (A+) Rating, 2009",
       issuer: "wi-tribe Pakistan",
       date: "April 2010",
       description: "Rated A+ (Outstanding Performance) in the 2009 annual appraisal and awarded performance pay.",
@@ -387,7 +387,7 @@ export const resume = {
     role: "IT Consultant",
     period: "July 2018 - Present",
     bullets: [
-      "Designed and implemented a comprehensive finance tracking system using Next.js, TypeScript, Material UI, and Tailwind.",
+      "Designed and implemented a finance tracking system using Next.js, TypeScript, Material UI, and Tailwind.",
       "Utilized AWS Amplify for backend infrastructure to ensure scalability and reliability.",
       "Enabled field operatives to efficiently manage donations and expenses during campaigns.",
       "Integrated invoicing capabilities and audit data storage for compliance and transparency.",

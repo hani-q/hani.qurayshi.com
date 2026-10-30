@@ -88,7 +88,7 @@ function cursorLine(onEnter: () => void) {
   caret.className = "sf-type-caret";
   const hint = document.createElement("span");
   hint.className = "sf-hero-ph";
-  hint.textContent = "Type your prompt here";
+  hint.textContent = "Ask a question";
   const enter = document.createElement("button");
   enter.type = "button";
   enter.tabIndex = -1;
@@ -367,7 +367,7 @@ export function initChat(root: HTMLElement) {
   });
 
   const engine = () => (geminiBox.checked && gemini ? "gemini" : smartBox.checked && llm ? "smart" : "search");
-  const engineNames = { search: "Résumé search · MiniLM", smart: "Qwen3 0.6B", gemini: "Gemini Nano" };
+  const engineNames = { search: "Résumé Search · MiniLM", smart: "Qwen3 0.6B", gemini: "Gemini Nano" };
   const engineName = $<HTMLElement>(".sf-sl-engine-name");
   const showEngine = () => { engineLabel.dataset.engine = engine(); engineName.textContent = engineNames[engine()]; setStatus(""); };
 
@@ -520,7 +520,7 @@ export function initChat(root: HTMLElement) {
     load.type = "button"; load.className = "sf-ask-offer-load";
     load.textContent = useGemini ? "Use Gemini Nano" : "Load Qwen3 0.6B";
     const skip = document.createElement("button");
-    skip.type = "button"; skip.className = "sf-ask-offer-skip"; skip.textContent = "Not now";
+    skip.type = "button"; skip.className = "sf-ask-offer-skip"; skip.textContent = "Not Now";
     const btns = document.createElement("div");
     btns.className = "sf-ask-offer-btns";
     btns.append(load, skip);
@@ -557,7 +557,7 @@ export function initChat(root: HTMLElement) {
     try {
       let a: string;
       if (/^\s*(hi|hello|hey|salam|assalam|as-salamu)\b/i.test(q) && q.length < 24) {
-        a = out.textContent = `Hello! Ask me anything about ${k.first}'s work, projects, skills or certifications.`;
+        a = out.textContent = `Ask about ${k.first}'s work, projects, skills or certifications.`;
       } else {
         let hits = await rank(q);
         // Short or vague follow-ups ("when does it launch?", "tell me more") lean on the previous
