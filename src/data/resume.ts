@@ -245,7 +245,7 @@ export const resume = {
     {
       title: "Principal Design Engineer",
       company: "PLUMgrid Inc. (Acquired by VMware)",
-      location: "Santa Clara, California",
+      location: "Santa Clara, California (Remote)",
       period: "May 2014 - January 2017",
       presentation: "featured",
       summaryBullets: [
@@ -364,7 +364,7 @@ export const resume = {
   ],
 
   education:
-    "Bachelor of Electrical Engineering | Computer | Centre for Advanced Studies in Engineering (CASE), UET Taxila | Islamabad, Pakistan | 2009",
+    "Bachelor of Electrical Engineering | Computer | Centre for Advanced Studies in Engineering (CASE), UET Taxila | Islamabad, Pakistan | 2010",
 
   honors: [
     {
