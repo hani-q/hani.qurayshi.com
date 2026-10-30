@@ -108,12 +108,12 @@ const ghCellLevel = (n: number) => (n === 0 ? 0 : n <= ghQuart[0] ? 1 : n <= ghQ
 // typed in (src/scripts/chat/chat.ts); {name} renders highlighted. The first is the
 // server-rendered default for no-JS visitors and crawlers.
 const welcomes = [
-  "Ask something about {name}, the founder of ArkaType Intelligence.",
-  "Hello! What would you like to know about {name}?",
-  "Curious what {name} is building at ArkaType? Just ask.",
+  "Ask about {name}, founder of ArkaType Intelligence.",
+  "What would you like to know about {name}?",
+  "What is {name} building at ArkaType?",
   `{name} has ${resume.yearsOfExperience}+ years in networks, cloud and security. Ask me anything about it.`,
   "Ask me about {name}'s experience, projects or skills.",
-  "Want to know how {name} runs engineering agentic-first? Ask away.",
+  "How does {name} use coding agents in engineering?",
 ];
 const [welcomeBefore, welcomeAfter] = welcomes[0].split("{name}");
 // Once the welcome has streamed in, the headline rotates every 5s while idle: a programming joke
@@ -137,7 +137,7 @@ const truths = rfc1925Truths.filter((t) => !t.text.startsWith("See ")).map((t) =
 const capabilities = [
   {
     title: "Agentic Engineering Leadership",
-    claim: "Runs engineering through specifications, agent implementation, and governed review.",
+    claim: "Writes specifications, uses coding agents to implement them, and reviews the work.",
     proof: [
       "Stealth Startup (Contract): led AI-assisted development and wrote guidelines for coding agents",
       "ArkaType: FlowSense.AI built agentic-first",
@@ -146,7 +146,7 @@ const capabilities = [
   },
   {
     title: "Network & Packet Intelligence",
-    claim: "Builds traffic-classification systems spanning carrier-scale DPI and on-device intelligence.",
+    claim: "Builds traffic-classification systems for telecom networks and on-device use.",
     proof: [
       "Sandvine: DPI, PCRF and NFV for telecom operators",
       "Sandvine: led the Centre of Excellence for Traffic Classification, including signature development",
@@ -155,7 +155,7 @@ const capabilities = [
   },
   {
     title: "Full-Stack Product Engineering",
-    claim: "Ships products end to end: React and React Native front ends, Node.js, Java and Go back ends, on AWS.",
+    claim: "Builds products with React and React Native front ends, Node.js, Java and Go back ends, and AWS.",
     proof: [
       "Simplus Innovation: full-stack engineer on React, TypeScript, Redux, MongoDB and AWS",
       "Qasmia Welfare Trust: Next.js and AWS Amplify finance system with live dashboards",
@@ -163,8 +163,8 @@ const capabilities = [
     ],
   },
   {
-    title: "Engineering Organization Building",
-    claim: "Builds engineering teams from zero, including a dedicated Agentic Software Engineering team.",
+    title: "Building Engineering Teams",
+    claim: "Sets up and leads engineering teams, including a dedicated Agentic Software Engineering team.",
     proof: [
       "Stealth Startup (Contract): set up and led an Agentic Software Engineering team as part of building the engineering org from scratch",
       "Sandvine: led the Traffic Classification Centre of Excellence",
@@ -175,7 +175,7 @@ const capabilities = [
     title: "Technical Product Leadership",
     claim: "Leads product and engineering for FlowSense.AI, a pre-launch cyber-intelligence product.",
     proof: [
-      "ArkaType: building FlowSense.AI from zero toward launch",
+      "ArkaType: building FlowSense.AI for launch",
     ],
   },
   {
@@ -235,7 +235,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
     <svg viewBox={hqLogo.viewBox.join(" ")} aria-hidden="true" set:html={hqLogo.logo} />
   </a>
   <div class="sf-tools">
-  <button type="button" class="sf-mode sf-print" aria-label="Print or save résumé as PDF" title="Print résumé (PDF)">
+  <button type="button" class="sf-mode sf-print" aria-label="Print or save résumé as PDF" title="Print Résumé (PDF)">
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6" /><rect x="3" y="9" width="18" height="8" rx="1" /><path d="M6 14h12v7H6z" /></svg>
   </button>
   <button type="button" class="sf-mode sf-skin-btn" popovertarget="sf-skins" aria-label="Choose theme" title="Theme">
@@ -344,7 +344,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
   <!-- About -->
   <section class="sf-about" id="sf-about">
     <div class="sf-container">
-      <h2 class="sf-section-title">About me</h2>
+      <h2 class="sf-section-title">About Me</h2>
       <div class="sf-row sf-about-wrapper">
         <div class="sf-col-md-6">
           <div class="sf-about-image">
@@ -398,7 +398,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
               <p class="sf-project-meta"><span class="sf-grad">{pr.when}</span> · {pr.where}</p>
               <p class="sf-project-lead">{pr.summary}</p>
               <div class="sf-project-actions">
-                <button type="button" class="sf-cta sf-cta--hero" data-sf-open={pr.id}>Open product</button>
+                <button type="button" class="sf-cta sf-cta--hero" data-sf-open={pr.id}>Open Product</button>
                 <a class="sf-cta sf-grad sf-cta--link" href="https://www.arka-type.com/" target="_blank" rel="noreferrer">ArkaType ↗</a>
               </div>
             </div>
@@ -458,9 +458,9 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
                 </ul>
                 <ul class="sf-experience-highlights">{c.summaryBullets.map((bullet) => <li>{bullet}</li>)}</ul>
                 <div class="sf-project-actions">
-                  <button type="button" class="sf-cta sf-cta--hero" data-sf-open={c.id}>Open experience</button>
+                  <button type="button" class="sf-cta sf-cta--hero" data-sf-open={c.id}>Open Experience</button>
                   <a class="sf-cta sf-grad sf-cta--link" href={i < featuredCompanies.length - 1 ? `#${featuredCompanies[i + 1].id}` : "#sf-experience-compact"}>
-                    {i < featuredCompanies.length - 1 ? "Next role" : "More experience"}
+                    {i < featuredCompanies.length - 1 ? "Next Role" : "More Experience"}
                   </a>
                 </div>
               </div>
@@ -472,8 +472,8 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
                     <div class="sf-shot-bar" aria-hidden="true">
                       <i></i><i></i><i></i>
                       <span class="sf-url">{c.site.label}</span>
-                      {c.site.archived && <em class="sf-url-tag">archived {c.site.archived}</em>}
-                      {c.site.tag ? <em class="sf-url-tag">{c.site.tag}</em> : !c.site.image && <em class="sf-url-tag">offline</em>}
+                      {c.site.archived && <em class="sf-url-tag">Archived {c.site.archived}</em>}
+                      {c.site.tag ? <em class="sf-url-tag">{c.site.tag}</em> : !c.site.image && <em class="sf-url-tag">Offline</em>}
                       <span class="sf-expand">Expand ↗</span>
                     </div>
                     {c.site.image ? (
@@ -491,8 +491,8 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
                         <span class="sf-shot-name">{c.company}</span>
                         <span class="sf-shot-role">{c.site.placeholder ?? "This site is no longer online."}</span>
                         <span class="sf-shot-stats">
-                          <span><b>{c.roles.length}</b> {c.roles.length === 1 ? "role" : "roles"}</span>
-                          <span><b>{c.highlights}</b> highlights</span>
+                          <span><b>{c.roles.length}</b> {c.roles.length === 1 ? "Role" : "Roles"}</span>
+                          <span><b>{c.highlights}</b> Highlights</span>
                         </span>
                       </div>
                     )}
@@ -525,7 +525,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
                       {(role.summaryBullets ?? role.bullets).length > 0 && <ul class="sf-experience-highlights">{(role.summaryBullets ?? role.bullets).map((bullet) => <li>{bullet}</li>)}</ul>}
                     </div>
                   ))}
-                  <button type="button" class="sf-cta sf-cta--link" data-sf-open={entry.company.id} aria-label={`Open full ${entry.company.company} experience`}>Full experience ↗</button>
+                  <button type="button" class="sf-cta sf-cta--link" data-sf-open={entry.company.id} aria-label={`Open full ${entry.company.company} experience`}>Full Experience ↗</button>
                 </article>
               ))}
             </div>
@@ -553,7 +553,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
   <!-- Open source -->
   <section class="sf-plain" id="sf-open-source">
     <div class="sf-container">
-      <h2 class="sf-section-title sf-dark">Open source</h2>
+      <h2 class="sf-section-title sf-dark">Open Source</h2>
       <div class="sf-proj-grid">
         {openSource.map((pr) => (
           <article class="sf-proj">
@@ -577,7 +577,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
             <h3 class="sf-project-title">{pr.name}</h3>
             <p class="sf-project-meta"><span class="sf-grad">{pr.when}</span> · {pr.where}</p>
             <p class="sf-project-lead">{pr.summary}</p>
-            <div class="sf-details" id={`${pr.id}-details`} data-kind="Open source" data-company={pr.name} data-range={pr.when} data-location={pr.where}
+            <div class="sf-details" id={`${pr.id}-details`} data-kind="Open Source" data-company={pr.name} data-range={pr.when} data-location={pr.where}
               data-site-label={pr.site.label} data-site-url={pr.site.url} data-site-image={pr.site.image} data-site-tag={pr.site.tag}>
               <div class="sf-details-inner">
                 <article class="sf-detail-role">
@@ -664,9 +664,9 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
             <h3 class="sf-project-title">{education.degree}</h3>
             <p class="sf-project-meta"><span class="sf-grad">Class of {education.year}</span> · {education.location}</p>
             <p class="sf-project-lead">Major in {education.major} Engineering at {education.school}. Degree awarded by the University of Engineering and Technology, Taxila.</p>
-            <p class="sf-project-lead sf-muted">Also: {resume.involvement.role}, {resume.involvement.organization} ({resume.involvement.period}).</p>
+            <p class="sf-project-lead sf-muted">I also work as an {resume.involvement.role} at {resume.involvement.organization} ({resume.involvement.period}).</p>
             <div class="sf-project-actions">
-              <button type="button" class="sf-cta sf-cta--hero" data-sf-open="sf-edu">Open education</button>
+              <button type="button" class="sf-cta sf-cta--hero" data-sf-open="sf-edu">Open Education</button>
               <a class="sf-cta sf-grad sf-cta--link" href="https://www.uettaxila.edu.pk/" target="_blank" rel="noreferrer">UET Taxila ↗</a>
             </div>
           </div>
@@ -734,7 +734,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
       <div class="sf-posts">
         <div class="sf-posts-intro">
           <p class="sf-posts-label">On X</p>
-          <p class="sf-posts-text">Pinned on X: what I'm testing and building.</p>
+          <p class="sf-posts-text">What I'm testing and building, pinned on X.</p>
           <a class="sf-cta sf-cta--hero" href={resume.twitter} target="_blank" rel="noreferrer">Follow @{twitterHandle}</a>
         </div>
         <div class="sf-posts-list">
@@ -812,7 +812,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
         <span data-sf-b="label"></span>
         <em class="sf-url-tag" data-sf-b="tag" hidden></em>
       </div>
-      <a class="sf-browser-open" data-sf-b="open" target="_blank" rel="noreferrer">Visit site ↗</a>
+      <a class="sf-browser-open" data-sf-b="open" target="_blank" rel="noreferrer">Visit Site ↗</a>
       <button type="button" class="sf-browser-close" data-sf-close aria-label="Close">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
       </button>
@@ -1098,7 +1098,7 @@ const skinFonts = Object.fromEntries(skins.filter((s) => s.fonts).map((s) => [s.
         current = i;
         part('label').textContent = d.dataset.siteLabel || '';
         var tag = part('tag');
-        var tagText = d.dataset.siteTag || (d.dataset.siteArchived ? 'archived ' + d.dataset.siteArchived : (d.dataset.siteImage ? '' : 'offline'));
+        var tagText = d.dataset.siteTag || (d.dataset.siteArchived ? 'Archived ' + d.dataset.siteArchived : (d.dataset.siteImage ? '' : 'Offline'));
         tag.textContent = tagText;
         tag.hidden = !tagText;
         var open = part('open');

@@ -65,9 +65,9 @@ export const experienceByCompany: { company: string; roles: Job[] }[] = resume.e
 
 /** Relevance determines prominence; full role details stay available on the website. */
 export const experienceSections = [
-  { id: "featured", title: "Professional Experience", label: "Selected experience" },
-  { id: "compact", title: "Additional Experience", label: "Additional experience" },
-  { id: "earlier", title: "Earlier Experience", label: "Earlier experience" },
+  { id: "featured", title: "Professional Experience", label: "Selected Experience" },
+  { id: "compact", title: "Additional Experience", label: "Additional Experience" },
+  { id: "earlier", title: "Earlier Experience", label: "Earlier Experience" },
 ].map((section) => {
   const companies = experienceByCompany
     .filter((group) => group.roles[0].presentation === section.id)
@@ -85,7 +85,7 @@ export const experienceSections = [
     entries: [
       ...(shortRoles.length ? [{
         kind: "short-roles" as const,
-        label: `Short roles, ${shortRoles[0].location}, ${shortRoles[0].period.match(/\d{4}/)?.[0]}`,
+        label: `Short Roles, ${shortRoles[0].location}, ${shortRoles[0].period.match(/\d{4}/)?.[0]}`,
         roles: shortRoles,
       }] : []),
       ...companyEntries,
@@ -109,7 +109,7 @@ export interface CompanySite {
 
 export const companySites: Record<string, CompanySite> = {
   "ArkaType Intelligence": { label: "www.arka-type.com", url: "https://www.arka-type.com/", image: "/sites/arkatype.jpg" },
-  "Stealth Startup": { label: "Stealth Startup", tag: "stealth", placeholder: "Company details are private." },
+  "Stealth Startup": { label: "Stealth Startup", tag: "Stealth", placeholder: "Company details are private." },
   Sandvine: { label: "www.sandvine.com", url: "https://web.archive.org/web/20200108112459/https://www.sandvine.com/", image: "/sites/sandvine.jpg", archived: "Jan 2020" },
   SNSKIES: { label: "snskies.com", url: "https://snskies.com/", image: "/sites/snskies.jpg" },
   "Simplus Innovation": { label: "www.glasc.io", url: "https://web.archive.org/web/20240304113911/https://glasc.io/", image: "/sites/glasc.jpg", archived: "Mar 2024" },
